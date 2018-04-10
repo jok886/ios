@@ -1,0 +1,564 @@
+一、选择题
+
+初级
+
+1、下列哪个名词是不属于在UML类图的（D）
+
+A、	类名 B、属性  C、操作  D、默认值
+
+2、下列哪个关系描述的是聚合关系（B）
+
+A、嘴巴 -- 头            B 、汽车 -- 引擎
+
+C、大雁 – 翅膀         D、叶 -- 树
+
+3、在OC中类的接口声明关键字为：（B）
+
+A、@import                B、@interface 
+
+C、@implemention           D、@protocol
+
+4、经过下列哪种操作后需要使用release方法（C）
+
+A、delegate                B、assign
+
+C、retain	D、dealloc
+
+5、OC中,所有类的根类是：（A）
+
+A、NSObject               B、NSDate
+
+C、NSCoding               D、UIView
+
+6、向Xcode控制台输出一个字符串应该用：（A）
+
+A、NSLog()                B、system.out.print()
+
+C、NSPrintf()               D、scanf()
+
+7、必须实现的协议方法使用：关键字声明（C）
+
+A、@property               B、@interface
+
+C、@required               D、@protocol
+
+8、OC中布尔(BOOL)类型的变量的值只有：（B）
+
+A、1/0                   B、YES/NO
+
+C、true/false               D、1/-1
+
+9、在OC中，类中成员变量的可见度(访问权限)不包括：（D）
+
+A、@public                    B、@protected
+
+C、@private                    D、@optional 
+
+10、面向对象的特性不包括：（D）
+
+A、封装                     B、继承
+
+C、多态                     D、构造
+
+11、类何时调用dealloc方法：（D）
+
+A、[property release]后          B、[instance release]后
+
+C、[super dealloc]时            D、当引用计数为0时.
+
+12、简单类型的成员在使用@property()时,括号中应使用：（A）
+
+A、assign       B、copy        C、retain         D、auto
+
+13、NSRange是什么数据类型：（C）
+
+A、数组                    B、字典
+
+C、结构体                  D、指针
+
+14、实例变量默认的访问修饰符是：（C）
+
+A、@public                  B、@private
+
+C、@protected                D、@package
+
+15、关于协议描述不正确的是：（D）
+
+A、协议分正式和非正式协议
+
+B、在要求确认协议的类必须实现协议中的方法时，可以使用@required
+
+C、一个协议可以被多个类确认
+
+D、协议中声明的方法，默认是@optional的
+
+16、NSMutableDictionary字典中删除对象可以使用下面那个方法：（D）
+
+A、filteredArrayUsingPredicate:             B、arrayByAddingObject:
+
+C、initWithCapacity:                     D、setValue:forKey:
+
+17、在Xcode中，需要编译混合Objective-C和C++的源码文件，需要将文件格式的后缀改为 （C）
+
+A.  .c     B.  .cpp      C.  .mm       D.  .m
+
+18、下列哪项不属于数据持久化？(C)
+
+A. 属性列表                   B. Core Data
+
+C. NSUserDefaults                D. 归档和反归档
+
+19、下面哪个类可以创建可变对象(C)
+
+Ａ.NSString                    B. NSArray
+
+C. NSMutableDictionary           D.NSSet
+
+20、对于类和对象的概念，属性对象的是：（C）
+
+A、奥迪A6                   B、保龄球
+
+C、世界冠军刘翔	D、西红柿
+
+21、下面哪个方法不属于NSObject的内省方法（A）
+
+A、init                      B、iskindOfClass
+
+C、responseToselector            D、isMemberOfClass
+
+22、一个良好的算法由下面的基本结构组成，但不包括（D）
+
+A、顺序结构                 B、选择结构
+
+C、循环结构                 D、跳转结构
+
+23、下面哪个方法可以比较两个字符串的异同（B）
+
+A、if(str = str2)               B、if([str1 isEqualToString:str2])
+
+C、if(str1&&str2)             D、if([str1 length] == [str2 length])
+
+24、NSMutableDictionary *dic = [[NSMutableDictionary alloc ]
+
+initWithObjectsAndKeys:@”1”,@”2”,@”2”,@”3”,@”4”,nil];
+
+NSArray *arr = [[NSAarry alloc]initWithArray:[dic allKeys]];
+
+NSString *str = [[NSString alloc]initWithFormat:[arr objectAtIndex:0],[arr objectAtIndex:1], [arr objectAtIndex:2]];NSLog(@”%@”,str);输出结果是：（C）
+
+A、123     B、234       C、2         D、3
+
+25、下列哪个修饰符的对象被废弃后悔被自动赋值为nil？(C)
+
+   A、__strong               B、__autoreleasing
+
+   C、__weak                D、__unsafe_unretained
+
+26、在SVN版本库浏览器中，使用（A）指令可以查看所选文件或目录的日志？
+
+A、show log  B、Rename  C、Blame   D、Save as
+
+27、下列不是属性默认关键字的是（D）
+
+A、readwrite  B、assign  C、atomic  D、copy
+
+28、NSString *name = [[NSString alloc]initWithString:@"张三"];NSLog(@"%d",[name retainCount]);上述代码打印结果是：（A）
+
+A、-1      B、0        C、1          D、2
+
+29、现有如下集合，能准确删除“张三”的代码是：NSMutableDictionary * peoples=[NSMutableDictionary dictionaryWithObjectsAndKeys:@"张三",@"001",@"lisa",@"002",@"唐sir",@"老大哥", nil];（A）
+
+A、[peoples removeObjectForKey:@"001"];
+
+B、[peoples removeObject:@"张三"];
+
+C、[peoples removeObjectAtIndex:0];
+
+D、[peoples removeAllObjects];
+
+30、NSArray *array = [NSArray arrayWithObjects:@"one", @"two", @"three",nil];
+
+NSLog(@"%@",[array objectAtIndex:1]);
+
+NSLog(@"%@",[array objectAtIndex:3]);
+
+控制台中打印的最后一条信息会是：（D）
+
+A、one        B、two         C、three       D、崩溃信息
+
+31、NSRange的成员变量有：（A）
+
+A、location,length             B、width,height
+
+C、location,height             D、length,width
+
+32、关于NSSet描述正确的有：（B）
+
+A、NSSet可以存放任何数据类型的数据
+
+B、NSSet存放数据是无序的
+
+C、NSSet可以通过下标获取数据
+
+D、NSSet存放的数据是有序的
+
+33、NSRange是什么数据类型：（C）
+
+A、数组  B、字典     C、结构体     D、指针
+
+34、关于协议描述不正确的是：（D）
+
+A、协议分正式和非正式协议
+
+B、在要求确认协议的类必须实现协议中的方法时，可以使用@required
+
+C、一个协议可以被多个类确认
+
+D、协议中声明的方法，默认是@optional的
+
+35、以下对类的描述不正确的是：（C）
+
+A、类的接口部分可以包含实例变量、属性和方法
+
+B、可以把声明和实现都放到.h文件中
+
+C、一对文件（Person.h Person.m）只能定义一个类//可以定义多个类
+
+D、类比较抽象，对象比较具体
+
+36、Objective-C 语言中类的实例变量如果只可以被本类和其子类访问，需要下列哪个修饰符：（C）
+
+A、@public       B、@private     C、@protected     D、@friendly
+
+37、int a = 10;NSNumber *b = [[NSNumber alloc] initWithInt:a];NSLog(@"%d", a+++b);这段代码的输出结果是什么：（D）
+
+A、21
+
+B、20
+
+C、30
+
+D、编译错误
+
+38、下列选项中不能正常为emp的name属性赋值的代码有：（B）
+
+A、emp.name=@"李嘉诚";
+
+B、emp->name=@"李开复";
+
+C、[emp setValue:@"柳传志" forKey:@"name"];
+
+D、[emp setName:@"黄光裕"];
+
+39、关于类与对象的说法正确的是（A）
+
+A、一个文件中可以声明多个类
+
+B、方法需要传递多个参数时，参数用逗号隔开
+
+C、不是每个对象都有引用计数
+
+D、Objective-C可以有多继承
+
+中级
+
+1、关于KVC的描述正确的是：（B）
+
+A、KVC是指"Key-Value Observing"
+
+B、是一种间接访问对象的属性的机制
+
+C、只能访问对象的属性
+
+D、当对象的属性值改变时，我们能收到一个通知
+
+2、以下说法正确的是：（C）
+
+A、求数组的内容的个数用length方法
+
+B、字典是根据其位置来索引数据的
+
+C、协议中定义的方法默认不是必须实现的
+
+D、一个文件中可以声明多个类
+
+3、下面说法错误的是（B）
+
+A、GCD的开销要比NSThread大 
+
+B、可以在子线程中修改UI元素
+
+C、NSOperationQueue是比NSthread更高层的封装
+
+D、GCD可以根据不同优先级分配线程
+
+4、下列哪个操作不会引起引用计数（retaincount）的变化是：（C）
+
+A、NSString *str = [[NSString stringWithFormat:@"hello"]; 
+
+B、NSMutableData *data = [NSMutableData allocWithZone:data1];
+
+C、int a=1;
+
+D、NSArray *arr = [[NSArray alloc]initWithArray:arr1];
+
+5、多线程中栈与堆是公有的还是私有的(C)
+
+A.栈公有，堆私有           B.栈公有，堆公有
+
+C.栈私有，堆公有           D.栈私有，堆私有
+
+6、以下哪个算法不是对称加密算法(D)
+
+A.DES       B.RC5       C.AES       D.RSA
+
+7、优秀的程序设计，应遵循下列哪个准则？(B)
+
+A. 高内聚，高耦合              B. 高内聚，低耦合
+
+C. 低内聚，高耦合              D. 低内聚，低耦合
+
+8、对于runloop的理解不正确的是（C）
+
+A、每个线程都有其对应的RunLoop
+
+B、默认非主线程的RunLoop是没有运行的
+
+C、在一个单独的线程中没有必要去启用RunLoop
+
+D、可以将NSTimer添加到runLoop
+
+9、下列选项不是MVVM模式特点的是（A）
+
+A、高耦合  B、可重用性 C、可测试性 D、独立开发
+
+10、对于Objective-C中的方括号“[]”的作用,下列说法错误的是：（D）
+
+A、用于通知某个对象该做什么
+
+B、方括号内第一项是对象,其余部分是你需要对象执行的操作
+
+C、在Objective-C中通知对象执行某种操作,称为发送消息.(也叫调用方法)
+
+D、方括号中可以为空
+
+11、下列关于环信的说法错误的是（D）
+
+A、环信是一个第三方平台，提供即时通信服务（IM）。
+
+B、环信是在XMPP的基础上进行二次开发。
+
+C、环信在网络上传输的数据也是XML
+
+D、使用环信，需要自己搭建服务器
+
+12、关于Socket，下列说法错误的是（A）
+
+A、socket本身是一种协议，而不是接口
+
+B、通过socket我们才能使用TCP/IP协议
+
+C、TCP/IP协议是传输层协议，主要解决数据如何在网络中传输
+
+D、socket是对TCP/IP协议的封装
+
+13、关于git和svn的说法正确的是（B）
+
+A、在很多其情况下，git的速率远远比SVN小
+
+B、git是分布式管理，SVN是集中式管理
+
+C、git用分支比较麻烦
+
+D、git必须用网络并且服务器开启的情况下才可以使用
+
+二、简答
+
+问题1：请说明一下UML类图中组合与聚合的区别
+
+答：聚合与组合都表示整体与部分的关系，只不过在聚合关系中，成员对象可以脱离整体对象独立存在，而在组合关系中，成员对象与整体对象之间具有同生共死的关系，例如头与嘴巴，如果头没了，那么嘴巴自然也不复存在。
+
+问题2：OC有多继承吗？没有的话可以用什么方法替代？
+
+答：多继承即一个子类可以有多个父类，它继承了多个父类的特性。OC的类没有多继承，只支持单继承，如果要实现多继承的话，可以通过类别和协议的方式来实现。protocal可以实现多个接口，通过实现多个接口可以完成多继承。Category一般使用分类，用Category去重写类的方法，仅对Category有效，不会影响到其他类与原有类的关系。
+
+问题3：如果在block里面修改外部变量的值，会报错吗？
+
+答：在默认情况下，不允许block内部修改外部变量的数值。因为拷贝之后它与原数值指向了不同的地址。若是能改变则会破坏代码的可读性。
+
+问题4：下面是一段能正确运行的代码。为啥将外部变量定义成mutableString就能在block内部对其进行修改？
+
+void demoBlock() {
+
+    NSMutableString *strM = [NSMutableString stringWithString:@”张三”]；
+
+  void(^myBlock)() = ^{
+
+[strM setString:@”lisa”];
+
+};
+
+    myBlock();
+
+    NSLog(@”%@”,strM);
+
+}
+
+答案：在block中引用外部变量要拷贝一份到堆中。
+
+这个时候拷贝到堆中的地址与在栈中的地址是一样的。因此，它指向zhangsan。在使用setString方法之时，将指针指向的地址的值进行修改。
+
+![](media/15200565364442/15200580079155.jpg)
+
+问题5：简述_block/weak修饰符的区别
+
+答：_block在arc和mrc环境下都能用，可以修饰对象，也能修饰基本数据类型
+
+_weak只能在arc环境下使用，只能修饰对象，不能修饰基本数据类型
+
+_block对象可以在block中重新赋值，_weak不行。
+
+问题6：请简单说明在安装cocoapods时，使用pod install命令安装框架后的大致过程
+
+答：
+
+1)分析依赖:该步骤会分析Podfile,查看不同类库之间的依赖情况。如果有多个类库依赖于同一个类库，但是依赖于不同的版本，那么cocoaPods会自动设置一个兼容的版本。
+
+2)下载依赖:根据分析依赖的结果，下载指定版本的类库到本地项目中。
+
+3)生成Pods项目：创建一个Pods项目专门用来编译和管理第三方框架，CocoaPods会将所需的框架，库等内容添加到项目中，并且进行相应的配置。
+
+4)整合Pods项目：将Pods和项目整合到一个工作空间中，并且设置文件链接
+
+问题7：在开发中，如何去优化tableview呢？
+
+答：
+
+行高一定要缓存： 行高方法其实被调用的次数非常多。通过缓存行高，可以减少大量计算自动布局的过程。
+
+不要动态创建子视图：当cell显示的时候，不要再去创建了。所有的自视图都应该预先创建，如果不需要显示可以设置hidden。
+
+所有的子视图都必须制定背景颜色
+
+所有的颜色都不要使用alpha：设置alpha会增加图层的计算，对性能的消耗非常之大。
+
+cell栅格化
+
+栅格化的代码如下：
+
+-(instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier(NSString *)reuseIdentifier {
+
+    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+
+    if(self){
+
+        //栅格化
+
+        self.layer.shouldRasterize = YES;
+
+        // 栅格化必须指定分辨率，否则默认使用 *1 生成图像
+
+        self.layer.raterizationScale = [UIScreen mainScreen].scale;
+
+    }
+
+    return self;
+
+}
+
+异步绘制
+
+self.layer.drawsAsynchronously = YES;
+
+问题8：SDWebimage 在内存方面存在很大的问题，如何解决动态图片内存不释放的问题？
+
+答：SDWebimage 在内存方面存在很大的内存问题，静态的图片也会出现拉伸问题，动态的gif图内存峰值更加的高，内存释放不会及时。
+
+1、利用CADisplayLink开启一个时钟，每次触发只加载一帧图像！而之前的图像立即释放。
+
+2、用加时钟的方式来解决内存过大的问题，会造成额外的开销。可以将动态图片加载换成YYAnimatedImageView。
+
+问题9：逆向分析最常用的有三种方法是什么？
+
+网络分析
+
+通过分析和篡改接口数据，可以有效的破解通过接口数据来控制客户端行为的app，常用的抓包工具有Tcpdump, WireShark, Charles等，windows平台有fidller
+
+静态分析
+
+通过砸壳、反汇编、classdump头文件等技术来分析app行为，通过这种方式可以有效的分析出app实用的一些第三方库，甚至分析出app的架构等内容，常用的工具有dumpdecrypted（砸壳）、hopper disassembler（反汇编）、class_dump（导头文件）
+
+动态分析
+
+动态分析指的是通过分析app的运行时数据，来定位注入点或者获取关键数据，常用的工具有cycript（运行时控制台）、 lldb+debugserver（远程断点调试）、logify（追踪）
+
+问题10：怎样防止反编译？
+
+本地数据加密
+
+对NSUserDefaults，sqlite存储文件数据加密，保护帐号和关键信息
+
+URL编码加密
+
+对程序中出现的URL进行编码加密，防止URL被静态分析
+
+网络传输数据加密
+
+对客户端传输数据提供加密方案，有效防止通过网络接口的拦截获取数据
+
+方法体，方法名高级混淆
+
+对应用程序的方法名和方法体进行混淆，保证源码被逆向后无法解析代码
+
+程序结构混排加密
+
+对应用程序逻辑结构进行打乱混排，保证源码可读性降到最低
+
+借助第三方APP加固，例如：网易云易盾
+
+问题11：在MVC架构中，如何解决controller层的臃肿问题？
+
+答：将网络请求抽象到单独的类中
+
+将界面的拼装抽象到专门的类中
+
+构造 ViewModel 
+
+这样抽象之后，View 只接受 ViewModel，而 Controller 只需要传递 ViewModel 这么一行代码。而另外构造 ViewModel 的过程，我们就可以移动到另外的类中了。
+
+专门构造存储类
+
+三、大厂面试题（答案略）
+
+1、 RunLoop 的基本概念，它是怎么休眠的？
+
+2、runtime如何通过selector找到对应的IMP地址？
+
+3、YYAsyncLayer如何异步绘制？
+
+4、你是如何组件化解耦的？
+
+5、_objc_msgForward函数是做什么的？直接调用它将会发生什么？
+
+6、用过 TableView 吗，平时怎么解决 TableView 滑动卡顿问题的？
+
+7、KVC机制是如何通过key找到value？
+
+8、app内存你是如何分析的？
+
+9、使用了第三方库, 有看它们是怎么实现的吗？
+
+10、什么是强连通量算法？
+
+11、如何应对APP版本升级，数据结构随之变化?
+
+12、单例会有什么弊端？
+
+13、如何关闭默认的KVO的默认实现，简述KVO的实现原理。
+
+14、说说Swift和Objective-C的联系。
+
+作者：程晓媛闯天涯
+链接：https://www.jianshu.com/p/4f205ea18d0f
+來源：简书
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
