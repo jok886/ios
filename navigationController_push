@@ -1,0 +1,17 @@
+for (UIViewController *controller in self.navigationController.viewControllers) {
+                if ([controller isKindOfClass:[JLLoginViewController class]]) {
+                    
+                    [self.navigationController popToViewController:controller animated:NO];
+                    
+                    
+                }
+                
+                if ([controller isKindOfClass:[JLControlPasswordViewController class]]) {
+                    [[BLEService getInstance] disConnect];
+                    [GlobalMethod startLogout];
+                    //JLLoginViewController *vc  =  [[JLLoginViewController alloc]init];
+                    //[self.navigationController pushViewController:vc animated:NO];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kNotif_completeLogout object:nil];
+                }
+                
+            }
