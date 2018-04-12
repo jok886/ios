@@ -1,0 +1,16 @@
+1.ios10tabbar上面出现一个灰线 
+if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 10.0) {
+        self.tabBarController.tabBar.subviews[0].subviews[0].hidden = YES;
+    }else{
+        [self.tabBarController.tabBar setValue:@(YES) forKeyPath:@"_hidesShadow"];
+    }，这个可以解决我最后说的那个问题。
+    
+    self.tabBar.backgroundImage = [UIImage imageNamed:@"tabbar_bg"];
+    self.tabBar.shadowImage = [UIImage new];
+    
+ 2.
+ 3.
+ 4.
+ 5.
+ 6.
+ 
