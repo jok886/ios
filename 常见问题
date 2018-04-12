@@ -8,7 +8,44 @@ if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 10.0) {
     self.tabBar.backgroundImage = [UIImage imageNamed:@"tabbar_bg"];
     self.tabBar.shadowImage = [UIImage new];
     
- 2.
+ 2.iPhone X尺寸问题 
+ .简单了解下IPhoneX 导航栏 状态栏 tabar高度
+1.导航栏高度 88 非非IPoneX手机为64
+2.状态栏高度44 非IPoneX手机为20
+3.tabar高度83 非IPhoneX手机为49
+
+1. 高度增加了145pt，变成812pt. 
+2.屏幕圆角显示，注意至少留10pt边距。
+3. 状态栏高度由20pt变成44pt，留意这个距离就能避开“刘海”的尴尬，相应的导航栏以上变化64--->88。 
+4.底部工具栏需要为home indicator留出34pt边距。 5.物理分辨率为1125px * 2436px
+非iPhone X ：
+StatusBar高20px，NavigationBar高44px，底部TabBar高49px
+iPhone X：
+StatusBar高44px，NavigationBar高44px，底部TabBar高83px
+
+// status bar height.
+
+#define  kStatusBarHeight      (IS_iPhoneX ? 44.f : 20.f)
+// Navigation bar height.
+#define  kNavigationBarHeight  44.f
+// Tabbar height.
+#define  kTabbarHeight        (IS_iPhoneX ? (49.f+34.f) : 49.f)
+// Tabbar safe bottom margin.
+#define  kTabbarSafeBottomMargin        (IS_iPhoneX ? 34.f : 0.f)
+// Status bar & navigation bar height.
+#define  kStatusBarAndNavigationBarHeight  (IS_iPhoneX ? 88.f : 64.f)
+
+//判断是否iPhone X
+#define IS_iPhoneX ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1125, 2436), [[UIScreen mainScreen] currentMode].size) : NO)
+
+
+ if (@available(iOS 11.0, *)) {
+    tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    _tableView.contentInset = UIEdgeInsetsMake(64, 0, 49, 0);
+    _tableView.scrollIndicatorInsets = _tableView.contentInset;
+}
+由于项目中Tabbar是用自定义的,需要对Tabbar的高度做适配,用到宏#define kTabbarHeight (IS_iPhoneX ? (49.f+34.f) : 49.f)
+
  3.
  4.
  5.
