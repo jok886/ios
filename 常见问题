@@ -46,7 +46,7 @@ StatusBar高44px，NavigationBar高44px，底部TabBar高83px
 }
 由于项目中Tabbar是用自定义的,需要对Tabbar的高度做适配,用到宏#define kTabbarHeight (IS_iPhoneX ? (49.f+34.f) : 49.f)
 
- 3.
+ 3.iOS11下，苹果对相册的权限key做了调整，原来的NSPhotoLibraryUsageDescription，在iOS11之后，改成了NSPhotoLibraryAddUsageDescription。
  4.
  5.
  6.
