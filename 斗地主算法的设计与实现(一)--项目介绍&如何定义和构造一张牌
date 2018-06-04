@@ -1,0 +1,332 @@
+
+https://blog.csdn.net/fansunion/article/details/12516411
+
+定义一张牌Card
+
+a.一张牌的类型
+
+
+
+[java] view plain copy 
+1.// 一张牌的大类型  
+2. public enum CardBigType {  
+3.  HEI_TAO, HONG_TAO, MEI_HUA, FANG_KUAI, XIAO_WANG, DA_WANG  
+4. }  
+5.  
+6.   
+
+
+
+ 
+
+
+
+[java] view plain copy 
+1.// 一张牌的小类型  
+2. public enum CardSmallType {  
+3.  A, ER, SAN, SI, WU, LIU, QI, BA, JIU, SHI, J, Q, K, XIAO_WANG, DA_WANG  
+4. }  
+5.  
+6.   
+
+
+
+b.一张牌Card的属性
+
+
+
+[java] view plain copy 
+1.// 牌的数字ID,1到54  
+2. public int id;  
+3.  
+4. // 牌的大类型，方块，梅花,红桃,黑桃,小王,大王  
+5. public final CardBigType bigType;  
+6.  
+7. // 牌的小类型，2_10,A,J,Q,K  
+8. public final CardSmallType smallType;  
+9.  
+10. // 牌的等级，对牌进行排序时会用到  
+11. public int grade;  
+12.  
+13. // 牌的图像名字，图形界面显示牌用到  
+14. public String imageName;  
+
+
+
+c.构造一张牌
+
+
+
+[java] view plain copy 
+1.// 通过牌的整型id构造一张牌  
+2. public Card(int id) {  
+3.  this.id = id;  
+4.  bigType = CardUtil.getBigType(id);  
+5.  smallType = CardUtil.getSmallType(id);  
+6.  grade = CardUtil.getGrade(id);  
+7.  imageName = CardUtil.getImageName(id);  
+8.  Icon icon = DdzUtil.getImageIcon(imageName);  
+9.  setIcon(icon);  
+10. }  
+
+
+
+d.根据牌的id获得一张牌的大类型：方块，梅花,红桃,黑桃,小王,大王
+
+
+
+[java] view plain copy 
+1./** 
+2.  * 根据牌的id获得一张牌的大类型：方块，梅花,红桃,黑桃,小王,大王 
+3.  * 
+4.  * @param id 
+5.  *            牌的id 
+6.  * 
+7.  * @return 牌的大类型：方块，梅花,红桃,黑桃,小王,大王 
+8.  */  
+9. public static CardBigType getBigType(int id) {  
+10.  CardBigType bigType = null;  
+11.  if (id >= 1 && id <= 13) {  
+12.   bigType = CardBigType.FANG_KUAI;  
+13.  } else if (id >= 14 && id <= 26) {  
+14.   bigType = CardBigType.MEI_HUA;  
+15.  } else if (id >= 27 && id <= 39) {  
+16.   bigType = CardBigType.HONG_TAO;  
+17.  } else if (id >= 40 && id <= 52) {  
+18.   bigType = CardBigType.HEI_TAO;  
+19.  } else if (id == 53) {  
+20.   bigType = CardBigType.XIAO_WANG;  
+21.  } else if (id == 54) {  
+22.   bigType = CardBigType.DA_WANG;  
+23.  }  
+24.  return bigType;  
+25. }  
+
+
+
+e.根据牌的id，获取牌的小类型：2_10,A,J,Q,K
+
+
+
+[java] view plain copy 
+1./** 
+2.  * 根据牌的id，获取牌的小类型：2_10,A,J,Q,K 
+3.  * 
+4.  * @param id 
+5.  *            牌的id 
+6.  * 
+7.  * @return 牌的小类型：2_10,A,J,Q,K 
+8.  */  
+9. public static CardSmallType getSmallType(int id) {  
+10.  if (id < 1 || id > 54) {  
+11.   throw new RuntimeException("牌的数字不合法");  
+12.  }  
+13.  
+14.  CardSmallType smallType = null;  
+15.  
+16.  if (id >= 1 && id <= 52) {  
+17.   smallType = numToType(id % 13);  
+18.  } else if (id == 53) {  
+19.   smallType = CardSmallType.XIAO_WANG;  
+20.  } else if (id == 54) {  
+21.   smallType = CardSmallType.DA_WANG;  
+22.  } else {  
+23.   smallType = null;  
+24.  }  
+25.  return smallType;  
+26. }  
+27.  
+28./** 
+29.  * 将阿拉伯数字0到12转换成对应的小牌型,被getSmallType方法调用 
+30.  * 
+31.  * @param num 
+32.  *            数字（0到12） 
+33.  * @return 牌的小类型 
+34.  */  
+35. private static CardSmallType numToType(int num) {  
+36.  CardSmallType type = null;  
+37.  switch (num) {  
+38.  case 0:  
+39.   type = CardSmallType.K;  
+40.   break;  
+41.  case 1:  
+42.   type = CardSmallType.A;  
+43.   break;  
+44.  case 2:  
+45.   type = CardSmallType.ER;  
+46.   break;  
+47.  case 3:  
+48.   type = CardSmallType.SAN;  
+49.   break;  
+50.  case 4:  
+51.   type = CardSmallType.SI;  
+52.   break;  
+53.  case 5:  
+54.   type = CardSmallType.WU;  
+55.   break;  
+56.  case 6:  
+57.   type = CardSmallType.LIU;  
+58.   break;  
+59.  case 7:  
+60.   type = CardSmallType.QI;  
+61.   break;  
+62.  case 8:  
+63.   type = CardSmallType.BA;  
+64.   break;  
+65.  case 9:  
+66.   type = CardSmallType.JIU;  
+67.   break;  
+68.  case 10:  
+69.   type = CardSmallType.SHI;  
+70.   break;  
+71.  case 11:  
+72.   type = CardSmallType.J;  
+73.   break;  
+74.  case 12:  
+75.   type = CardSmallType.Q;  
+76.   break;  
+77.  
+78.  }  
+79.  return type;  
+80. }  
+
+
+
+f.根据牌的id，获得一张牌的等级
+
+
+
+[java] view plain copy 
+1./** 
+2.  * 根据牌的id，获得一张牌的等级 
+3.  * 
+4.  * @param id 
+5.  *            牌的id 
+6.  * @return 与牌数字对应的等级 
+7.  */  
+8. public static int getGrade(int id) {  
+9.  
+10.  if (id < 1 || id > 54) {  
+11.   throw new RuntimeException("牌的数字不合法");  
+12.  }  
+13.  
+14.  int grade = 0;  
+15.  
+16.  // 2个王必须放在前边判断  
+17.  if (id == 53) {  
+18.   grade = 16;  
+19.  } else if (id == 54) {  
+20.   grade = 17;  
+21.  }  
+22.  
+23.  else {  
+24.   int modResult = id % 13;  
+25.  
+26.   if (modResult == 1) {  
+27.    grade = 14;  
+28.   } else if (modResult == 2) {  
+29.    grade = 15;  
+30.   } else if (modResult == 3) {  
+31.    grade = 3;  
+32.   } else if (modResult == 4) {  
+33.    grade = 4;  
+34.   } else if (modResult == 5) {  
+35.    grade = 5;  
+36.   } else if (modResult == 6) {  
+37.    grade = 6;  
+38.   } else if (modResult == 7) {  
+39.    grade = 7;  
+40.   } else if (modResult == 8) {  
+41.    grade = 8;  
+42.   } else if (modResult == 9) {  
+43.    grade = 9;  
+44.   } else if (modResult == 10) {  
+45.    grade = 10;  
+46.   } else if (modResult == 11) {  
+47.    grade = 11;  
+48.   } else if (modResult == 12) {  
+49.    grade = 12;  
+50.   } else if (modResult == 0) {  
+51.    grade = 13;  
+52.   }  
+53.  
+54.  }  
+55.  
+56.  return grade;  
+57. }  
+
+
+
+g.根据牌的id获得牌图片的名字
+
+
+
+[java] view plain copy 
+1./** 
+2.  * 根据牌的id获得牌图片的名字 
+3.  * 
+4.  * @param id 
+5.  *            牌的id 
+6.  * @return 图片的名字 
+7.  */  
+8. public static String getImageName(int id) {  
+9.  // 得到图片的前一个字符，表示是第几个牌  
+10.  String imageName = "";  
+11.  
+12.  if (id == 53) {  
+13.   imageName += "smallJoker";  
+14.  } else if (id == 54) {  
+15.   imageName += "bigJoker";  
+16.  } else {  
+17.   int mod = id % 13;  
+18.   String firstLetter = "";  
+19.   switch (mod) {  
+20.   case 0:  
+21.    firstLetter = "K";  
+22.    break;  
+23.   case 1:  
+24.    firstLetter = "A";  
+25.    break;  
+26.   case 2:  
+27.   case 3:  
+28.   case 4:  
+29.   case 5:  
+30.   case 6:  
+31.   case 7:  
+32.   case 8:  
+33.   case 9:  
+34.   case 10:  
+35.    firstLetter = "" + mod;  
+36.    break;  
+37.   case 11:  
+38.    firstLetter = "J";  
+39.    break;  
+40.   case 12:  
+41.    firstLetter = "Q";  
+42.    break;  
+43.   default:  
+44.    break;  
+45.   }  
+46.  
+47.   String secondLetter = "";  
+48.   // 得到图片的后一个字符，表示什么颜色的牌  
+49.   if (id >= 1 && id <= 13) {  
+50.    secondLetter = "0";  
+51.   } else if (id >= 14 && id <= 26) {  
+52.    secondLetter = "1";  
+53.   } else if (id >= 27 && id <= 39) {  
+54.    secondLetter = "2";  
+55.   } else if (id >= 40 && id <= 52) {  
+56.    secondLetter = "3";  
+57.   }  
+58.  
+59.   imageName = firstLetter + secondLetter;  
+60.  }  
+61.  String extension = ".gif";  
+62.  
+63.  return imageName + extension;  
+64. }  
+
+
+
+下一篇将介绍 斗地主出牌规则算法的设计和实现
