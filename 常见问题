@@ -253,7 +253,22 @@ static  NSString const *key1 = @"name";
     
     // 强制更新
     [showTextButton layoutIfNeeded];
- 16.
+ 16.+ (instancetype)dealWithDict:(NSDictionary *)dict
+{
+    XMGDeal *deal = [[self alloc] init];
+    
+//    deal.title = dict[@"title"];
+//    deal.icon = dict[@"icon"];
+//    deal.buyCount = dict[@"buyCount"];
+//    deal.price = dict[@"price"];
+    
+    // KVC - Key Value Coding
+    [deal setValuesForKeysWithDictionary:dict];
+    
+    return deal;
+}
+
+
  17.
  18.
  19.
