@@ -250,6 +250,9 @@ static  NSString const *key1 = @"name";
 //    [self.messageField resignFirstResponder];
 //    [self.messageField endEditing:YES];
     [self.view endEditing:YES];
+    
+    // 强制更新
+    [showTextButton layoutIfNeeded];
  16.
  17.
  18.
