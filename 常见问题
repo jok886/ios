@@ -51,6 +51,7 @@ StatusBar高44px，NavigationBar高44px，底部TabBar高83px
 //    image = [image resizableImageWithCapInsets:UIEdgeInsetsMake(30, 30, 30, 30) resizingMode:UIImageResizingModeStretch];
     
 //    image = [image stretchableImageWithLeftCapWidth:image.size.width * 0.5 topCapHeight:image.size.height * 0.5];
- 5.
+ 5.// 解析JSON
+        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
  6.
  
