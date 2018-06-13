@@ -53,5 +53,206 @@ StatusBar高44px，NavigationBar高44px，底部TabBar高83px
 //    image = [image stretchableImageWithLeftCapWidth:image.size.width * 0.5 topCapHeight:image.size.height * 0.5];
  5.// 解析JSON
         NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
- 6.
+ 6.#import <objc/message.h>
+
+@implementation UIImage (Image)
+// 加载这个分类的时候调用
++ (void)load
+{
+
+    // 交换方法实现,方法都是定义在类里面
+    // class_getMethodImplementation:获取方法实现
+    // class_getInstanceMethod:获取对象
+    // class_getClassMethod:获取类方法
+    // IMP:方法实现
+    
+    // imageNamed
+    // Class:获取哪个类方法
+    // SEL:获取方法编号,根据SEL就能去对应的类找方法
+    Method imageNameMethod = class_getClassMethod([UIImage class], @selector(imageNamed:));
+    
+    // xmg_imageNamed
+    Method xmg_imageNamedMethod = class_getClassMethod([UIImage class], @selector(xmg_imageNamed:));
+    
+    // 交换方法实现
+    method_exchangeImplementations(imageNameMethod, xmg_imageNamedMethod);
+    
+}
+ 7.// 默认一个方法都有两个参数,self,_cmd,隐式参数
+// self:方法调用者
+// _cmd:调用方法的编号
+
+// 动态添加方法,首先实现这个resolveInstanceMethod
+// resolveInstanceMethod调用:当调用了没有实现的方法没有实现就会调用resolveInstanceMethod
+// resolveInstanceMethod作用:就知道哪些方法没有实现,从而动态添加方法
+// sel:没有实现方法
+
+
++ (BOOL)resolveInstanceMethod:(SEL)sel
+{
+//    NSLog(@"%@",NSStringFromSelector(sel));
+    
+    // 动态添加eat方法
+    
+    if (sel == @selector(eat:)) {
+        
+        /*
+         cls:给哪个类添加方法
+         SEL:添加方法的方法编号是什么
+         IMP:方法实现,函数入口,函数名
+         types:方法类型
+         */
+        // @:对象 :SEL
+        class_addMethod(self, sel, (IMP)aaaa, "v@:@");
+        
+        
+        // 处理完
+        return YES;
+        
+    }
+    
+    
+    return [super resolveInstanceMethod:sel];
+}
+ 8.- (void)setName:(NSString *)name
+{
+    // 添加属性,跟对象
+    // 给某个对象产生关联,添加属性
+    // object:给哪个对象添加属性
+    // key:属性名,根据key去获取关联的对象 ,void * == id
+    // value:关联的值
+    // policy:策越
+    objc_setAssociatedObject(self, @"name", name, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+//    _name = name;
+}
+
+- (NSString *)name
+{
+    return objc_getAssociatedObject(self, @"name");
+}
+ 9. // 创建对应类的对象
+    id objc = [[self alloc] init];
+    
+    // runtime:遍历模型中所有成员属性,去字典中查找
+    // 属性定义在哪,定义在类,类里面有个属性列表(数组)
+    
+    // 遍历模型所有成员属性
+    // ivar:成员属性
+    // class_copyIvarList:把成员属性列表复制一份给你
+    // Ivar *:指向Ivar指针
+    // Ivar *:指向一个成员变量数组
+    // class:获取哪个类的成员属性列表
+    // count:成员属性总数
+    unsigned int count = 0;
+    Ivar *ivarList = class_copyIvarList(self, &count);
+    for (int i = 0 ; i < count; i++) {
+        // 获取成员属性
+        Ivar ivar = ivarList[i];
+        
+        // 获取成员名
+       NSString *propertyName = [NSString stringWithUTF8String:ivar_getName(ivar)];
+        ;
+        // 成员属性类型
+        NSString *propertyType = [NSString stringWithUTF8String:ivar_getTypeEncoding(ivar)];
+
+        // 获取key
+        NSString *key = [propertyName substringFromIndex:1];
+ 10.// 4.const和宏的区别:
+    // 编译时刻:宏是预编译，const是编译
+    // 编译检查：宏不会报编译错误，const会报编译错误.
+    // 宏的好处:可以定义函数和方法，const不行
+    // 宏的坏处:大量使用宏，会造成编译时间太久，每次都需要替换。
+ 11.// const放*前面约束参数，表示*a只读
+// 只能修改地址a,不能通过a修改访问的内存空间
+- (void)test:(const int * )a
+{
+//    *a = 20;
+}
+
+// const放*后面约束参数，表示a只读
+// 不能修改a的地址，只能修改a访问的值
+- (void)test1:(int * const)a
+{
+    int b;
+    // 会报错
+    a = &b;
+    
+    *a = 2;
+}
+ 12./*
+ 先了解作用，才知道怎么使用。
+ static作用:
+ * 修饰局部变量：
+ 1.延长局部变量的生命周期,程序结束才会销毁。
+ 2.局部变量只会生成一份内存,只会初始化一次。
+ 3.改变局部变量的作用域。
+ 
+ * 修饰全局变量
+ 1.只能在本文件中访问,修改全局变量的作用域,生命周期不会改
+ 2.避免重复定义全局变量
+ 
+ 
+ extern作用:
+ * 只是用来获取全局变量(包括全局静态变量)的值，不能用于定义变量
+ extern工作原理:
+ * 先在当前文件查找有没有全局变量，没有找到，才会去其他文件查找。
+ */
+ 13.// iOS中staic和const常用使用场景，是用来代替宏，把一个经常使用的字符串常量，定义成静态全局只读变量.
+
+// 开发中经常拿到key修改值，因此用const修饰key,表示key只读，不允许修改。
+static  NSString * const key = @"name";
+
+// 如果 const修饰 *key1,表示*key1只读，key1还是能改变。
+
+static  NSString const *key1 = @"name";
+
+ 14.// KVC: Key Value Coding, 常见作用：给模型属性赋值
+    // KVO: Key Value Observing, 常用作用：监听模型属性值的改变
+    
+    
+    self.p1 = [[XMGPerson alloc] init];
+    self.p1.name = @"p1";
+    
+    [self.p1 addObserver:self forKeyPath:@"name" options: NSKeyValueObservingOptionOld context:nil];
+    
+    self.p1.name = @"pppp1";
+    #pragma mark - KVO监听方法
+/**
+ * 当监听到object的keyPath属性发生了改变
+ */
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    NSLog(@"监听到%@对象的%@属性发生了改变， %@", object, keyPath, change);
+}
+ 15.    // 监听键盘通知
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
+
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+#pragma mark - 键盘处理
+- (void)keyboardWillChangeFrame:(NSNotification *)note {
+    // 取出键盘最终的frame
+    CGRect rect = [note.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    // 取出键盘弹出需要花费的时间
+    double duration = [note.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    // 修改transform
+    [UIView animateWithDuration:duration animations:^{
+        CGFloat ty = [UIScreen mainScreen].bounds.size.height - rect.origin.y;
+        self.view.transform = CGAffineTransformMakeTranslation(0, - ty);
+    }];
+}
+
+// 退出键盘
+//    [self.messageField resignFirstResponder];
+//    [self.messageField endEditing:YES];
+    [self.view endEditing:YES];
+ 16.
+ 17.
+ 18.
+ 19.
+ 
  
