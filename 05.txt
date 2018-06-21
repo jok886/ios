@@ -1,0 +1,113 @@
+OS端app性能测试简要步骤：
+
+一、 准备步骤
+
+1. 下载xcode
+
+可以通过访问 https://developer.apple.com/xcode/downloads/ 下载最新的xcode的版本
+
+2.打开xcode，右键xcode选择instruments，如果测试Cpu/内存就选择activity monitor，如果测试耗电量也有相应的选择Energy diagnostic
+
+二、Cpu/内存测试
+
+选择activity monitor打开，加载好app，点击录制，操控app，停止录制，将cpu/内存值记录下来
+
+三、耗电测试
+
+1.选择Energy diagnostic打开
+
+2.找一个最好苹果9系统的测试机，iOS 设置选项 －开发者选项 －logging －start recording
+
+3.断开iOS设备测试机和电脑、电源的连接
+
+4.在测试机上操控app
+
+5.iOS 测试设置选项 －开发者选项 －logging －stop recording
+
+6.USB连接iOS device和MAC PC
+
+7.打开instruments －energy diagnostics －file－import logged data from device，就可以看到电量数据；
+
+
+四个最主要的耗电原因,分别是CPU(唤醒及使用),Network(网络访问),Location(定位功能),Background(后台运行功能)
+
+每秒刷新. 不同功能分别的资源消耗情况.如果消耗资源小方块显示深灰色,没有消耗资源的时候小方块显示白色.
+
+
+测试方法：
+
+一般多执行几次，记录每次数据和平均数据
+
+
+app内存优化
+
+ 以下这些技巧分为三个不同那个的级别---基础，中级，高级。 
+
+   基础
+   这些技巧你要总是想着实现在你开发的App中。 
+
+   1. 用ARC去管理内存（Use ARC to Manage Memory）
+
+   2.适当的地方使用reuseIdentifier（Use a reuseIdentifier Where Appropriate）
+
+   3.尽可能设置视图为不透明（Set View as Opaque When Possible）
+
+   4.避免臃肿的XIBs文件（Avoid Fat XiBs）
+
+   5.不要阻塞主进程（Don't Block the Main Thread）
+
+   6.调整图像视图中的图像尺寸（Size Images to Image Views）
+
+   7.选择正确集合（Choose the Correct Collection）
+
+   8.启用Gzip压缩（Enable GZIP Compression）
+
+   
+
+   中级
+
+   这些技巧是当你遇到更复杂的情况的时候使用。
+
+    9. 重用和延迟加载视图（Reuse and Lazy Load Views）
+
+   10.缓存，缓存，缓存（Cache,Cache,Cache）
+
+   11.考虑绘图（Consider Drawing）
+
+   12.处理内存警告（Handle Memory Warnings）
+
+   13.重用大开销对象（Reuse Expensive Objects）
+
+   14.使用精灵表（Use Sprite Sheets ）
+
+   15.避免重复处理数据（Avoid Re-Processing Data）
+
+   16.选择正确的数据格式（Choose the Right Data Format）
+
+   17.适当的设置背景图片（Set  Background Images Appropriately）
+
+   18.减少你的网络占用（Reduce Your Web Footprint）  
+
+   19.设置阴影路径（Set the Shadow Path ）
+
+   20.你的表格视图Optimize Your Table Views）
+
+   21.选择正确的数据存储方式（Choose Correct Data Storage Option）
+
+   
+
+   高级
+
+   这些技巧你应该只在你很积极认为它们能解决这个问题，而且你觉得用它们很舒适的时候使用。
+
+   22.加速启动时间（Speed up Launch Time ）
+
+   23.使用自动释放池（Use AutoRelease Pool）
+
+   24.缓存图像（Cache Images-Or not ）
+
+   25.尽可能避免日期格式化器（Avoid Date Formatters Where Possible）  
+
+
+.xcarchive里的.dsYM文件和.app文件是有对应的UUID的  
+或者自己找到.xcarchive文件和错误内存地址(友盟错误详情里标绿色的为错误内存地址)。然后通过一个小应用来分析出对应的函数。应用下载地址,具体可参考文章dSYM 文件分析工具
