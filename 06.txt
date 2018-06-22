@@ -1,0 +1,382 @@
+
+
+2.GCD同步异步操作（应用场景：a->b->c顺序执行 ，async执行的先后顺序），同步阻塞.nsoperation。
+//异步的方式 执行串行队列 会创建一个新的线程来执行任务  
+-(void)demo2  
+{  
+    //创建串行队列 DISPATCH_QUEUE_SERIAL  
+    //   并行队列 DISPATCH_QUEUE_CONCURRENT  
+    dispatch_queue_t queue=dispatch_queue_create("itcast", DISPATCH_QUEUE_SERIAL);  
+      
+    //创建任务  
+    dispatch_block_t task1=^{  
+        NSLog(@"%@  异步执行了方法1",[NSThread currentThread]);  
+    };  
+      
+    dispatch_block_t task2=^{  
+        NSLog(@"%@  异步执行了方法2",[NSThread currentThread]);  
+    };  
+      
+      
+    //加入队列  
+      
+    //异步的方式 执行队列  
+      
+    //会顺序执行  
+    dispatch_async(queue, task1);  
+      
+    dispatch_async(queue, task2);  
+      
+      
+}  
+
+3.响应链（uiimageview的user interfaced ＝ no ，uibutton添加在其上是否可以点击响应:否）。
+
+
+
+6.preformselect在delay 0秒时的执行顺序。
+在touchBegan里面
+[self performSelector:@selector(longPressMethod:) withObject:nil afterDelay:longPressTime]
+然后在end 或cancel里做判断，如果时间不够长按的时间调用：
+[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(longPressMethod:) object:nil]
+取消began里的方法
+
+
+
+
+
+
+
+
+12.重写init以及initwithframe建议。
+1.在定制类的时候，会重写init 方法。
+
+- (id)init; 
+
+会调用
+
+- (id)initWithFrame:(CGRect)frame;
+
+
+
+2.重写
+
+- (id)initWithFrame:(CGRect)frame; 
+
+不会调用 
+
+- (id)init;
+
+
+
+所以一般选择在
+
+- (id)initWithFrame:(CGRect)frame;
+
+里重写。
+
+13。quartz2d和coregraphic
+Quartz 2D以PDF的规范为基础的图形库，用来绘制二维文字和图形，允许相同的绘图指令在任何装置上，使用可以得到的最佳分辨率，产生相同的输出.
+Core Graphic框架是一组基于C的API，可以用于一切绘图操作，这个框架的重要性，仅次于UIKit和Foundation
+
+
+
+
+
+
+
+
+
+20.arc下的dealloc有什么用
+dealloc在ARC下的作用就是释放 系统无法释放的该对象占用的资源,或者其他对象对该对象的引用.
+//移除通知观察者
+
+
+
+
+26.两个app共享数据
+方法一：UIPasteboard
+T1设置剪贴板内容：
+
+UIPasteboard *pasteboard = [UIPasteboard pasteboardWithName:@"myPasteboard" create:YES];
+pasteboard.string = @"myShareData";
+T2读取剪贴板内容：
+
+UIPasteboard *pasteboard = [UIPasteboard pasteboardWithName:@"myPasteboard" create:NO];
+NSString *content = pasteboard.string;
+方法二：共享钥匙串
+方法三：App Groups
+方法四：通过Custom URL Scheme
+27.图片与text混编（coretext）
+
+
+
+1、如何令自己所写的对象具有拷贝功能?
+
+需声明该类遵从 NSCopying 协议
+实现 NSCopying 协议。该协议只有一个方法:
+ - (id)copyWithZone:(NSZone *)zone;
+
+3、题目：Swift mutating关键字的使用？
+
+4、UIView和CALayer是什么关系?
+
+1. 首先UIView可以响应事件，Layer不可以.
+UIKit使用UIResponder作为响应对象，来响应系统传递过来的事件并进行处理。在 UIResponder中定义了处理各种事件和事件传递的接口。
+
+UIApplication、UIViewController、UIView、和所有从UIView派生出来的UIKit类（包括UIWindow）
+都直接或间接地继承自UIResponder类。
+CALayer直接继承 NSObject，并没有相应的处理事件的接口。
+
+
+2. UIView是CALayer的delegate
+
+3. UIView主要处理事件，CALayer负责绘制就更好
+
+4. 每个 UIView 内部都有一个 CALayer 在背后提供内容的绘制和显示，并且 UIView 的尺寸样式都由内部的 Layer 所提供。
+两者都有树状层级结构，layer 内部有 SubLayers，View 内部有 SubViews.但是 Layer 比 View 多了个AnchorPoint
+
+
+
+
+
+
+
+
+10、id和NSObject＊的区别
+1.NSObject包含了一些其他的方法，需要实现NSObject协议，可以用NSObject来表示id，但是不能用id来表示NSObject
+
+
+2.id关键字在编译的时候不会被检查，而NSObject在编译的时候被被检查是否含有一些错误的方法
+
+
+3.id可以是任何对象，包括不是NSObject的对象
+
+
+4.定义id的时候不需要*，而定义NSOject的时候需要。
+
+
+
+
+
+12、使用系统的某些block api（如UIView的block版本写动画时），是否也考虑引用循环问题？
+
+“引用循环”是指双向的强引用，所以那些“单向的强引用”（block 强引用 self ）没有问题，比如这些：
+
+[UIViewanimateWithDuration:durationanimations:^{ [self.superviewlayoutIfNeeded]; }];
+
+[[NSOperationQueuemainQueue]addOperationWithBlock:^{ self.someProperty= xyz; }];
+
+
+[[NSNotificationCenterdefaultCenter]addObserverForName:@"someNotification"object:nilqueue:[NSOperationQueuemainQueue]usingBlock:^(NSNotification* notification) { self.someProperty= xyz; }];
+
+这些情况不需要考虑“引用循环”。
+
+
+
+
+
+
+
+
+
+底层：
+
+16、main()之前的过程有哪些？
+整个事件由dyld主导，完成运行环境的初始化后，配合ImageLoader将二进制文件按格式加载到内存，
+动态链接依赖库，并由runtime负责加载成objc定义的结构，所有初始化工作结束后，dyld调用真正的main函数。
+值得说明的是，这个过程远比写出来的要复杂，这里只提到了runtime这个分支，还有像GCD、XPC等重头的系统库初始化分支没有提及（当然，有缓存机制在，它们也不会玩命初始化），总结起来就是main函数执行之前，系统做了茫茫多的加载和初始化工作，但都被很好的隐藏了，我们无需关心。
+
+
+
+21、静态库的原理是什么？你有没有自己写过静态编译库，遇到了哪些问题？
+在ios开发中，动态库的名字一般是libxxx.dylib，静态库的名字一般是libxxx.a(xxx.framework是静态库文件.a的一层封装，后续介绍)。
+
+使用静态库的好处
+
+1，模块化，分工合作
+
+2，避免少量改动经常导致大量的重复编译连接
+
+3，也可以重用，注意不是共享使用
+
+
+
+
+32、假设有一个字符串aabcad，请写一段程序，去掉字符串中不相邻的重复字符串，即上述字符串处理之后的输出结果为：aabcd
+
+相邻字符串，所以可以先用空格替换掉需要删除的字符，最后对数组里面的空格进行处理。
+
+
+-(void)removeRepeat:(NSString *)aNum
+
+
+{
+
+
+NSMutableArray *mArr = [[NSMutableArray alloc]initWithCapacity:10];
+
+
+for (int i = 0;i < aNum.length;i++)
+
+
+{
+
+
+[mArr addObject:[aNum substringWithRange:NSMakeRange(i,1)]];
+
+
+}
+
+NSLog(@"- %@", mArr);
+
+
+[self compareNum:mArr];
+
+NSLog(@"%@",mArr);
+
+}
+
+
+//比较是否相等
+
+
+-(NSMutableArray *)compareNum:(NSMutableArray *)mArr
+
+
+{
+
+int count = mArr.count;
+//重新定义了,count不会减一
+
+
+for (int j = 0; j < count - 1; j++)
+
+
+{
+
+for (int i = j; i < count - 1-1-1; i++)
+
+
+{
+
+NSLog(@" %@ ?%@",[mArr objectAtIndex:j],[mArr objectAtIndex:i + 2]);
+
+
+NSString *a = [mArr objectAtIndex:j];
+
+
+NSString *b = [mArr objectAtIndex:i+2];
+
+
+if ([a isEqualToString:b])
+
+
+{
+
+[mArr replaceObjectAtIndex:i + 2 withObject:@" "];
+
+
+}
+
+}
+
+}
+
+
+return mArr;
+
+}
+
+
+
+
+34、iOS app启动如何优化？
+1. App启动过程
+解析Info.plist 
+加载相关信息，例如如闪屏
+沙箱建立、权限检查
+Mach-O加载 
+如果是胖二进制文件，寻找合适当前CPU类别的部分
+加载所有依赖的Mach-O文件（递归调用Mach-O加载的方法）
+定位内部、外部指针引用，例如字符串、函数等
+执行声明为__attribute__((constructor))的C函数
+加载类扩展（Category）中的方法
+C++静态对象加载、调用ObjC的 +load 函数
+程序执行 
+调用main()
+调用UIApplicationMain()
+调用applicationWillFinishLaunching
+
+main()函数之前耗时的影响因素
+动态库加载越多，启动越慢。
+ObjC类越多，启动越慢
+C的constructor函数越多，启动越慢
+C++静态对象越多，启动越慢
+ObjC的+load越多，启动越慢
+
+main()函数之后耗时的影响因素
+执行main()函数的耗时
+执行applicationWillFinishLaunching的耗时
+rootViewController及其childViewController的加载、view及其subviews的加载
+
+
+
+
+36、怎样防止反编译？
+1.本地数据加密
+对NSUserDefaults，sqlite存储文件数据加密，保护帐号和关键信息
+
+将文件进行加密
+2.URL编码加密
+对程序中出现的URL进行编码加密，防止URL被静态分析
+3.网络传输数据加密
+对客户端传输数据提供加密方案，有效防止通过网络接口的拦截获取数据, 使用MD5加密。
+4.方法体，方法名高级混淆
+5.程序结构混排加密
+对应用程序逻辑结构进行打乱混排，保证源码可读性降到最低
+
+6.借助第三方APP加固
+例如：网易云易盾
+
+
+
+
+42、内存管理的几条原则时什么？按照默认法则.那些关键字生成的对象
+
+需要手动释放？在和property结合的时候怎样有效的避免内存泄露？
+
+谁申请，谁释放
+
+
+
+
+
+48、1.什么方式可以看到上架App的头文件?
+
+3.下载dumpdecrypted库，它负责脱壳的; 
+5.class-dump 能够获得应用的所有头文件; 
+
+
+
+49、iOS iAP内购审核可能失败的问题
+苹果AppStore线上的购买凭证验证地址是https://buy.itunes.apple.com/verifyReceipt 
+测试的验证地址是：https://sandbox.itunes.apple.com/verifyReceipt
+
+50、IAP内购中虚拟货币导致审核无法通过的问题？
+
+苹果对于虚拟货币是需要提成的，提成的额度为30%。所以对于这块的审核比较严格。
+首先你们的购买的道具在ios端和安卓端是需要分开的。如果大家玩游戏的就会发现游戏的数据在两端是分开的。
+
+
+用户在安卓手机上购买的道具在iOS上是不能使用的。因为这样也间接的影响了苹果的收入。
+
+
+另外就是在审核期间不能有可以兑换在appStore可购买的商品，的任意活动或者兑换码，这个也是苹果不允许的。因为这个也会影响苹果的收入。
+
+? ?
+ 另外就是可能有的同学会在苹果审核之后隐藏ipa支付，此处提醒下，苹果会扫描你的app代码中是否有支付宝，微信等关于支付的字段。使用开关加h5的方式可以通过审核，但是此处也有风险，风险就是一旦被发现，可能的结果就是苹果直接封掉账号。
+app无法使用。
+
+
+
