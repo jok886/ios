@@ -269,7 +269,8 @@ static  NSString const *key1 = @"name";
 }
 
 
- 17.
+ 17. 模拟器安装app
+ /Applications/Xcode.app/Contents/Developer/usr/bin/simctl install booted ~/Downloads/DingTalk.app
  18.
  19.
  
