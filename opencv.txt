@@ -1,0 +1,271 @@
+
+//检查大写金额区域涂改，可擦笔
+int  CheckTUGAI(const char *srcPath,int itype)  
+{  
+	IplImage* inputImage = cvLoadImage(srcPath);
+
+	CvRect rect;
+	if (1 == itype)
+	{
+		//提取底部票号区域
+		rect.x=1090,rect.y=85,rect.width=220,rect.height=42;
+		//rect.x=1234,rect.y=130,rect.width=11,rect.height=10;
+	}
+	else
+	{
+		rect.x=990,rect.y=85,rect.width=260,rect.height=42;
+	}
+
+	
+	//设置ROI区域
+	cvSetImageROI(inputImage,rect);
+	//提取ROI
+	IplImage *dst = cvCloneImage(inputImage);
+	cvSaveImage("C:\\BILLNUM.jpg",dst);
+	//取消设置
+	cvResetImageROI(inputImage);
+
+
+
+	IplImage* hsv = cvCreateImage(cvGetSize(dst),IPL_DEPTH_8U,3);
+	int gray =0,black=0;
+	int other=0,white=0;
+	int flage1=0,flage2 =0,flage3=0;
+	cvCvtColor(dst,hsv,CV_BGR2HSV);  
+	int width = hsv->width;  
+	int height = hsv->height; 
+
+	//other = countDisperseBrown(hsv);
+
+	for (int i = 0; i < height; i++)  
+	{
+		CvScalar s_hsv;
+		for (int j = 0; j < width; j++)  
+		{  
+			s_hsv = cvGet2D(hsv, i, j);//获取像素点为（j, i）点的HSV的值   
+// 			//白色 异常颜色  涂改液
+// 			if (s_hsv.val[0]>=15 && s_hsv.val[0]<=35 && s_hsv.val[1]>10 && s_hsv.val[1]<= 25 && s_hsv.val[2] >=240)
+// 			{
+// 				white++;
+// 				continue;
+// 			}
+// 
+// 			//浅褐色
+// 			if (s_hsv.val[0]>=32 && s_hsv.val[0]<=38 && s_hsv.val[1]>=26 && s_hsv.val[1]<= 44 && s_hsv.val[2] >=130 && s_hsv.val[2] <200)
+// 			{
+// 				gray++; //正常应该是74个像素左右
+// 				continue;
+// 			}
+			//CXFSLogger::WriteAF(LOGLEVEL_INFO,"h=[%.0f],s=[%.0f],v=[%.0f]",s_hsv.val[0],s_hsv.val[1],s_hsv.val[2]);
+			//printf("h=[%.0f],s=[%.0f],v=[%.0f]\n",s_hsv.val[0],s_hsv.val[1],s_hsv.val[2]);
+			//黑色 票号有及部分是黑色的，大部分都是棕褐色
+
+			if (  (s_hsv.val[0]>0 && s_hsv.val[0] <=180) && (s_hsv.val[1]>=0 && s_hsv.val[1]<255) && s_hsv.val[2] <=43)  //2=43
+			{
+				black++;
+				//CXFSLogger::WriteAF(LOGLEVEL_INFO,"h=[%.0f],s=[%.0f],v=[%.0f]",s_hsv.val[0],s_hsv.val[1],s_hsv.val[2]);
+				continue;
+			}
+
+			if (  s_hsv.val[0]== 40 && s_hsv.val[1] >= 40 &&  s_hsv.val[1] <=42 && s_hsv.val[2] >=55 )
+			{
+				continue;
+			}
+
+			if (  s_hsv.val[0]== 43 && s_hsv.val[1] >= 30 && s_hsv.val[1] <=33 && s_hsv.val[2] >50 )
+			{
+				continue;
+			}
+
+
+			if (  s_hsv.val[0]== 34 && s_hsv.val[1] >= 34 &&  s_hsv.val[1] <=40 && s_hsv.val[2] >=50 )
+			{
+				continue;
+			}
+
+			//黑色 票号有及部分是黑色的，大部分都是棕褐色
+			if (  (s_hsv.val[0]>15 && s_hsv.val[0] <=52 ) && s_hsv.val[1]>10   && s_hsv.val[1]<43 && s_hsv.val[2] <60 && s_hsv.val[2] >30 )
+			{
+				//CXFSLogger::WriteAF(LOGLEVEL_INFO,"h=[%.0f],s=[%.0f],v=[%.0f]",s_hsv.val[0],s_hsv.val[1],s_hsv.val[2]);
+				other++;
+				continue;
+			}
+			//黑色 票号有及部分是黑色的，大部分都是棕褐色
+			if (  (s_hsv.val[0]>50 && s_hsv.val[0] <=60) && s_hsv.val[1]<27 && s_hsv.val[2]<45 )
+			{
+				other++;
+				continue;
+			}
+
+		}
+	}
+
+	char szFileName[200]={0};
+	sprintf(szFileName,"c:\\szpl\\bin\\R89X.ini");	
+	int iBlack = GetPrivateProfileInt("CHECKELEMENT","TGBillNum",0,szFileName);
+	int iOther = GetPrivateProfileInt("CHECKELEMENT","TGBillNumOther",0,szFileName);
+
+	if (black > 200)
+	{
+		//防止部分票号是黑色，导致检测票号异常， OTHER取值一般要求大于150即可 BLACK =25
+		black = 0;
+	}
+
+	CXFSLogger::WriteAF(LOGLEVEL_INFO,"检查票号是否被涂改,white=[%d],black=[%d],other涂改=[%d]",white,black,other);
+
+	if (/*white>40 ||*/ other>iOther || black >iBlack)  /*60*/
+	{
+		//涂改
+		CXFSLogger::WriteAF(LOGLEVEL_INFO,"检查票号是否被涂改,white=[%d],black=[%d],other涂改=[%d]",white,black,other);
+		flage2 = 1;
+	}
+
+	cvReleaseImage(&dst);
+	cvReleaseImage(&hsv);
+	return flage2;
+}  
+
+
+/*
+挖补检测:
+先做黑帽操作，得到灰度图，然后进行边缘检测-》二值图，通过二值图计算直线（霍夫变换），然后给据斜率计算
+*/
+
+
+
+
+
+//返回负数表示直线》2条，有被挖补过,0表示票正常
+int CheckLineCnt(const char *srcPath,int threshold,int interVal)
+{
+	IplImage *dst = cvLoadImage(srcPath,0);  
+
+	CvMemStorage *storage = cvCreateMemStorage();  
+	CvSeq *lines = 0;  
+	
+	//threshold表示一条直线上的像素点大于110时，才作为直线检测出来，值越大，得到的直线越少    
+	//interVal在一条直线上碎线短连接的最大隔值；当一条直线上的隔值小于30时，会认为是同一条直线
+
+	lines = cvHoughLines2(dst,storage,/*CV_HOUGH_STANDARD*/CV_HOUGH_PROBABILISTIC,1,CV_PI/180,threshold,interVal,0);  
+	int shx=0,hex=0,xie=0; //竖线 横线
+	CvPoint pt1,pt2; 
+	for (int i=0;i<lines->total;i++)  
+	{  
+		CvPoint *line = (CvPoint *)cvGetSeqElem(lines,i);  
+		pt1 = line[0];  
+		pt2 = line[1];
+
+		if ( abs(pt1.x - pt2.x) >30)
+		{
+			//横线检测
+			hex++;
+		}
+		if ( abs(pt1.x - pt2.x) <5 && abs(pt1.y -pt2.y) >33)
+		{
+			shx++;
+		}
+	}
+
+	cvReleaseImage(&dst);  
+	cvReleaseMemStorage(&storage); 
+
+	CXFSLogger::WriteAF(LOGLEVEL_INFO,"挖补线条检测hex=[%d]",hex);
+	if (hex > 2)
+	{
+		return -1;
+	}
+	return 0;
+}
+
+
+//按照灰度统计黑白点
+int GetBackCountByGray(const char* gryPathImage,int fValue)
+{
+	IplImage *pImage = cvLoadImage(gryPathImage,CV_LOAD_IMAGE_GRAYSCALE);
+	if (NULL == pImage)
+	{
+		return -1;
+	}
+	int height,width;
+	int black = 0;
+	//获取图像的宽度
+	width=(int)pImage->width;
+	//获取图像的长度
+	height=(int)pImage->height;
+
+	for (int i=0;i<height;i++)
+	{
+		for (int j=0;j<width;j++)
+		{
+			uchar * ptr = (uchar *)pImage->imageData + pImage->widthStep * i;
+			if (ptr[j] <=fValue)
+			{   
+				//若为黑点，把此点作为字符大致的最高点
+				black++;
+			}
+			//如果该点不是黑点，继续循环
+		}
+	}
+	cvReleaseImage(&pImage);
+	return black;
+}
+
+//统计二值图黑白点
+int GetBackCount(const char* binPathImage)
+{
+	IplImage *pImage = cvLoadImage(binPathImage);
+	int height,width;
+	int black = 0;
+	int whrite = 0;
+	//获取图像的宽度
+	width=(int)pImage->width;
+	//获取图像的长度
+	height=(int)pImage->height;
+
+	for (int i=0;i<height;i++)
+	{
+		for (int j=0;j<width;j++)
+		{
+			uchar * ptr = (uchar *)pImage->imageData + pImage->widthStep * i;
+			if (ptr[j] <128)
+			{   
+				//若为黑点，把此点作为字符大致的最高点
+				black++;
+			}
+			//如果该点不是黑点，继续循环
+			else
+			{
+				whrite++;
+			}
+		}
+	}
+	cvReleaseImage(&pImage);
+	return black;
+}
+
+//精准提取票号
+void BillBPO:: RoiBillNumber2(const char* binSrcPath,const char* outPath,int top,int hight)
+{
+	IplImage *pSrcIamge = cvLoadImage(binSrcPath);//载入一张图片;
+	if (NULL == pSrcIamge)
+	{
+		CXFSLogger::WriteAF(LOGLEVEL_INFO,"RoiBillNumber 加载[%s]失败",binSrcPath);
+	}
+	CvRect rect;
+	//取正面图年份区域
+	rect.x=12,rect.y=0,rect.width=pSrcIamge->width,rect.height=hight + top;
+
+	if (hight > pSrcIamge->height)
+	{
+		rect.height=pSrcIamge->height;
+	}
+	//设置ROI区域
+	cvSetImageROI(pSrcIamge,rect);
+	//提取ROI
+	IplImage *dst = cvCloneImage(pSrcIamge);
+	cvSaveImage(outPath,dst);
+	//取消设置
+	cvResetImageROI(pSrcIamge);
+	cvReleaseImage(&dst);
+	cvReleaseImage(&pSrcIamge);
+}
