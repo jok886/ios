@@ -1,0 +1,168 @@
+1.imageNamed:先将图片缓存到内存中，然后在显示。
+
+
+imageWithContentsOfFile：仅加载图片，图像数据不会缓存。
+
+2.layoutSubviews方法
+ 
+根据苹果官方帮助文档对layoutSubviews方法的解释：
+    此方法用来重新定义子元素的位置和大小。当子类重写此方法，用来实现UI元素的更精确布局。如果要让布局重新刷新，那么就调用setNeedsLayout，即setNeedsLayout方法会默认用layoutSubViews方法。
+
+很多时候系统会自动调用layoutSubviews方法：
+
+　　1.初始化不会触发layoutSubviews，但是如果设置了不为CGRectZero的frame的时候就会触发。
+　　2.addSubview会触发layoutSubviews
+　　3.设置view的Frame会触发layoutSubviews，当然前提是frame的值设置前后发生了变化
+　　4.滚动一个UIScrollView会触发layoutSubviews
+　　5.旋转Screen会触发父UIView上的layoutSubviews事件
+　　6.改变一个UIView大小的时候也会触发父UIView上的layoutSubviews事件
+
+ 
+
+注：setNeedsLayout方法并不会立即刷新，立即刷新需要调用layoutIfNeeded方法。
+
+ 
+setNeedsDisplay方法
+ 
+与setNeedsLayOut方法相似的方法是setNeedsDisplay方法。该方法在调用时，会自动调用drawRect方法。drawRect方法主要用来画图。
+ 
+总结
+所以，当需要刷新布局时，用setNeedsLayOut方法；当需要重新绘画时，调用setNeedsDisplay方法。
+ 
+3.-[ViewController initWithCoder:]
+
+ -[ViewController awakeFromNib]
+
+ -[ViewController loadView]
+
+ -[ViewController viewDidLoad]
+
+ -[ViewController viewWillAppear:]
+
+ -[ViewController viewWillLayoutSubviews]
+
+-[ViewController viewDidLayoutSubviews]
+
+ -[ViewController viewWillLayoutSubviews]
+
+ -[ViewController viewDidLayoutSubviews]
+
+ -[ViewController viewDidAppear:]
+
+ -[ViewController viewWillDisappear:]
+
+ -[ViewController viewDidDisappear:]
+
+ -[ViewController dealloc]
+
+ -[ViewController didReceiveMemoryWarning]
+
+
+
+具体执行流程
+
+程序入口
+
+进入main函数，设置AppDelegate称为函数的代理
+
+程序
+完成加载
+
+[AppDelegate application:didFinishLaunchingWithOptions:]
+
+
+创建window窗口
+
+
+程序被激活
+
+[AppDelegate applicationDidBecomeActive:]
+
+
+当点击command+H时(针对模拟器,手机是当点击home键)
+
+程序取消激活状态
+
+[AppDelegate applicationWillResignActive:];
+
+程序进入后台
+
+[AppDelegate applicationDidEnterBackground:];
+
+
+
+点击进入工程
+
+程序进入前台
+[AppDelegate applicationWillEnterForeground:]
+
+程序被激活
+[AppDelegate applicationDidBecomeActive:];
+
+
+
+4.
+@interface Person : NSObject <NSCopying>
+
+@property (nonatomic, strong) NSString *userId;
+
+@end
+
+
+@implementation Person
+
+- (id)copyWithZone:(NSZone *)zone
+{
+ 
+ Person *p = [[Person alloc] init];
+  
+p.userId = self.userId;
+  
+return p;
+
+}
+
+@end
+
+
+@interface Student : Person <NSCopying> 
+
+@property (nonatomic, strong) NSString *studentId;
+
+@end
+
+
+
+@implementation Person
+- (id)copyWithZone:(NSZone *)zone
+
+{
+  
+Person *p = [[[self class] alloc] init]; // <== 注意这里
+  
+p.userId = self.userId;
+ 
+ return p;
+
+}
+
+@end
+
+
+@implementation Student
+
+- (id)copyWithZone:(NSZone *)zone
+
+{
+ 
+ Student *s = [super copyWithZone:zone];
+  
+s.studentId = self.studentId;
+ 
+return s;
+
+}
+
+@end
+
+
