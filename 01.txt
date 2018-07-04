@@ -1,56 +1,58 @@
-NSStringתΪNSData����
+NSString转为NSData类型
 
 
-NSString * str=@"����д���ַ���";
+NSString * str=@"我是写入字符窜";
 
 
 NSData * data=[str dataUsingEncoding:NSUTF8StringEncoding]; 
-//������������
+
+NSString * str  =[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+//创建单利对象
 NSFileManager * fm=[NSFileManager defaultManager];
-1.�鿴ĳ��Ŀ¼�µ��ļ�����Ŀ¼
-        ��1��NSArray * array=[fm contentsOfDirectoryAtPath:PATH error:&error];
-        //����鿴ʧ�ܣ���Ŀ¼�����ڣ��÷����ᴴ��һ��NSError�����ô����ָ��ָ���������
+1.查看某个目录下的文件或子目录
+        （1）NSArray * array=[fm contentsOfDirectoryAtPath:PATH error:&error];
+        //如果查看失败，如目录不存在，该方法会创建一个NSError对象，让传入的指针指向这个对象。
 
-        //����ɹ�������һ�����飬װ�ļ�����Ŀ¼���ƣ����������ַ
+        //如果成功，创建一个数组，装文件和子目录名称，返回数组地址
 
 
-        ��2��NSArray * array=[fm subpathsOfDirectoryAtPath:PATH error:&error];
+        （2）NSArray * array=[fm subpathsOfDirectoryAtPath:PATH error:&error];
 
-        //�����ƶ�Ŀ¼�µ��ļ�������Ŀ¼����ͬʱ������Ŀ¼�µ����ݡ�
-2.����Ŀ¼
+        //返回制定目录下的文件名和子目录名，同时遍历子目录下的内容。
+2.创建目录
                     [fm createDirectoryAtPath:pathString withIntermediateDirectories:YES attributes:nil error:&error];
-        //�ڶ�����������ʾ�Ƿ񴴽��м�Ŀ¼(��middle)�����ѡNO����ȱʧ�м�Ŀ¼������ʧ�ܣ����������ѡYES�����Զ���ȫȱʧ���м�Ŀ¼�����м�Ŀ¼Ҳ�ᱻ����
-        //������������ʾĿ¼���ԣ�ͨ������nil����ʾĬ������
-3.�����ļ�
+        //第二个参数，表示是否创建中间目录(如middle)，如果选NO，当缺失中间目录，创建失败，报错。如果选YES，会自动补全缺失的中间目录，即中间目录也会被创建
+        //第三个参数表示目录属性，通常传入nil，表示默认属性
+3.创建文件
 bool ret=[fm createFileAtPath:[pathString stringByAppendingPathComponent:@"file.txt"] contents:dataattributes:nil];
-        //�ڶ�����������д���ļ������ݡ�����д�����ݣ�����nil
-        //ͨ������ֵ����
+        //第二个参数，是写入文件的内容。不想写入内容，填入nil
+        //通过返回值报错
 if(!ret)
         {
             perror("createFile");
 
             exit(-1);
         }
-4.ɾ��Ŀ¼�ļ�
+4.删除目录文件
  [fm removeItemAtPath:[PATH stringByAppendingPathComponent:@"middle"] error:&error];
-5.�ж�һ���ļ��Ƿ����
+5.判断一个文件是否存在
 
         BOOL isDirectory=NO;
 
         ret=[fm fileExistsAtPath:filePath isDirectory:&isDirectory];
-        //����ļ����ڣ�����ֵretΪYES������ΪNO
-        //����ļ�ΪĿ¼������isDirectoryΪYES������ΪNO��
-6.��ȡ�ļ�����
+        //如果文件存在，返回值ret为YES，否则为NO
+        //如果文件为目录，参数isDirectory为YES，否则为NO。
+6.获取文件属性
 NSDictionary * attribute=[fm attributesOfItemAtPath:filePath error:&error];
-        //��ȡ�ļ���С��ȡ������һ��NSNumber����ͨ��integerValue��������
+        //读取文件大小，取出的是一个NSNumber对象，通过integerValue返回数字
         size_t size=[[attribute objectForKey:@"NSFileSize"]integerValue];
 
         NSLog(@"%lu",size);
 
 
-//    ��дһ�����򣬽�һ��Ŀ¼�µ��ļ����������
-//    ��ÿ���ļ���β׺��������Ӧȫ��дĿ¼��������ļ��ƶ�����ӦĿ¼�У�����1.txt�ļ�������TXTĿ¼����1.txt�ƶ������Ŀ¼�£�����һ��Ŀ¼��subDir���洢��Ŀ¼�� ������β׺�ļ�������OthersĿ¼��
-//    ����֧��˫β׺��1.txt.zip
+//    编写一个程序，将一个目录下的文件分类管理。
+//    用每个文件的尾缀，创建对应全大写目录，将相关文件移动到对应目录中，如有1.txt文件，创建TXT目录，将1.txt移动到这个目录下，另有一个目录（subDir）存储子目录， 其他无尾缀文件，放入Others目录。
+//    【不支持双尾缀】1.txt.zip
 +(void)archieveFilesInPath:(NSString *)path
 {
 NSFileManager * fm=[NSFileManager defaultManager];
@@ -138,13 +140,13 @@ NSThread *thread=[[NSThread alloc]initWithTarget:self selector:@selector(func) o
 
     [self performSelectorInBackground:@selector(func3) withObject:self];
          2. NSOperation
-//��������
+//操作队列
 NSOperationQueue * queue=[[NSOperationQueue alloc]init];
 
-//�����ִ����
+//最大并行执行数
     queue.maxConcurrentOperationCount=3;
 
-//���Ӳ��� NSOperation
+//添加操作 NSOperation
     for(int i=1;i<11;i++)
     {
         MyOperation * oper=[[MyOperation alloc]init];
@@ -154,13 +156,13 @@ NSOperationQueue * queue=[[NSOperationQueue alloc]init];
         [queue addOperation:oper];
     }
 [backcolor=transparent] 3.Block
-  //����һ
-    //�̵߳�����
+  //方法一
+    //线程的引用
 dispatch_queue_t t=dispatch_queue_create(NULL, NULL);
 
-//ץȡһ�����õ��߳�(����)
+//抓取一个闲置的线程(复用)
 dispatch_queue_t t2=dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-//��t�߳���ȥ��block�����
+//在t线程里去做block里的事
 dispatch_async(t, ^{
         [self func];
     });
@@ -169,7 +171,7 @@ dispatch_async(t2, ^{
     });
 
 
-[backcolor=transparent] //������
+[backcolor=transparent] //方法二
     dispatch_group_t t=dispatch_group_create();
 
 dispatch_group_async(t, dispatch_get_global_queue(0,0) , ^{
@@ -181,10 +183,10 @@ dispatch_group_async(t, dispatch_get_global_queue(0,0) , ^{
     });
 
 dispatch_group_notify(t, dispatch_get_global_queue(0,0), ^{
-        NSLog(@"�߳����");
+        NSLog(@"线程完成");
     });
-  4.�߳���
-///�߳��� �߳�ͬ��
+  4.线程锁
+///线程锁 线程同步
 +(GCDManager*)sharedManager
     {
 //    NSLock * lock=[[NSLock alloc]init];
@@ -203,17 +205,17 @@ dispatch_group_notify(t, dispatch_get_global_queue(0,0), ^{
     }
 
 
-ע�⣺���������߳��£�UIˢ��Ҫ�����߳���
+注意：下载在子线程下，UI刷新要在主线程下
 dispatch_async(dispatch_get_main_queue(), ^{_imageView.image=image;});
 
-#if_has_deature(objc_arc)  //�����ARC
+#if_has_deature(objc_arc)  //如果是ARC
 #define RELEASE(a)
 #define AUTORELEASE(a) a
 #define RETAIN(a)
 #define SUPER_DEALLOC
 
 
-#else   //�ֶ��ڴ����
+#else   //手动内存管理
 #define RELEASE(a) [(a) release]
 #define AUTORELEASE(a) [(a) autorelease]
 #define RETAIN(a) [(a) retain]
@@ -224,10 +226,10 @@ dispatch_async(dispatch_get_main_queue(), ^{_imageView.image=image;});
 #endif
 
 
-������̬��
+创建静态库
 lipo -create libtestlib.a /Users/qianfeng/Desktop/Release-iphoneos/libtestlib.a -output AAAAtest.a 
 
-ʱ���
+时间戳
 NSDate *date=[NSDate dateWithTimeIntervalSince1970:[@"12321423" intValue]];
 NSDateFormatter *dateFormatter=[[NSDateFormatter alloc]init];
 [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
@@ -235,50 +237,50 @@ NSLog(@"%@",[dateFormatter stringFromDate:date]);
 
 
 
-����ϵͳ״̬��
+隐藏系统状态栏
 UIApplication *app = [UIApplication sharedApplication];
 //[app setStatusBarHidden:YES withAnimation:YES];
 [app.keyWindow setWindowLevel:UIWindowLevelStatusBar];
 
-//�Զ���view�ӵ�����
+//自定义view加到顶部
 UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 20)];
 view.backgroundColor = [UIColor clearColor];
 [app.keyWindow addSubview:view];
 
 
-CoreText ���
+CoreText 简介
 
-��1�� NSAttributedString
-      NSAttributedString ���Խ�һ�������еĲ����������õ������������ɫ��
+（1） NSAttributedString
+      NSAttributedString 可以将一段文字中的部分文字设置单独的字体和颜色。
 
-      ��UITouch��Ͽ���ʵ�ֵ����ͬ���ִ�����ͬ�¼��Ľ������ܡ�
-       ��Ҫ������
+      与UITouch结合可以实现点击不同文字触发不同事件的交互功能。
+       主要方法：
            - (void)addAttribute:(NSString *)name value:(id)value range:(NSRange)range;
 
-           ��������ĳ�����ֵ��������ƣ���ɫ���»��ߵ���Ϣ��
+           可以设置某段文字的字体名称，颜色，下滑线等信息。
            - (void)removeAttribute:(NSString *)name range:(NSRange)range;
-           �Ƴ�֮ǰ���õ���������ֵ��
+           移除之前设置的字体属性值。
            - (void)addAttributes:(NSDictionary *)attrs range:(NSRange)range;
-           �洢ĳ�����ְ�������Ϣ�������������Ի�������Ҳ���Դ洢һЩ�Զ������Ϣ�� 
+           存储某段文字包含的信息（包括字体属性或其它，也可以存储一些自定义的信息） 
 
            - (NSDictionary *)attributesAtIndex:(NSUInteger)location effectiveRange:(NSRangePointer)range;
-           ͨ��location����ȡĳ��������֮ǰ�洢����ϢNSDictionary
+           通过location来获取某段文字中之前存储的信息NSDictionary
 
 
-   //��������
+   //设置字体
    CTFontRef aFont = CTFontCreateWithName((CFStringRef)textFont.fontName, textFont.pointSize, NULL);
    if (!aFont) return;
-   CTFontRef newFont = CTFontCreateCopyWithSymbolicTraits(aFont, 0.0, NULL, kCTFontItalicTrait, kCTFontBoldTrait);    //��Ĭ�Ϻ���������Ϊ�������� 
+   CTFontRef newFont = CTFontCreateCopyWithSymbolicTraits(aFont, 0.0, NULL, kCTFontItalicTrait, kCTFontBoldTrait);    //将默认黑体字设置为其它字体 
    [self removeAttribute:(NSString*)kCTFontAttributeName range:textRange];
    [self addAttribute:(NSString*)kCTFontAttributeName value:(id)newFont range:textRange];
    CFRelease(aFont);
    CFRelease(newFont);
    
-   //����������ɫ
+   //设置字体颜色
    [self removeAttribute:(NSString*)kCTForegroundColorAttributeName range:textRange];
    [self addAttribute:(NSString*)kCTForegroundColorAttributeName value:(id)textColor.CGColor range:textRange];
    
-   //���ö��� ����
+   //设置对齐 换行
    CTTextAlignment coreTextAlign = kCTLeftTextAlignment;
    CTLineBreakMode coreTextLBMode = kCTLineBreakByCharWrapping;
    CTParagraphStyleSetting paraStyles[2] =
@@ -292,13 +294,13 @@ CoreText ���
    CFRelease(aStyle);
 
 
-��2��Draw NSAttributedString
+（2）Draw NSAttributedString
 
        
    CGContextRef cgc = UIGraphicsGetCurrentContext();
    CGContextSaveGState(cgc);
    
-   //ͼ����ת��
+   //图像方向转换
    CGContextConcatCTM(cgc, CGAffineTransformScale(CGAffineTransformMakeTranslation(0, self.bounds.size.height), 1.f, -1.f));
    
    CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)weiBoText);
@@ -313,36 +315,36 @@ CoreText ���
    CGContextRestoreGState(cgc);
 
 
-��3��ͼ�Ļ���
-     CTFrameRef  textFrame     // coreText �� frame
-     CTLineRef      line             //  coreText �� line
-     CTRunRef      run             //  line  �еĲ�������
+（3）图文混排
+     CTFrameRef  textFrame     // coreText 的 frame
+     CTLineRef      line             //  coreText 的 line
+     CTRunRef      run             //  line  中的部分文字
 
-     ��ط�����
+     相关方法：
    
-   CFArrayRef CTFrameGetLines    (CTFrameRef frame )      //��ȡ����CTLineRef������
+   CFArrayRef CTFrameGetLines    (CTFrameRef frame )      //获取包含CTLineRef的数组
 
    void CTFrameGetLineOrigins(
    CTFrameRef frame,
    CFRange range,
-   CGPoint origins[] )  //��ȡ����CTLineRef��ԭ��
- CFRange CTLineGetStringRange  (CTLineRef line )    //��ȡline�����������������е�Range
+   CGPoint origins[] )  //获取所有CTLineRef的原点
+ CFRange CTLineGetStringRange  (CTLineRef line )    //获取line中文字在整段文字中的Range
 
- CFArrayRef CTLineGetGlyphRuns  (CTLineRef line )    //��ȡline�а�������run������
+ CFArrayRef CTLineGetGlyphRuns  (CTLineRef line )    //获取line中包含所有run的数组
 
- CFRange CTRunGetStringRange  (CTRunRef run )     //��ȡrun�����������е�Range
+ CFRange CTRunGetStringRange  (CTRunRef run )     //获取run在整段文字中的Range
  CFIndex CTLineGetStringIndexForPosition(
    CTLineRef line,
-   CGPoint position )   //��ȡ�����position���������������е�index
+   CGPoint position )   //获取点击处position文字在整段文字中的index
 
    CGFloat CTLineGetOffsetForStringIndex(
    CTLineRef line,
    CFIndex charIndex,
-   CGFloat* secondaryOffset ) //��ȡ����������charIndexλ�õ��ַ����line��ԭ���xֵ
+   CGFloat* secondaryOffset ) //获取整段文字中charIndex位置的字符相对line的原点的x值
 
-  ��Ҫ���裺
-       1�����㲢�洢�����б��������б������ּ���Range
-       2���滻��������Ϊָ�����ȵ�NSAttributedString
+  主要步骤：
+       1）计算并存储文字中保含的所有表情文字及其Range
+       2）替换表情文字为指定宽度的NSAttributedString
            CTRunDelegateCallbacks callbacks;
    callbacks.version = kCTRunDelegateVersion1;
    callbacks.getAscent = ascentCallback;
@@ -361,67 +363,67 @@ CoreText ���
    [weiBoText replaceCharactersInRange:faceRange withAttributedString:faceAttributedString];
    [faceAttributedString release];    
 
-       3)  ���ݱ���ı������ֵ�Range�������ͼƬ��Frame
-                textFrame ͨ��CTFrameGetLines ��ȡ����line������ lineArray
+       3)  根据保存的表情文字的Range计算表情图片的Frame
+                textFrame 通过CTFrameGetLines 获取所有line的数组 lineArray
 
-               ����lineArray�е�lineͨ��CTLineGetGlyphRuns��ȡline�а���run������ runArray
+               遍历lineArray中的line通过CTLineGetGlyphRuns获取line中包含run的数组 runArray
 
-               ����runArray�е�run ͨ��CTRunGetStringRange��ȡrun��Range
+               遍历runArray中的run 通过CTRunGetStringRange获取run的Range
 
-               �жϱ������ֵ�location�Ƿ���run��Range
+               判断表情文字的location是否在run的Range
 
-               ����� ͨ��CTLineGetOffsetForStringIndex��ȡx��ֵ y��ֵΪlineԭ���ֵ
+               如果在 通过CTLineGetOffsetForStringIndex获取x的值 y的值为line原点的值
 
-       4��Draw����ͼƬ�������ȡ����Frame
+       4）Draw表情图片到计算获取到的Frame
 
-��3��������ִ����¼�
+（3）点击文字触发事件
   
 
-  ��Ҫ���裺
-       1�� ����touch�¼���ȡ��point
-       2)   textFrame ͨ��CTFrameGetLineOrigins��ȡ����line��ԭ��
-       3�� �Ƚ�point��lineԭ���yֵ��ȡ��������ĸ�line
-       4)  line��point ͨ��CTLineGetStringIndexForPosition��ȡ������ַ������������е�    index   
+  主要步骤：
+       1） 根据touch事件获取点point
+       2)   textFrame 通过CTFrameGetLineOrigins获取所有line的原点
+       3） 比较point和line原点的y值获取点击处于哪个line
+       4)  line、point 通过CTLineGetStringIndexForPosition获取到点击字符在整段文字中的    index   
 
-       5)  NSAttributedString ͨ��index �÷�����(NSDictionary *)attributesAtIndex:(NSUInteger)location effectiveRange:(NSRangePointer)range  ���Ի�ȡ���������NSAttributedString�д洢��NSDictionary
+       5)  NSAttributedString 通过index 用方法－(NSDictionary *)attributesAtIndex:(NSUInteger)location effectiveRange:(NSRangePointer)range  可以获取到点击到的NSAttributedString中存储的NSDictionary
 
-       6�� ͨ��NSDictionary�д洢����Ϣ�жϵ���������������ͷֱ���
-
-
-ִ��˳��
-initWithNibName(ʲô��ûд)->viewDidLoad->viewWillAppear
-initWithNibName(��createView()ִ�е�createView()֮ǰ)->viewDidLoad->createView()-> initWithNibName->viewWillAppear() 
+       6） 通过NSDictionary中存储的信息判断点击的哪种文字类型分别处理
 
 
-��1����Object-C���Ե���Դ
+执行顺序
+initWithNibName(什么都没写)->viewDidLoad->viewWillAppear
+initWithNibName(有createView()执行到createView()之前)->viewDidLoad->createView()-> initWithNibName->viewWillAppear() 
 
-1��������ռ�ڴ����Ƿ����ڡ��ѿռ䡱��heap space���У�������������ڡ�ջ����stack���ϣ�������ջ�з���Objective-C����NSString * someString=@"The string";NSString * anotherString=someString; ָ������ָ�루someString��anotherString��������ջ�ϡ�
 
-��2���������ͷ�ļ��о���������������ͷ�ļ�
+第1条：Object-C语言的起源
 
-1������ȷ�б�Ҫ������Ҫ����ͷ�ļ���һ����˵��Ӧ����ĳ�����ͷ�ļ���ʹ����ǰ�����ἰ����࣬����ʵ���ļ���������Щ���ͷ�ļ�������������������֮�����ϣ�coupling����
-2����ʱ�޷�ʹ����ǰ����������Ҫ����ĳ������ѭһ��Э�顣��������£������ɡ�������ѭĳЭ�顱������������������class0continuation���С�������еĻ����Ͱ�Э�鵥������һ��ͷ�ļ��У�Ȼ�������á�
+1、对象所占内存总是分配在“堆空间”（heap space）中，而绝不会分配在“栈”（stack）上，不能在栈中分配Objective-C对象。NSString * someString=@"The string";NSString * anotherString=someString; 指向对象的指针（someString和anotherString）分配在栈上。
 
-��3���������������﷨��������֮�ȼ۵ķ���
+第2条：在类的头文件中尽量减少引入其他头文件
 
-1��Ӧ��ʹ���������﷨�������ַ�������ֵ�����顢�ֵ䣬�봴���������ĳ��淽����ȣ����������Ӽ�����Ҫ��(NSNumber * expressionNumber=@(x * y);NSArray * array=@[@"a",@"b",@"c"];NSDictionary * dictionary=@{@"a":@"1",@"b":@2})
-2��Ӧ��ͨ��ȡ�±���������������±���ֵ��еļ�����Ӧ��Ԫ�ء�(array[0],personData[@"lastName"])
-3�����������﷨������������ֵ䣬��ֵ����nil������׳��쳣����ˣ����ȷ��ֵ�ﲻ��nil��
+1、除非确有必要，否则不要引入头文件。一般来说，应该在某各类的头文件中使用向前申明提及别的类，并在实现文件中引入那些类的头文件。这样做尽量降低类之间的耦合（coupling）。
+2、有时无法使用向前声明，比如要声明某个类遵循一项协议。这种情况下，尽量吧“改类遵循某协议”的这条声明移至到“class0continuation”中。如果不行的话，就把协议单独放在一个头文件中，然后将其引用。
 
-��4�����������ͳ���������#defineԤ����ָ��
+第3条：多用字面量语法，少用与之等价的方法
 
-1��#define ANIMATION_DURATION 0.3 ���滻Ϊstatic const NSTimeInterval kAnimationDuration = 0.3;���˳���������Ϣ���������⡣������.m��ʹ�ñ�����ǰ����k��ͷ���ⲿʹ������������ͷ��
-2���ⲿʹ��ʱ.h��extern NSString * const LoginManagerNotification; .m��??NSString * const LoginManagerNotification=@"LoginManagerNotification";���ೣ������Ҫ���壬����ֻ�ܶ���һ�Ρ�ͨ�����䶨�����������ó�����ͷ�ļ���ص�ʵ���ļ��С���ʵ���ļ�����Ŀ���ļ�ʱ�����������ڡ����ݶΣ�data session��Ϊ�ַ�������洢�ռ䡣
+1、应该使用字面量语法来创建字符串、数值、数组、字典，与创建此类对象的常规方法相比，这样做更加简明概要。(NSNumber * expressionNumber=@(x * y);NSArray * array=@[@"a",@"b",@"c"];NSDictionary * dictionary=@{@"a":@"1",@"b":@2})
+2、应该通过取下标操作来访问数组下标活字典中的键所对应的元素。(array[0],personData[@"lastName"])
+3、用字面量语法创建的数组或字典，若值中有nil，则会抛出异常。因此，务必确定值里不含nil。
 
-��5������ö�ٱ�ʾ״̬��ѡ�״̬��
+第4条：多用类型常量，少用#define预处理指令
 
-1����ͨ��ö�����Ͷ���
+1、#define ANIMATION_DURATION 0.3 可替换为static const NSTimeInterval kAnimationDuration = 0.3;多了常量类型信息，更好理解。（若在.m中使用变量名前面以k开头，外部使用则以类名开头）
+2、外部使用时.h中extern NSString * const LoginManagerNotification; .m中??NSString * const LoginManagerNotification=@"LoginManagerNotification";此类常量必须要定义，而且只能定义一次。通常将其定义在与声明该常量的头文件相关的实现文件中。有实现文件生存目标文件时，编译器会在“数据段（data session）为字符串分配存储空间。
+
+第5条：用枚举表示状态、选项、状态码
+
+1、普通的枚举类型定义
 typedef NS_ENUM(NSUInteger, WYDConnectionState){
 ???? WYDConnectionStateDisconnected=0,
 ???? WYDConnectionStateConnecting=1,
 ???? WYDConnectionStateConnected=2
 };
-2��������UIViewAutoresizing���ְ���һϵ��ѡ���ö�����ͣ�����ѡ���ֻ����Ϊ2���ݣ��Ա�ͨ����λ����������������
+2、定义像UIViewAutoresizing这种包含一系列选项的枚举类型，将各选项的只定义为2的幂，以便通过按位或操作将其组合起来
 typedef NS_OPTIONS(NSUInteger, WYDDirection){
 ???? WYDDirectionLeft =1<< 0,
 ???? WYDDirectionRight =1<< 1,
@@ -429,31 +431,31 @@ typedef NS_OPTIONS(NSUInteger, WYDDirection){
 ???? WYDDirectionRight =1 << 3
 };
 WYDDirection direction= WYDDirectionLeft | WYDDirectionRight;??//direction=3
-if(direction & WYDDirectionLeft)//3&1Ϊ��
-3����NS_ENUM��NS_OPTIONS��������ö�����ͣ���ָ����ز����ݽṹ������������ȷ��ö��ʹ�ÿ�������ѡ�ĵײ���������ʵ�ֳ����ģ���������ñ�������ѡ�����͡�
-4���ڴ���ö�����͵�switch����в�Ҫʵ��default��֧�������Ļ���������ö��֮�󣬱������ͻ���ʾ�����ߣ�switch���δ�������е�ö�١�
+if(direction & WYDDirectionLeft)//3&1为真
+3、用NS_ENUM和NS_OPTIONS宏来定义枚举类型，并指明其地层数据结构。这样做可以确保枚举使用开发者所选的底层数据类型实现出来的，并不会采用编译器所选的类型。
+4、在处理枚举类型的switch语句中不要实现default分支、这样的话，加入新枚举之后，编译器就会提示开发者：switch语句未处理所有的枚举。
 
 
-��6�������⡰���ԡ���һ����
+第6条：理解“属性”这一概念
 
-1��@dynamic ������; �����������Զ��ϳɴ�ȡ������ʵ���������������������е����ԣ�������Ҳ���ᷢ��������Ϣ��
-2��strong ���÷������ȱ�����ֵ���ͷž�ֵ��Ȼ���ٽ���ֵ������ȥ��
-3��weak ���÷����Ȳ�������ֵ��Ҳ���ͷž�ֵ�����������������⵽�ݻٺ�����ֵҲ����ա�
-4��unsafe_unretain ���ڶ������ͣ���Ŀ������⵽�ݻٺ�����ֵ�����Զ����
-5��copy ���÷����в�������ֵ�����ǽ��俽��������NSString���������ԡ�
-6��block��һ������, ����block�������ǿ���retain/release��. ����block�ڴ�����ʱ�������ڴ���Ĭ���Ƿ�����ջ(stack)��, �����Ƕ�(heap)�ϵ�. ����������������޴���ʱ��ĵ�ǰ������(����, ����...), �����ڸ�����������ø�blockʱ, ����ͻ����. 
+1、@dynamic 属性名; 编译器不会自动合成存取方法或实例变量。如果代码访问其中的属性，编译器也不会发出警告信息。
+2、strong 设置方法会先保留新值，释放旧值，然后再将新值设置上去；
+3、weak 设置方法既不保留新值，也不释放旧值。在属性所属对象遭到摧毁后，属性值也会清空。
+4、unsafe_unretain 用于对象类型，当目标对象遭到摧毁后，属性值不会自动清空
+5、copy 设置方法中不保存新值，而是将其拷贝适用于NSString保护其封闭性。
+6、block是一个对象, 所以block理论上是可以retain/release的. 但是block在创建的时候它的内存是默认是分配在栈(stack)上, 而不是堆(heap)上的. 所以它的作用域仅限创建时候的当前上下文(函数, 方法...), 当你在该作用域外调用该block时, 程序就会崩溃. 
 
 
-��7����ʵ������
-1���׳��쳣��Ϣ
+第7条：实例变量
+1、抛出异常信息
 [NSException raise:NSInvalidArgumentException format:@"this is the test exception"];
-2��ֱ�ӷ���ʵ���������ᴥ����ֵ�۲⣨KVO��
-3���ڶ����ڲ���ȡ����ʱ��Ӧ��ֱ��ͨ��ʵ��������������д������ʱ��Ӧͨ��������д��
+2、直接访问实例变量不会触发键值观测（KVO）
+3、在对象内部读取数据时，应该直接通过实例变量来读，而写入数据时，应通过属性来写。
 
 
-��8���������ͬ��
-1�����������ĵ�ͬ�ԣ���Ҫʵ��isEqual:��hash����
-2����ҪäĿ��������ÿ�����ԣ�����Ӧ�����վ����������ƶ���ⷽ����
+第8条：对象等同性
+1、若想检测对象的等同性，需要实现isEqual:与hash方法
+2、不要盲目地逐个检测每条属性，而是应该依照具体需求来制定检测方案。
 
 
 
