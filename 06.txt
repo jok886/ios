@@ -338,7 +338,7 @@ rootViewController及其childViewController的加载、view及其subviews的加�
  * 第二类: 比如用户数据需要在广告显示完成以后使用, 所以需要伴随广告页启动, 只需要将启动代码放到 startupEventsOnADTimeWithAppDelegate 方法里.
  * 第三类: 比如直播和分享等业务, 肯定是用户能看到真正的主界面以后才需要启动, 所以推迟到主界面加载完成以后启动, 只需要将代码放到 startupEventsOnDidAppearAppContent 方法里.
  */
-
+pre-main()耗时检测 在Xcode的菜单中选择Project→Scheme→Edit Scheme，然后找到 Run → Environment Variables →+，添加name为DYLD_PRINT_STATISTICSvalue为1的环境变量。
 
 
 
