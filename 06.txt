@@ -1,28 +1,28 @@
 
 
-2.GCDͬ���첽������Ӧ�ó�����a->b->c˳��ִ�� ��asyncִ�е��Ⱥ�˳�򣩣�ͬ������.nsoperation��
-//�첽�ķ�ʽ ִ�д��ж��� �ᴴ��һ���µ��߳���ִ������  
+2.GCD同步异步操作（应用场景：a->b->c顺序执行 ，async执行的先后顺序），同步阻塞.nsoperation。
+//异步的方式 执行串行队列 会创建一个新的线程来执行任务  
 -(void)demo2  
 {  
-    //�������ж��� DISPATCH_QUEUE_SERIAL  
-    //   ���ж��� DISPATCH_QUEUE_CONCURRENT  
+    //创建串行队列 DISPATCH_QUEUE_SERIAL  
+    //   并行队列 DISPATCH_QUEUE_CONCURRENT  
     dispatch_queue_t queue=dispatch_queue_create("itcast", DISPATCH_QUEUE_SERIAL);  
       
-    //��������  
+    //创建任务  
     dispatch_block_t task1=^{  
-        NSLog(@"%@  �첽ִ���˷���1",[NSThread currentThread]);  
+        NSLog(@"%@  异步执行了方法1",[NSThread currentThread]);  
     };  
       
     dispatch_block_t task2=^{  
-        NSLog(@"%@  �첽ִ���˷���2",[NSThread currentThread]);  
+        NSLog(@"%@  异步执行了方法2",[NSThread currentThread]);  
     };  
       
       
-    //�������  
+    //加入队列  
       
-    //�첽�ķ�ʽ ִ�ж���  
+    //异步的方式 执行队列  
       
-    //��˳��ִ��  
+    //会顺序执行  
     dispatch_async(queue, task1);  
       
     dispatch_async(queue, task2);  
@@ -30,16 +30,16 @@
       
 }  
 
-3.��Ӧ����uiimageview��user interfaced �� no ��uibutton�����������Ƿ���Ե����Ӧ:�񣩡�
+3.响应链（uiimageview的user interfaced ＝ no ，uibutton添加在其上是否可以点击响应:否）。
 
 
 
-6.preformselect��delay 0��ʱ��ִ��˳��
-��touchBegan����
+6.preformselect在delay 0秒时的执行顺序。
+在touchBegan里面
 [self performSelector:@selector(longPressMethod:) withObject:nil afterDelay:longPressTime]
-Ȼ����end ��cancel�����жϣ����ʱ�䲻��������ʱ����ã�
+然后在end 或cancel里做判断，如果时间不够长按的时间调用：
 [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(longPressMethod:) object:nil]
-ȡ��began��ķ���
+取消began里的方法
 
 
 
@@ -48,38 +48,36 @@
 
 
 
-12.��дinit�Լ�initwithframe���顣
-1.�ڶ������ʱ�򣬻���дinit ������
+12.重写init以及initwithframe建议。
+1.在定制类的时候，会重写init 方法。
 
 - (id)init; 
 
-�����
+会调用
 
 - (id)initWithFrame:(CGRect)frame;
 
 
 
-2.��д
+2.重写
 
 - (id)initWithFrame:(CGRect)frame; 
 
-������� 
+不会调用 
 
 - (id)init;
 
 
 
-����һ��ѡ����
+所以一般选择在
 
 - (id)initWithFrame:(CGRect)frame;
 
-����д��
+里重写。
 
-13��quartz2d��coregraphic
-Quartz 2D��PDF�Ĺ淶Ϊ������ͼ�ο⣬�������ƶ�ά���ֺ�ͼ�Σ�������ͬ�Ļ�ͼָ�����κ�װ���ϣ�ʹ�ÿ��Եõ�����ѷֱ��ʣ�������ͬ�����.
-Core Graphic�����һ�����C��API����������һ�л�ͼ�����������ܵ���Ҫ�ԣ�������UIKit��Foundation
-
-
+13。quartz2d和coregraphic
+Quartz 2D以PDF的规范为基础的图形库，用来绘制二维文字和图形，允许相同的绘图指令在任何装置上，使用可以得到的最佳分辨率，产生相同的输出.
+Core Graphic框架是一组基于C的API，可以用于一切绘图操作，这个框架的重要性，仅次于UIKit和Foundation
 
 
 
@@ -87,81 +85,83 @@ Core Graphic�����һ�����C��API����������һ�л�ͼ�����������ܵ���Ҫ�ԣ�������
 
 
 
-20.arc�µ�dealloc��ʲô��
-dealloc��ARC�µ����þ����ͷ� ϵͳ�޷��ͷŵĸö���ռ�õ���Դ,������������Ըö��������.
-//�Ƴ�֪ͨ�۲���
+
+
+20.arc下的dealloc有什么用
+dealloc在ARC下的作用就是释放 系统无法释放的该对象占用的资源,或者其他对象对该对象的引用.
+//移除通知观察者
 
 
 
 
-26.����app��������
-����һ��UIPasteboard
-T1���ü��������ݣ�
+26.两个app共享数据
+方法一：UIPasteboard
+T1设置剪贴板内容：
 
 UIPasteboard *pasteboard = [UIPasteboard pasteboardWithName:@"myPasteboard" create:YES];
 pasteboard.string = @"myShareData";
-T2��ȡ���������ݣ�
+T2读取剪贴板内容：
 
 UIPasteboard *pasteboard = [UIPasteboard pasteboardWithName:@"myPasteboard" create:NO];
 NSString *content = pasteboard.string;
-������������Կ�״�
-��������App Groups
-�����ģ�ͨ��Custom URL Scheme
-27.ͼƬ��text��ࣨcoretext��
+方法二：共享钥匙串
+方法三：App Groups
+方法四：通过Custom URL Scheme
+27.图片与text混编（coretext）
 
 
 
-1��������Լ���д�Ķ�����п�������?
+1、如何令自己所写的对象具有拷贝功能?
 
-������������� NSCopying Э��
-ʵ�� NSCopying Э�顣��Э��ֻ��һ������:
+需声明该类遵从 NSCopying 协议
+实现 NSCopying 协议。该协议只有一个方法:
  - (id)copyWithZone:(NSZone *)zone;
 
-3����Ŀ��Swift mutating�ؼ��ֵ�ʹ�ã�
+3、题目：Swift mutating关键字的使用？
 
-4��UIView��CALayer��ʲô��ϵ?
+4、UIView和CALayer是什么关系?
 
-1. ����UIView������Ӧ�¼���Layer������.
-UIKitʹ��UIResponder��Ϊ��Ӧ��������Ӧϵͳ���ݹ������¼������д������� UIResponder�ж����˴��������¼����¼����ݵĽӿڡ�
+1. 首先UIView可以响应事件，Layer不可以.
+UIKit使用UIResponder作为响应对象，来响应系统传递过来的事件并进行处理。在 UIResponder中定义了处理各种事件和事件传递的接口。
 
-UIApplication��UIViewController��UIView�������д�UIView����������UIKit�ࣨ����UIWindow��
-��ֱ�ӻ��ӵؼ̳���UIResponder�ࡣ
-CALayerֱ�Ӽ̳� NSObject����û����Ӧ�Ĵ����¼��Ľӿڡ�
-
-
-2. UIView��CALayer��delegate
-
-3. UIView��Ҫ�����¼���CALayer������ƾ͸���
-
-4. ÿ�� UIView �ڲ�����һ�� CALayer �ڱ����ṩ���ݵĻ��ƺ���ʾ������ UIView �ĳߴ���ʽ�����ڲ��� Layer ���ṩ��
-���߶�����״�㼶�ṹ��layer �ڲ��� SubLayers��View �ڲ��� SubViews.���� Layer �� View ���˸�AnchorPoint
+UIApplication、UIViewController、UIView、和所有从UIView派生出来的UIKit类（包括UIWindow）
+都直接或间接地继承自UIResponder类。
+CALayer直接继承 NSObject，并没有相应的处理事件的接口。
 
 
+2. UIView是CALayer的delegate
+
+3. UIView主要处理事件，CALayer负责绘制就更好
+
+4. 每个 UIView 内部都有一个 CALayer 在背后提供内容的绘制和显示，并且 UIView 的尺寸样式都由内部的 Layer 所提供。
+两者都有树状层级结构，layer 内部有 SubLayers，View 内部有 SubViews.但是 Layer 比 View 多了个AnchorPoint
 
 
 
 
 
 
-10��id��NSObject��������
-1.NSObject������һЩ�����ķ�������Ҫʵ��NSObjectЭ�飬������NSObject����ʾid�����ǲ�����id����ʾNSObject
 
 
-2.id�ؼ����ڱ����ʱ�򲻻ᱻ��飬��NSObject�ڱ����ʱ�򱻱�����Ƿ���һЩ����ķ���
+10、id和NSObject＊的区别
+1.NSObject包含了一些其他的方法，需要实现NSObject协议，可以用NSObject来表示id，但是不能用id来表示NSObject
 
 
-3.id�������κζ��󣬰�������NSObject�Ķ���
+2.id关键字在编译的时候不会被检查，而NSObject在编译的时候被被检查是否含有一些错误的方法
 
 
-4.����id��ʱ����Ҫ*��������NSOject��ʱ����Ҫ��
+3.id可以是任何对象，包括不是NSObject的对象
+
+
+4.定义id的时候不需要*，而定义NSOject的时候需要。
 
 
 
 
 
-12��ʹ��ϵͳ��ĳЩblock api����UIView��block�汾д����ʱ�����Ƿ�Ҳ��������ѭ�����⣿
+12、使用系统的某些block api（如UIView的block版本写动画时），是否也考虑引用循环问题？
 
-������ѭ������ָ˫���ǿ���ã�������Щ�������ǿ���á���block ǿ���� self ��û�����⣬������Щ��
+“引用循环”是指双向的强引用，所以那些“单向的强引用”（block 强引用 self ）没有问题，比如这些：
 
 [UIViewanimateWithDuration:durationanimations:^{ [self.superviewlayoutIfNeeded]; }];
 
@@ -170,7 +170,7 @@ CALayerֱ�Ӽ̳� NSObject����û����Ӧ�Ĵ����¼��Ľӿڡ�
 
 [[NSNotificationCenterdefaultCenter]addObserverForName:@"someNotification"object:nilqueue:[NSOperationQueuemainQueue]usingBlock:^(NSNotification* notification) { self.someProperty= xyz; }];
 
-��Щ�������Ҫ���ǡ�����ѭ������
+这些情况不需要考虑“引用循环”。
 
 
 
@@ -180,32 +180,32 @@ CALayerֱ�Ӽ̳� NSObject����û����Ӧ�Ĵ����¼��Ľӿڡ�
 
 
 
-�ײ㣺
+底层：
 
-16��main()֮ǰ�Ĺ�������Щ��
-�����¼���dyld������������л����ĳ�ʼ�������ImageLoader���������ļ�����ʽ���ص��ڴ棬
-��̬���������⣬����runtime������س�objc����Ľṹ�����г�ʼ������������dyld����������main������
-ֵ��˵�����ǣ��������Զ��д������Ҫ���ӣ�����ֻ�ᵽ��runtime�����֧��������GCD��XPC����ͷ��ϵͳ���ʼ����֧û���ἰ����Ȼ���л�������ڣ�����Ҳ����������ʼ�������ܽ���������main����ִ��֮ǰ��ϵͳ����ãã��ļ��غͳ�ʼ���������������ܺõ������ˣ�����������ġ�
-
-
-
-21����̬���ԭ����ʲô������û���Լ�д����̬����⣬��������Щ���⣿
-��ios�����У���̬�������һ����libxxx.dylib����̬�������һ����libxxx.a(xxx.framework�Ǿ�̬���ļ�.a��һ���װ����������)��
-
-ʹ�þ�̬��ĺô�
-
-1��ģ�黯���ֹ�����
-
-2�����������Ķ��������´������ظ���������
-
-3��Ҳ�������ã�ע�ⲻ�ǹ���ʹ��
+16、main()之前的过程有哪些？
+整个事件由dyld主导，完成运行环境的初始化后，配合ImageLoader将二进制文件按格式加载到内存，
+动态链接依赖库，并由runtime负责加载成objc定义的结构，所有初始化工作结束后，dyld调用真正的main函数。
+值得说明的是，这个过程远比写出来的要复杂，这里只提到了runtime这个分支，还有像GCD、XPC等重头的系统库初始化分支没有提及（当然，有缓存机制在，它们也不会玩命初始化），总结起来就是main函数执行之前，系统做了茫茫多的加载和初始化工作，但都被很好的隐藏了，我们无需关心。
 
 
 
+21、静态库的原理是什么？你有没有自己写过静态编译库，遇到了哪些问题？
+在ios开发中，动态库的名字一般是libxxx.dylib，静态库的名字一般是libxxx.a(xxx.framework是静态库文件.a的一层封装，后续介绍)。
 
-32��������һ���ַ���aabcad����дһ�γ���ȥ���ַ����в����ڵ��ظ��ַ������������ַ�������֮���������Ϊ��aabcd
+使用静态库的好处
 
-�����ַ��������Կ������ÿո��滻����Ҫɾ�����ַ���������������Ŀո���д�����
+1，模块化，分工合作
+
+2，避免少量改动经常导致大量的重复编译连接
+
+3，也可以重用，注意不是共享使用
+
+
+
+
+32、假设有一个字符串aabcad，请写一段程序，去掉字符串中不相邻的重复字符串，即上述字符串处理之后的输出结果为：aabcd
+
+相邻字符串，所以可以先用空格替换掉需要删除的字符，最后对数组里面的空格进行处理。
 
 
 -(void)removeRepeat:(NSString *)aNum
@@ -238,7 +238,7 @@ NSLog(@"%@",mArr);
 }
 
 
-//�Ƚ��Ƿ����
+//比较是否相等
 
 
 -(NSMutableArray *)compareNum:(NSMutableArray *)mArr
@@ -247,7 +247,7 @@ NSLog(@"%@",mArr);
 {
 
 int count = mArr.count;
-//���¶�����,count�����һ
+//重新定义了,count不会减一
 
 
 for (int j = 0; j < count - 1; j++)
@@ -291,92 +291,111 @@ return mArr;
 
 
 
-34��iOS app��������Ż���
-1. App��������
-����Info.plist 
-���������Ϣ������������
-ɳ�佨����Ȩ�޼��
-Mach-O���� 
-������ֶ������ļ���Ѱ�Һ��ʵ�ǰCPU���Ĳ���
-��������������Mach-O�ļ����ݹ����Mach-O���صķ�����
-��λ�ڲ����ⲿָ�����ã������ַ�����������
-ִ������Ϊ__attribute__((constructor))��C����
-��������չ��Category���еķ���
-C++��̬������ء�����ObjC�� +load ����
-����ִ�� 
-����main()
-����UIApplicationMain()
-����applicationWillFinishLaunching
+34、iOS app启动如何优化？
+1. App启动过程
+解析Info.plist 
+加载相关信息，例如如闪屏
+沙箱建立、权限检查
+Mach-O加载 
+如果是胖二进制文件，寻找合适当前CPU类别的部分
+加载所有依赖的Mach-O文件（递归调用Mach-O加载的方法）
+定位内部、外部指针引用，例如字符串、函数等
+执行声明为__attribute__((constructor))的C函数
+加载类扩展（Category）中的方法
+C++静态对象加载、调用ObjC的 +load 函数
+程序执行 
+调用main()
+调用UIApplicationMain()
+调用applicationWillFinishLaunching
 
-main()����֮ǰ��ʱ��Ӱ������
-��̬�����Խ�࣬����Խ����
-ObjC��Խ�࣬����Խ��
-C��constructor����Խ�࣬����Խ��
-C++��̬����Խ�࣬����Խ��
-ObjC��+loadԽ�࣬����Խ��
+main()函数之前耗时的影响因素
+动态库加载越多，启动越慢。
+ObjC类越多，启动越慢
+C的constructor函数越多，启动越慢
+C++静态对象越多，启动越慢
+ObjC的+load越多，启动越慢
 
-main()����֮���ʱ��Ӱ������
-ִ��main()�����ĺ�ʱ
-ִ��applicationWillFinishLaunching�ĺ�ʱ
-rootViewController����childViewController�ļ��ء�view����subviews�ļ���
-
-
+main()函数之后耗时的影响因素
+执行main()函数的耗时
+执行applicationWillFinishLaunching的耗时
+rootViewController及其childViewController的加载、view及其subviews的加载
 
 
-36��������ֹ�����룿
-1.�������ݼ���
-��NSUserDefaults��sqlite�洢�ļ����ݼ��ܣ������ʺź͹ؼ���Ϣ
+对于 didFinishLaunchingWithOptions，这里面的初始化是必须执行的，但是我们可以适当的根据功能的不同对应的适当延迟启动的时机。
+对于我们项目，我将初始化分为三个类型：
 
-���ļ����м���
-2.URL�������
-�Գ����г��ֵ�URL���б�����ܣ���ֹURL����̬����
-3.���紫�����ݼ���
-�Կͻ��˴��������ṩ���ܷ�������Ч��ֹͨ������ӿڵ����ػ�ȡ����, ʹ��MD5���ܡ�
-4.�����壬�������߼�����
-5.����ṹ���ż���
-��Ӧ�ó����߼��ṹ���д��һ��ţ���֤Դ��ɶ��Խ������
+一 日志、统计等必须在 APP 一起动就最先配置的事件
 
-6.����������APP�ӹ�
-���磺�������׶�
+二 项目配置、环境配置、用户信息的初始化 、推送、IM等事件
 
+三 其他 SDK 和配置事件
+所以我们可以放在第一个界面渲染完成以后的 viewDidAppear 方法里，这里完全不会影响到启动时间。
+第一个页面渲染的优化思路就是，先立马展示一个空壳的 UI 给用户，然后在 viewDidAppear 方法里进行数据加载解析渲染等一系列操作
 
-
-
-42���ڴ�����ļ���ԭ��ʱʲô������Ĭ�Ϸ���.��Щ�ؼ������ɵĶ���
-
-��Ҫ�ֶ��ͷţ��ں�property��ϵ�ʱ��������Ч�ı����ڴ�й¶��
-
-˭���룬˭�ͷ�
+ * 以后引入第三方需要在 didFinishLaunchingWithOptions 里初始化或者我们自己的类需要在 didFinishLaunchingWithOptions 初始化的时候,
+ * 要考虑尽量少的启动时间带来好的用户体验, 所以应该根据需要减少 didFinishLaunchingWithOptions 里耗时的操作.
+ * 第一类: 比如日志 / 统计等需要第一时间启动的, 仍然放在 didFinishLaunchingWithOptions 中.
+ * 第二类: 比如用户数据需要在广告显示完成以后使用, 所以需要伴随广告页启动, 只需要将启动代码放到 startupEventsOnADTimeWithAppDelegate 方法里.
+ * 第三类: 比如直播和分享等业务, 肯定是用户能看到真正的主界面以后才需要启动, 所以推迟到主界面加载完成以后启动, 只需要将代码放到 startupEventsOnDidAppearAppContent 方法里.
+ */
 
 
 
 
+36、怎样防止反编译？
+1.本地数据加密
+对NSUserDefaults，sqlite存储文件数据加密，保护帐号和关键信息
 
-48��1.ʲô��ʽ���Կ����ϼ�App��ͷ�ļ�?
+将文件进行加密
+2.URL编码加密
+对程序中出现的URL进行编码加密，防止URL被静态分析
+3.网络传输数据加密
+对客户端传输数据提供加密方案，有效防止通过网络接口的拦截获取数据, 使用MD5加密。
+4.方法体，方法名高级混淆
+5.程序结构混排加密
+对应用程序逻辑结构进行打乱混排，保证源码可读性降到最低
 
-3.����dumpdecrypted�⣬�������ѿǵ�; 
-5.class-dump �ܹ����Ӧ�õ�����ͷ�ļ�; 
-
-
-
-49��iOS iAP�ڹ���˿���ʧ�ܵ�����
-ƻ��AppStore���ϵĹ���ƾ֤��֤��ַ��https://buy.itunes.apple.com/verifyReceipt 
-���Ե���֤��ַ�ǣ�https://sandbox.itunes.apple.com/verifyReceipt
-
-50��IAP�ڹ���������ҵ�������޷�ͨ�������⣿
-
-ƻ�����������������Ҫ��ɵģ���ɵĶ��Ϊ30%�����Զ���������˱Ƚ��ϸ�
-�������ǵĹ���ĵ�����ios�˺Ͱ�׿������Ҫ�ֿ��ġ�����������Ϸ�ľͻᷢ����Ϸ�������������Ƿֿ��ġ�
-
-
-�û��ڰ�׿�ֻ��Ϲ���ĵ�����iOS���ǲ���ʹ�õġ���Ϊ����Ҳ��ӵ�Ӱ����ƻ�������롣
+6.借助第三方APP加固
+例如：网易云易盾
 
 
-�������������ڼ䲻���п��Զһ���appStore�ɹ������Ʒ�����������߶һ��룬���Ҳ��ƻ���������ġ���Ϊ���Ҳ��Ӱ��ƻ�������롣
+
+
+42、内存管理的几条原则时什么？按照默认法则.那些关键字生成的对象
+
+需要手动释放？在和property结合的时候怎样有效的避免内存泄露？
+
+谁申请，谁释放
+
+
+
+
+
+48、1.什么方式可以看到上架App的头文件?
+
+3.下载dumpdecrypted库，它负责脱壳的; 
+5.class-dump 能够获得应用的所有头文件; 
+
+
+
+49、iOS iAP内购审核可能失败的问题
+苹果AppStore线上的购买凭证验证地址是https://buy.itunes.apple.com/verifyReceipt 
+测试的验证地址是：https://sandbox.itunes.apple.com/verifyReceipt
+
+50、IAP内购中虚拟货币导致审核无法通过的问题？
+
+苹果对于虚拟货币是需要提成的，提成的额度为30%。所以对于这块的审核比较严格。
+首先你们的购买的道具在ios端和安卓端是需要分开的。如果大家玩游戏的就会发现游戏的数据在两端是分开的。
+
+
+用户在安卓手机上购买的道具在iOS上是不能使用的。因为这样也间接的影响了苹果的收入。
+
+
+另外就是在审核期间不能有可以兑换在appStore可购买的商品，的任意活动或者兑换码，这个也是苹果不允许的。因为这个也会影响苹果的收入。
 
 ? ?
- ������ǿ����е�ͬѧ����ƻ�����֮������ipa֧�����˴������£�ƻ����ɨ�����app�������Ƿ���֧������΢�ŵȹ���֧�����ֶΡ�ʹ�ÿ��ؼ�h5�ķ�ʽ����ͨ����ˣ����Ǵ˴�Ҳ�з��գ����վ���һ�������֣����ܵĽ������ƻ��ֱ�ӷ���˺š�
-app�޷�ʹ�á�
+ 另外就是可能有的同学会在苹果审核之后隐藏ipa支付，此处提醒下，苹果会扫描你的app代码中是否有支付宝，微信等关于支付的字段。使用开关加h5的方式可以通过审核，但是此处也有风险，风险就是一旦被发现，可能的结果就是苹果直接封掉账号。
+app无法使用。
 
 
 
