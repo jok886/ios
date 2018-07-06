@@ -1,0 +1,99 @@
+1.
+AFNetworking3.x manager内存泄露解决方法  单例调用  获得AFHTTPSessionManager和AFURLSessionManager单例
+在做网络数据请求部分大多数都是用 AFNetworking，很容易用到[AFHTTPSessionManager manager]类方法在 AFNetworking 3.X 中 manager 很容易出现内存泄露，在 AFNetworking 的 manager 类方法实现中可以看到
+
+
+
+static AFHTTPSessionManager *manager;
+ 
++(AFHTTPSessionManager *)sharedHttpSessionManager {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        manager = [AFHTTPSessionManager manager];
+        manager.requestSerializer.timeoutInterval = 10.0;
+    });
+    
+    return manager;
+
+
+}
+
+
+
+static AFHTTPSessionManager *manager ;
+static AFURLSessionManager *urlsession ;
+
+-(AFHTTPSessionManager *)sharedHTTPSession{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        manager = [AFHTTPSessionManager manager];
+        manager.requestSerializer.timeoutInterval = 10;
+    });
+    return manager;
+}
+
+-(AFURLSessionManager *)sharedURLSession{
+    static dispatch_once_t onceToken2;
+    dispatch_once(&onceToken2, ^{
+        urlsession = [[AFURLSessionManager alloc] initWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+    });
+    return urlsession;
+}
+
+
+
+-(void)startRequestInfo{
+    __weak typeof(self)weakself = self;
+    weakself.manager=[AFHTTPSessionManager manager];
+    weakself.manager.responseSerializer.acceptableContentTypes=[NSSet setWithObject:@"text/html"];
+    [weakself.manager GET:weakself.path parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        if ([weakself.delegate respondsToSelector:@selector(sendMessage:andPath:)]) {
+            [weakself.delegate sendMessage:responseObject andPath:weakself.path];
+        }
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        
+    }];
+
+} 
+
+
+2. 在使用SDWebImage加载较多图片造成内存警告时，定期调用
+
+ [[SDImageCache sharedImageCache] setValue:nil forKey:@"memCache"];
+可解决。
+
+
+sd_imageWithData方法
+发现这里面对图片的处理是直接按照原大小进行的，如果几千是分辨率这里导致占用了大量内存。
+
+
+#ifdef SD_WEBP
+    else if ([imageContentType isEqualToString:@"image/webp"])
+    {
+        image = [UIImage sd_imageWithWebPData:data];
+    }
+#endif
+    else {
+        image = [[UIImage alloc] initWithData:data];
+        if (data.length/1024 > 128) {
+            image = [self compressImageWith:image];
+        }
+        UIImageOrientation orientation = [self sd_imageOrientationFromImageData:data];
+        if (orientation != UIImageOrientationUp) {
+            image = [UIImage imageWithCGImage:image.CGImage
+                                        scale:image.scale
+                                  orientation:orientation];
+        }
+到了这里还需要进行最后一步。就是在SDWebImageDownloaderOperation的connectionDidFinishLoading方法里面的：
+
+
+UIImage *image = [UIImage sd_imageWithData:self.imageData];
+
+
+//将等比压缩过的image在赋在转成data赋给self.imageData
+NSData *data = UIImageJPEGRepresentation(image, 1);
+self.imageData = [NSMutableData dataWithData:data];
+
+   再配合    [[SDImageCache sharedImageCache] setValue:nil forKey:@"memCache"];（图片加载后使用）大功告成，
+
+
