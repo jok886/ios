@@ -1,0 +1,297 @@
+0.iOS App间常用的五种通信方式
+
+https://www.jianshu.com/p/d640ccfcea5f
+
+1、URL Scheme
+
+这个是iOS app通信最常用到的通信方式，App1通过openURL的方法跳转到App2，并且在URL中带上想要的参数，有点类似http的get请求那样进行参数传递。这种方式是使用最多的最常见的，使用方法也很简单只需要源App1在info.plist中配置LSApplicationQueriesSchemes，指定目标App2的scheme；然后在目标App2的info.plist中配置好URL types，表示该app接受何种URL scheme的唤起
+2、Keychain
+
+iOS系统的Keychain是一个安全的存储容器，它本质上就是一个sqllite数据库，它的位置存储在/private/var/Keychains/keychain-2.db，不过它所保存的所有数据都是经过加密的，可以用来为不同的app保存敏感信息，比如用户名，密码等。iOS系统自己也用keychain来保存VPN凭证和Wi-Fi密码。它是独立于每个App的沙盒之外的，所以即使App被删除之后，Keychain里面的信息依然存在。
+
+
+3、UIPasteboard
+
+顾名思义， UIPasteboard是剪切板功能，因为iOS的原生控件UITextView，UITextField 、UIWebView，我们在使用时如果长按，就会出现复制、剪切、选中、全选、粘贴等功能，这个就是利用了系统剪切板功能来实现的。而每一个App都可以去访问系统剪切板，所以就能够通过系统剪贴板进行App间的数据传输了。
+
+
+4、UIDocumentInteractionController
+
+UIDocumentInteractionController主要是用来实现同设备上app之间的共享文档，以及文档预览、打印、发邮件和复制等功能。它的使用非常简单.
+
+5、local socket
+
+这种方式不太常见，也是很容易被iOS开发者所忽略但是特别实用的一种方法。它的原理很简单，一个App1在本地的端口port1234进行TCP的bind和listen，另外一个App2在同一个端口port1234发起TCP的connect连接，这样就可以建立正常的TCP连接，进行TCP通信了，那么就想传什么数据就可以传什么数据了。
+
+
+
+
+
+1.double power(double base, int exponent)
+假设求a的n次方，当n为偶数时，a的n次方可以由两个a的n/2次方相乘求得；
+当n为奇数时，a的n次方可以由两个a的n/2次方相乘的积再乘以a得到
+
+int equal(double elem1, double elem2)
+{
+	if ((elem1 - elem2 < 0.0000001) && (elem1 - elem2 > -0.0000001))
+		return 1;	//相等
+	else
+		return 0;	//不相等
+}
+ 
+double power_unsigned_exp(double base, unsigned int exponent)
+{
+	double result = 0.0;
+	
+	if (0 == exponent)
+		return 1.0;
+	if (1 == exponent)
+		return base;
+ 
+	result = power_unsigned_exp(base, exponent / 2);
+	if (exponent & 1 == 1)
+		result *= base;
+	
+	return result;
+}
+ 
+double power(double base, int exponent)
+{
+	unsigned int abs_exponent = exponent;
+	double result = 0.0;
+	invalid_input = 0;
+	
+	if (equal(base, 0.0) && exponent < 0)
+	{
+		invalid_input = 1;
+		return 0.0;
+	}
+ 
+	if (exponent < 0)
+		abs_exponent = (unsigned int)(-exponent);
+	
+	result = power_unsigned_exp(base, abs_exponent >> 1);
+	result *= result;
+ 
+	if (result < 0)
+		result = 1.0 / result;
+	
+	return result;
+}
+
+
+1.
+找到两个排序数组的中位数.
+
+func findMedianSortedArrays_2(_ array1: [Int], _ array2: [Int]) -> Double { let c1 = array1.count, c2 = array2.count var a1 = array1, a2 = array2 if c1  nums2.count - j { return findKth(&nums2, i: j, &nums1, j: i, k: k)
+        } if nums1.count == i { return Double(nums2[j + k - 1])
+        } if k == 1 { return Double(min(nums1[i], nums2[j]))
+        } let pa = min(i + k / 2, nums1.count), pb = j + k - pa + i if nums1[pa - 1] < nums2[pb - 1] { return findKth(&nums1, i: pa, &nums2, j: j, k: k - pa + i)
+        } else if nums1[pa - 1] > nums2[pb - 1] { return findKth(&nums1, i: i, &nums2, j: pb, k: k - pb + j)
+        } else { return Double(nums1[pa - 1])
+        }
+    } let total = c1 + c2 if total % 2 == 1 { return findKth(&a1, i: 0, &a2, j: 0, k: total / 2 + 1)
+    } else { return (findKth(&a1, i: 0, &a2, j: 0, k: total / 2) + findKth(&a1, i: 0, &a2, j: 0, k: total / 2 + 1)) / 2.0 }
+}
+
+func findMedianSortedArrays_3(_ array1: [Int], _ array2: [Int]) -> Double { 
+let total = array1.count + array2.count let index = total / 2 let count = array1.count < array2.count ? array2.count : array1.count var array = [Int]() var i = 0, j = 0; for _ in 0...count { if array.count >= index + 1 { break } if array1[i] < array2[j] {
+            array.append(array1[i])
+            i += 1 } else {
+            array.append(array2[j])
+            j += 1 }
+    } return total % 2 == 1 ? Double(array[index]) : Double(array[index] + array[index - 1]) * 0.5 }
+
+	
+	
+@discardableResult func findMedianSortedArrays_4(_ array1: [Int], _ array2: [Int]) -> Double { if array1.count == 0 
+{ if array2.count % 2 == 1 { return Double(array2[array2.count / 2])
+        } else { return Double(array2[array2.count / 2] + array2[array2.count / 2 - 1]) * 0.5 }
+    } else if array2.count == 0 { if array1.count % 2 == 1 { return Double(array1[array1.count / 2])
+        } else { return Double(array1[array1.count / 2] + array1[array1.count / 2 - 1]) * 0.5 }
+    } let total = array1.count + array2.count let count = array1.count < array2.count ? array1.count : array2.count let odd = total % 2 == 1 var i = 0, j = 0, f = 1, m1 = 0.0, m2 = 0.0, result = 0.0; for _ in 0...count { if odd { array1[i] < array2[j] ? (i += 1) : (j += 1) } if f >= total / 2 { if odd {
+                result = array1[i] < array2[j] ? Double(array1[i]) : Double(array2[j])
+            } else { if array1[i] < array2[j] {
+                    m1 = Double(array1[i]) if (i + 1) < array1.count && array1[i + 1] < array2[j] {
+                        m2 = Double(array1[i + 1])
+                    } else {
+                        m2 = Double(array2[j])
+                    }
+                } else {
+                    m1 = Double(array2[j]) if (j + 1) < array2.count && array2[j + 1] < array1[i] {
+                        m2 = Double(array2[j + 1])
+                    } else {
+                        m2 = Double(array1[i])
+                    }
+                }
+                result = (m1 + m2) * 0.5 } break } if !odd { array1[i] < array2[j] ? (i += 1) : (j += 1) }
+        f += 1 } return result
+}
+
+
+1.<UIAlertViewDelegate>
+-(void)tapnameedit
+
+{
+    
+UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"请输入名字" message:@"" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定",nil];
+    
+alertView.alertViewStyle = UIAlertViewStylePlainTextInput;
+  
+ // [[alertView textFieldAtIndex:0] setKeyboardType:UIKeyboardTypeNumberPad];
+    
+    
+// 拿到UITextField
+    
+UITextField *tf = [alertView textFieldAtIndex:0];
+    
+tf.tag =15;
+    // 设置textfield 的键盘类型。
+   
+ //tf.keyboardType = UIKeyboardTypeNumberPad;
+   
+ [tf addTarget:self action:@selector(limitLength:) forControlEvents:UIControlEventEditingChanged];
+   
+ tf.text =_nameLabel.text;
+   
+// [alertView insertSubview:additonBackgroundView atIndex:1];
+    
+alertView.delegate = self;
+    
+alertView.tag = 12;
+    
+[alertView show];
+    
+
+}
+
+
+-(IBAction)limitLength:(UITextField *)sender
+{
+    bool isChinese;//判断当前输入法是否是中文
+    if ([[[UIApplication sharedApplication]textInputMode].primaryLanguage  isEqual: @"en-US"]) {
+        isChinese = false;
+    }
+    else
+    {
+        isChinese = true;
+    }
+    UITextField  *textTF =(UITextField  *)sender;
+    
+    NSInteger itag = textTF.tag;
+    NSInteger maxlength =10;
+    switch (itag) {
+        case 10:
+            //
+            maxlength =20;
+            break;
+        case 15:
+            //
+            maxlength =20;
+            break;
+        default:
+            break;
+    }
+    
+    
+    
+    // if(sender == self.txtName) {
+    // 8位
+    NSString *str = [[textTF text] stringByReplacingOccurrencesOfString:@"?" withString:@""];
+    if (isChinese) { //中文输入法下
+        UITextRange *selectedRange = [textTF markedTextRange];
+        //获取高亮部分
+        UITextPosition *position = [textTF positionFromPosition:selectedRange.start offset:0];
+        // 没有高亮选择的字，则对已输入的文字进行字数统计和限制
+        if (!position) {
+          //  NSLog(@"汉字");
+            if ( str.length>=(maxlength+1)) {
+                NSString *strNew = [NSString stringWithString:str];
+                [textTF setText:[strNew substringToIndex:maxlength]];
+            }
+        }
+        else
+        {
+           // NSLog(@"输入的英文还没有转化为汉字的状态");
+            
+        }
+    }else{
+       // NSLog(@"str=%@; 本次长度=%ld",str,(unsigned long)[str length]);
+        if ([str length]>=(maxlength+1)) {
+            NSString *strNew = [NSString stringWithString:str];
+            [textTF setText:[strNew substringToIndex:maxlength]];
+        }
+    }
+    // }
+}
+
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == alertView.cancelButtonIndex) {return;}
+    
+   
+    
+    
+    if (buttonIndex == 1) {
+      
+        if(alertView.tag ==12)
+        {
+            //得到输入框
+            UITextField *tf=[alertView textFieldAtIndex:0];
+            if ([tf.text length]>0) {
+                
+                [self editname:tf.text];
+                
+            }else{
+                [CustomMBHud customHudWindow:@"内容不能为空"];
+            }
+            
+        }
+	}
+	if (alertView.tag==10000) {
+        if (buttonIndex==1) {
+            NSURL *url = [NSURL URLWithString:@"http://itunes.apple.com/lookup?id=1127261966"];
+            [[UIApplication sharedApplication]openURL:url];
+        }
+    }
+    
+	
+}
+2.    //demo录音文件保存路径
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    NSString *scachePath = [paths objectAtIndex:0];
+    _pcmFilePath = [[NSString alloc] initWithFormat:@"%@",[scachePath stringByAppendingPathComponent:@"asr.pcm"]];
+    
+    
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(boardHide:)];
+    //设置成NO表示当前控件响应后会传播到其他控件上，默认为YES。
+    tapGestureRecognizer.cancelsTouchesInView = NO;
+    //将触摸事件添加到当前view
+    [self.view addGestureRecognizer:tapGestureRecognizer];
+	
+-(void)boardHide:(UITapGestureRecognizer*)tap
+{
+    [self.textFiled resignFirstResponder];
+	
+}
+
+#pragma mark - UITextFieldDelegate
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [self.textFiled resignFirstResponder];
+    return YES;
+}
+
+3.imageView.userInteractionEnabled = YES;
+        UITapGestureRecognizer *singleTap1 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(openTapAction:)];
+        [imageView addGestureRecognizer:singleTap1];
+        UIView *singleTapView = [singleTap1 view];
+        singleTapView.tag = i;
+		
+- (void)openTapAction:(UITapGestureRecognizer *)sender{
+    
+    UITapGestureRecognizer *singleTap = (UITapGestureRecognizer *)sender;
+   // NSLog(@"%d",[singleTap view].tag]);
+  }
+  
