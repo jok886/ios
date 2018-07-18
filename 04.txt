@@ -1,19 +1,38 @@
-iOS֮tableView�����Ż���tableView��������
+iOS之tableView性能优化／tableView滑动卡顿
 
-1.��ǰ���㲢����ø߶ȣ���ΪheightForRow��Ƶ���ĵ��á�
+1.提前计算并缓存好高度，因为heightForRow最频繁的调用。
 
-2.�첽���ƣ��������ӽ��棬����ƿ��ʱ��������ͻ�ƿڡ�
+2.异步绘制，遇到复杂界面，性能瓶颈时，可能是突破口。
 
-3.����ʱ������أ�����ڴ���ͼƬչʾ���������ʱ���ܹ��á���SDWebImage�Ѿ�ʵ���첽���أ���
+3.滑动时按需加载，这个在大量图片展示，网络加载时，很管用。（SDWebImage已经实现异步加载）。
 
-4.����cells��
+4.重用cells。
 
-5.���cell����ʾ����������web��ʹ���첽���أ�����������
+5.如果cell内显示得内容来自web，使用异步加载，缓存结果请求。
 
-6.���û���͸��ͼ�㣬ʹ�ò�͸����ͼ��
+6.少用或不用透明图层，使用不透明视图。
 
-7.����ʹ���е�view opaque������cell������
+7.尽量使所有的view opaque，包括cell本身。
 
-8.����subViews
+8.减少subViews
 
-9.����addView��cell��̬����view�����Գ�ʼ����ʱ������ӣ�Ȼ��ͨ��hide�����Ƿ���ʾ��
+9.少用addView给cell动态添加view，可以初始化的时候就添加，然后通过hide控制是否显示。
+
+
+
+一、weak和assign的区别
+1.修饰变量类型的区别
+weak 只可以修饰对象。如果修饰基本数据类型，编译器会报错-“Property with ‘weak’ attribute must be of object type”。
+assign 可修饰对象，和基本数据类型。当需要修饰对象类型时，MRC时代使用unsafe_unretained。当然，unsafe_unretained也可能产生野指针，所以它名字是"unsafe_”。
+
+2.是否产生野指针的区别
+weak 不会产生野指针问题。因为weak修饰的对象释放后（引用计数器值为0），指针会自动被置nil，之后再向该对象发消息也不会崩溃。 weak是安全的。
+assign 如果修饰对象，会产生野指针问题；如果修饰基本数据类型则是安全的。修饰的对象释放后，指针不会自动被置空，此时向对象发消息会崩溃。
+
+二、相似
+都可以修饰对象类型，但是assign修饰对象会存在问题。
+
+三、总结
+assign 适用于基本数据类型如int,float,struct等值类型，不适用于引用类型。因为值类型会被放入栈中，遵循先进后出原则，由系统负责管理栈内存。而引用类型会被放入堆中，需要我们自己手动管理内存或通过ARC管理。
+weak 适用于delegate和block等引用类型，不会导致野指针问题，也不会循环引用，非常安全。
+
