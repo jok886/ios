@@ -1,0 +1,140 @@
+
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions 
+{
+    
+
+// Override point for customization after application launch.
+   
+
+ self.window = [[UIWindow alloc]initWithFrame:[UIScreen mainScreen].bounds];
+    
+
+self.window.backgroundColor = [UIColor whiteColor];
+    
+    //加载界面视图
+    
+
+   UIStoryboard *storyboard=[UIStoryboard storyboardWithName:@"Main" bundle:nil];
+
+   UIViewController *vc=[storyboard instantiateInitialViewController];
+
+   //
+   UIViewController *vc=[ViewController alloc] initWithNibName:@"VC" bundle:nil];
+
+  //xib和类名一致，
+  //不带Controller的xib,去加载
+   UIViewController *vc=[ViewController alloc] initWithNibName:nil bundle:nil];
+
+
+  self.window.rootViewController = vc;
+     
+[self.window makeKeyAndVisible];
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
