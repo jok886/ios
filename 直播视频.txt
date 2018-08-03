@@ -1,0 +1,158 @@
+
+// VideoToolBox(视频编码) AudioToolBox(声音编码) 硬编码
+
+// librtmp
+
+// rtmp
+
+  // 开启推流 (采集视频 -> 美颜处理 -> 显示到屏幕,并且把数据推流到流媒体服务器)
+    // LFLiveKit : 主播端 (GPUImage,VideoToolBox,AudioToolBox,librtmp)
+	
+	
+	  // 创建房间
+    // web服务器 , 即时通讯服务器 , 流媒体服务器
+    // express, socket
+    // 保存房间到服务器
+    // 搭建socket服务器
+    // socket服务器依赖Http
+    
+    // 开始推流
+	
+	    // 创建视频源
+    GPUImageVideoCamera *camera = [[GPUImageVideoCamera alloc] initWithSessionPreset:AVCaptureSessionPreset1280x720 cameraPosition:AVCaptureDevicePositionBack];
+    camera.outputImageOrientation = UIInterfaceOrientationPortrait;
+    _camera = camera;
+    
+    // 创建滤镜
+    GPUImageBeautifyFilter *beautifyFilter = [[GPUImageBeautifyFilter alloc] init];
+//    // 美白滤镜
+//    GPUImageBrightnessFilter *filter = [[GPUImageBrightnessFilter alloc] init];
+//    filter.brightness = 0.3;
+//    
+//    // 磨皮滤镜
+//    GPUImageBilateralFilter *bilateralFilter = [[GPUImageBilateralFilter alloc] init];
+//    // 值越小,磨皮效果越明显
+//    bilateralFilter.distanceNormalizationFactor = 5;
+
+
+//- (void)startPush
+//{
+//    // 开启推流 (采集视频 -> 美颜处理 -> 显示到屏幕,并且把数据推流到流媒体服务器)
+//    // LFLiveKit : 主播端 (GPUImage,VideoToolBox,AudioToolBox,librtmp)
+//    
+//    // 推流
+//    LFLiveStreamInfo *info = [[LFLiveStreamInfo alloc] init];
+//    ;
+//    info.url = [XMGRTMPPushUrl stringByAppendingString:@"room"];
+//    
+//    [self.session startLive:info];
+//}
+//- (LFLiveSession *)session
+//{
+//    if (_session == nil) {
+//        
+//        _session = [[LFLiveSession alloc] initWithAudioConfiguration: [LFLiveAudioConfiguration defaultConfiguration] videoConfiguration:[LFLiveVideoConfiguration defaultConfiguration]];
+//        
+//        _session.captureDevicePosition = AVCaptureVideoOrientationPortrait;
+//        
+//        _session.preView.frame = [UIScreen mainScreen].bounds;
+//        
+//        _session.preView = _preView;
+//        
+//        _session.preView.backgroundColor = [UIColor redColor];
+//        
+////        [self.view addSubview:_session.preView];
+//    }
+//    return _session;
+//}
+
+
+
+
+拉流	
+#import <IJKMediaFramework/IJKMediaFramework.h>
+#import <MJExtension.h>
+#import "XMGRoomItem.h"
+@interface XMGAudienceViewController ()
+@property (weak, nonatomic) IBOutlet UIView *preView;
+//@property (nonatomic, strong) IJKFFMoviePlayerController *player;
+@property (nonatomic, strong) IJKFFMoviePlayerController *player;
+
+
+- (void)startPlayer
+{
+    NSURL *url = [NSURL URLWithString:_item.stream_addr];
+    
+    // 做直播
+    _player = [[IJKFFMoviePlayerController alloc] initWithContentURL:url withOptions:nil];
+    
+    // 获取拉流数据
+    [_player prepareToPlay];
+
+    
+    [_preView addSubview:_player.view];
+    
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+
+    [_player stop];
+    
+    // 关闭
+    [_player shutdown];
+}
+
+
+
+
+
+#import "ViewController.h"
+#import <AVFoundation/AVFoundation.h>
+#import <VideoToolbox/VideoToolbox.h>
+// 经验:只要发现苹果原生的类属性和方法比较少,一般都是基类,需要再次去寻找子类,根据功能
+// AVCaptureDevice(摄像头,麦克风),本质并不能够输出东西
+
+// AVCaptureInput 管理采集的数据
+
+// AVCaptureOutput 管理设备数据输出(视频文件,一张图片)
+
+//  AVCaptureSession: 管理输入到输出数据
+
+// AVCaptureSession给它指定一个输入和输出设备,就会在输入和输出设备中建立连接AVCaptureConnection
+
+//  AVCaptureVideoPreviewLayer: 展示采集数据
+
+//  AVCaptureVideoDataOutput: 获取视频设备输出数据
+//  AVCaptureAudioDataOutput: 获取音频设备输出数据
+
+/*
+    采集视频 -> 摄像头
+ 
+    采集音频 -> 麦克风
+ 
+ */
+
+ 
+ 
+ // 获取一帧播放时长
+// CMSampleBufferGetDuration(<#CMSampleBufferRef  _Nonnull sbuf#>) 计算视频时长
+// CMBlockBufferRef:把图片压缩之后的数据
+// CMSampleBufferCreate:压缩之后,解码显示
+// 获取图片信息
+//   CMSampleBufferGetImageBuffer(<#CMSampleBufferRef  _Nonnull sbuf#>)
+// 获取帧尺寸
+//    CMSampleBufferGetSampleSize(<#CMSampleBufferRef  _Nonnull sbuf#>, <#CMItemIndex sampleIndex#>)
+// 编码
+// VideoToolbox:硬编码 帧数据经过H.264压缩 NAL(PTS,DTS,I,P,B)
+//    // PTS:展示时间
+//    CMSampleBufferGetPresentationTimeStamp(<#CMSampleBufferRef  _Nonnull sbuf#>)
+//
+//    // DTS:帧压缩时间
+//    CMSampleBufferGetDecodeTimeStamp(<#CMSampleBufferRef  _Nonnull sbuf#>)
+
+// 获取帧格式,通过它获取PTS,DTS
+//    CMSampleBufferGetFormatDescription(<#CMSampleBufferRef  _Nonnull sbuf#>)
+
+
