@@ -1,0 +1,1733 @@
+1. xcode 插件 ： KSImageNamed-Xcode-master  ，VVDocumenter-Xcode-master
+
+CFBundleName  app名称
+
+/*
+    优先级:LaunchScreen > LaunchImage
+    在xcode配置了,不起作用 1.清空xcode缓存 2.直接删掉程序 重新运行
+    如果是通过LaunchImage设置启动界面,那么屏幕的可视范围由图片决定
+    注意:如果使用LaunchImage,必须让你的美工提供各种尺寸的启动图片
+    
+    LaunchScreen:Xcode6开始才有
+    LaunchScreen好处:1.自动识别当前真机或者模拟器的尺寸 2.只要让美工提供一个可拉伸图片
+    3.展示更多东西
+ 
+    LaunchScreen底层实现:把LaunchScreen截屏,生成一张图片.作为启动界面
+ 
+ */
+
+/*
+    项目架构(结构)搭建:主流结构(UITabBarController + 导航控制器)
+    -> 项目开发方式 1.storyboard 2.纯代码
+ */
+ 
+ 
+/*
+    1.创建UIApplication(1.打开网页,发短信,打电话 2.设置应用程序提醒数字 3.设置联网状态 4.设置状态栏)
+    2.创建AppDelegate代理对象,并且成为UIApplication代理,(监听整个app生命周期,处理内存警告)
+    3.开启主运行循环,保证程序一直运行(runloop:每一个线程都有runloop,主线程有一个runloop自动开启)
+    4.加载info.plist,判断是否指定了main.storyboard,如果指定,就会去加载
+ 
+    1.创建窗口
+    2.设置根控制器
+    3.显示窗口
+ */
+
+ 
+// 自定义类:1.可以管理自己业务
+// 封装:谁的事情谁管理 =. 方便以后去维护代码
+
+// 程序启动的时候就会调用
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+    // 1.创建窗口
+    self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    
+    // 2.设置窗口根控制器
+	
+	    // 2.广告
+    XMGAdViewController *adVc = [[XMGAdViewController alloc] init];
+    // init ->  initWithNibName 1.首先判断有没有指定nibName 2.判断下有没有跟类名同名xib
+    self.window.rootViewController = adVc;
+	
+	
+  //  XMGTabBarController *tabBarVc = [[XMGTabBarController alloc] init];
+  //  self.window.rootViewController = tabBarVc;
+    
+    /*
+        问题:
+        1.选中的图片被渲染
+        2.选中标题颜色:黑色 标题字体大
+        3.发布按钮显示不出来
+     */
+    
+    // 3.显示窗口 1.成为UIApplication主窗口 2.
+    [self.window makeKeyAndVisible];
+
+
+    return YES;
+}
+/*
+ 问题:
+ 1.选中按钮的图片被渲染 -> iOS7之后默认tabBar上按钮图片都会被渲染 1.修改图片 2.通过代码
+ 2.选中标题颜色:黑色 标题字体大
+
+ 3.发布按钮显示不出来 分析:为什么其他图片可以显示,我的图片不能显示 => 发布按钮图片太大,导致显示不出来
+ 
+    1.图片太大,系统帮你渲染 => 能显示 => 位置不对 => 高亮状态达不到
+ 
+    解决:不能修改图片尺寸, 效果:让发布图片居中
+	 // 发布按钮设置图片位置
+    publishVc.tabBarItem.imageInsets = UIEdgeInsetsMake(6, 0, -6 , 0);
+	
+	2.如何解决:系统的TabBar上按钮状态只有选中,没有高亮状态 => 中间发布按钮 不能用系统tabBarButton => 发布按钮 不是 tabBarController子控制器
+ 
+    1.自定义tabBar
+	
+	
+ */
+  // 快速生成一个没有渲染图片
+    nav.tabBarItem.selectedImage = [UIImage imageOriginalWithName:@"tabBar_essence_click_icon"];
+	
+// 只会调用一次
++ (void)load
+{
+    // 获取哪个类中UITabBarItem
+    UITabBarItem *item = [UITabBarItem appearanceWhenContainedIn:self, nil];
+    
+    // 设置按钮选中标题的颜色:富文本:描述一个文字颜色,字体,阴影,空心,图文混排
+    // 创建一个描述文本属性的字典
+    NSMutableDictionary *attrs = [NSMutableDictionary dictionary];
+    attrs[NSForegroundColorAttributeName] = [UIColor blackColor];
+    [item setTitleTextAttributes:attrs forState:UIControlStateSelected];
+    
+    // 设置字体尺寸:只有设置正常状态下,才会有效果
+    NSMutableDictionary *attrsNor = [NSMutableDictionary dictionary];
+    attrsNor[NSFontAttributeName] = [UIFont systemFontOfSize:13];
+    [item setTitleTextAttributes:attrsNor forState:UIControlStateNormal];
+}
+/*
+    appearance:只能在控件显示之前设置,才有作用
+ 
+    夜间模式
+ */
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    [self.view removeFromSuperview];
+  
+    
+    UISwitch *switchView =  [UISwitch appearance];
+    
+    switchView.onTintColor = [UIColor redColor];
+    
+    
+    [[UIApplication sharedApplication].keyWindow addSubview:self.view];
+    
+//    _s1.onTintColor = [UIColor redColor];
+//    _s2.onTintColor = [UIColor redColor];
+//    _s3.onTintColor = [UIColor redColor];
+}
+
+/*
+    1.改插件 -> 如何去查找插件 -> 插件开发知识 -> 插件代码肯定有个地方指定安装在什么地方
+    1.打开插件 2.搜索plug 3.就能找到安装路径
+ 
+ */
+ @interface XMGTabBarController : UITabBarController
+ 
+ #pragma mark - 生命周期方法
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    // Do any additional setup after loading the view.
+    // 1 添加子控制器(5个子控制器) -> 自定义控制器 -> 划分项目文件结构
+    [self setupAllChildViewController];
+    
+    // 2 设置tabBar上按钮内容 -> 由对应的子控制器的tabBarItem属性
+    [self setupAllTitleButton];
+    
+    
+    // 3.自定义tabBar
+    [self setupTabBar];
+    
+    // tabBar上按钮并不是在viewDidLoad添加的
+    
+    
+}
+
+
+ .h
+#import <UIKit/UIKit.h>
+
+@interface XMGTabBar : UITabBar
+
+@end
+
+
+.m
+#import "XMGTabBar.h"
+
+@interface XMGTabBar ()
+
+@property (nonatomic, weak) UIButton *plusButton;
+
+@end
+
+@implementation XMGTabBar
+
+- (UIButton *)plusButton
+{
+    if (_plusButton == nil) {
+        
+        UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [btn setImage:[UIImage imageNamed:@"tabBar_publish_icon"] forState:UIControlStateNormal];
+        [btn setImage:[UIImage imageNamed:@"tabBar_publish_click_icon"] forState:UIControlStateHighlighted];
+        [btn sizeToFit];
+        [self addSubview:btn];
+        
+        _plusButton = btn;
+    }
+    return _plusButton;
+}
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    // 跳转tabBarButton位置
+    NSInteger count = self.items.count;
+    CGFloat btnW = self.bounds.size.width / (count + 1);
+    CGFloat btnH = self.bounds.size.height;
+    CGFloat x = 0;
+    int i = 0;
+    // 私有类:打印出来有个类,但是敲出来没有,说明这个类是系统私有类
+    // 遍历子控件 调整布局
+    for (UIView *tabBarButton in self.subviews) {
+
+        if ([tabBarButton isKindOfClass:NSClassFromString(@"UITabBarButton")]) {
+            if (i == 2) {
+                i += 1;
+            }
+            
+            x = i * btnW;
+            
+            tabBarButton.frame = CGRectMake(x, 0, btnW, btnH);
+            
+            i++;
+        }
+    }
+    
+    // 调整发布按钮位置
+    self.plusButton.center = CGPointMake(self.bounds.size.width * 0.5, self.bounds.size.height * 0.5);
+    
+}
+
+@end
+
+@implementation UIBarButtonItem (Item)
++ (UIBarButtonItem *)itemWithimage:(UIImage *)image highImage:(UIImage *)highImage target:(id)target action:(SEL)action
+{
+    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [btn setImage:image forState:UIControlStateNormal];
+    [btn setImage:highImage forState:UIControlStateHighlighted];
+    [btn sizeToFit];
+    [btn addTarget:target action:action forControlEvents:UIControlEventTouchUpInside];
+    UIView *containView = [[UIView alloc] initWithFrame:btn.bounds];
+    [containView addSubview:btn];
+    
+    return [[UIBarButtonItem alloc] initWithCustomView:containView];
+}
+
+#pragma mark - 设置导航条
+- (void)setupNavBar
+{
+    
+    // 左边按钮
+    // 把UIButton包装成UIBarButtonItem.就导致按钮点击区域扩大
+    self.navigationItem.leftBarButtonItem = [UIBarButtonItem itemWithimage:[UIImage imageNamed:@"nav_item_game_icon"] highImage:[UIImage imageNamed:@"nav_item_game_click_icon"] target:self action:@selector(game)];
+    
+    // 右边按钮
+    self.navigationItem.rightBarButtonItem = [UIBarButtonItem itemWithimage:[UIImage imageNamed:@"navigationButtonRandom"] highImage:[UIImage imageNamed:@"navigationButtonRandomClick"] target:nil action:nil];
+    
+    // titleView
+    self.navigationItem.titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"MainTitle"]];
+
+}
+
+/*
+    pch步骤:1.提前编译Pch
+ 
+    1.存放公用宏
+    2.存放公用头文件
+    3.自定义Log
+ */
+
+#import "UIView+Frame.h"
+#import "UIBarButtonItem+Item.h"
+
+
+
+/***********屏幕适配*************/
+#define XMGScreenW [UIScreen mainScreen].bounds.size.width
+#define XMGScreenH [UIScreen mainScreen].bounds.size.height
+#define iphone6P (XMGScreenH == 736)
+#define iphone6 (XMGScreenH == 667)
+#define iphone5 (XMGScreenH == 568)
+#define iphone4 (XMGScreenH == 480)
+
+
+#define XMGFunc XMGLog(@"%s",__func__)
+
+#ifdef DEBUG // 调试
+
+#define XMGLog(...) NSLog(__VA_ARGS__)
+
+#else // 发布
+
+#define XMGLog(...)
+
+#endif
+
+
+@interface XMGNavigationViewController : UINavigationController
+@implementation XMGNavigationViewController
++ (void)load
+{
+    UINavigationBar *navBar = [UINavigationBar appearanceWhenContainedIn:self, nil];
+    
+    // 只要是通过模型设置,都是通过富文本设置
+    // 设置导航条标题 => UINavigationBar
+    NSMutableDictionary *attrs = [NSMutableDictionary dictionary];
+    attrs[NSFontAttributeName] = [UIFont boldSystemFontOfSize:20];
+    [navBar setTitleTextAttributes:attrs];
+    
+    // 设置导航条背景图片
+    [navBar setBackgroundImage:[UIImage imageNamed:@"navigationbarBackgroundWhite"] forBarMetrics:UIBarMetricsDefault];
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+     UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self.interactivePopGestureRecognizer.delegate action:@selector(handleNavigationTransition:)];
+    
+    [self.view addGestureRecognizer:pan];
+    
+    // 控制手势什么时候触发,只有非根控制器才需要触发手势
+    pan.delegate = self;
+    
+    // 禁止之前手势
+    self.interactivePopGestureRecognizer.enabled = NO;
+    
+    // 假死状态:程序还在运行,但是界面死了.
+    
+    /*
+        为什么导航控制器的手势不是全屏滑动 =>
+     */
+}
+
+#pragma mark - UIGestureRecognizerDelegate
+// 决定是否触发手势
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+    return self.childViewControllers.count > 1;
+    
+}
+- (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated
+{
+    if (self.childViewControllers.count > 0) { // 非根控制器
+        
+        // 设置返回按钮,只有非根控制器
+        viewController.navigationItem.leftBarButtonItem = [UIBarButtonItem backItemWithimage:[UIImage imageNamed:@"navigationButtonReturn"] highImage:[UIImage imageNamed:@"navigationButtonReturnClick"]  target:self action:@selector(back) title:@"返回"];
+    }
+    
+    // 真正在跳转
+    [super pushViewController:viewController animated:animated];
+    
+}
+- (void)back
+{
+    [self popViewControllerAnimated:YES];
+}
+@end
+
+
+/*
+    1.广告业务逻辑
+    2.占位视图思想:有个控件不确定尺寸,但是层次结构已经确定,就可以使用占位视图思想
+    3.屏幕适配.通过屏幕高度判断
+ */
+ 
+ // 点击广告界面调用
+- (void)tap
+{
+    // 跳转到界面 => safari
+    NSURL *url = [NSURL URLWithString:_item.ori_curl];
+    UIApplication *app = [UIApplication sharedApplication];
+    if ([app canOpenURL:url]) {
+        [app openURL:url];
+    }
+}
+    // 加载广告数据 => 拿到活时间 => 服务器 => 查看接口文档 1.判断接口对不对 
+	2.解析数据(w_picurl,ori_curl:跳转到广告界面,w,h) => 请求数据(AFN)
+    [self loadAdData];
+    
+    // 创建定时器
+    _timer =  [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(timeChange) userInfo:nil repeats:YES];
+
+	
+	
+ [responseObject writeToFile:@"/Users/xiaomage/Desktop/04-广告/ad.plist" atomically:YES];
+        // 请求数据 -> 解析数据(写成plist文件) -> 设计模型 -> 字典转模型 -> 展示数据
+        // 获取字典
+        NSDictionary *adDict = [responseObject[@"ad"] lastObject];
+        
+        // 字典转模型
+        _item = [XMGADItem mj_objectWithKeyValues:adDict];
+		
+	     // 创建UIImageView展示图片 =>
+        CGFloat h = XMGScreenW / _item.w * _item.h;
+        
+        self.adView.frame = CGRectMake(0, 0, XMGScreenW, h);
+        // 加载广告网页
+        [self.adView sd_setImageWithURL:[NSURL URLWithString:_item.w_picurl]];
+		
+	// 点击跳转做的事情
+- (IBAction)clickJump:(id)sender {
+    // 销毁广告界面,进入主框架界面
+    XMGTabBarController *tabBarVc = [[XMGTabBarController alloc] init];
+    [UIApplication sharedApplication].keyWindow.rootViewController = tabBarVc;
+    
+    // 干掉定时器
+    [_timer invalidate];
+}
+
+    // 注册cell
+    [self.tableView registerNib:[UINib nibWithNibName:@"XMGSubTagCell" bundle:nil] forCellReuseIdentifier:ID];
+
+	
+@implementation XMGSubTagCell
+
+/*
+ 头像变成圆角 1.设置头像圆角 2.裁剪图片
+ 处理数字
+ */
+- (void)setItem:(XMGSubTagItem *)item
+{
+    _item = item;
+    
+    // 设置内容
+    _nameView.text = item.theme_name;
+    
+    // 判断下有没有>10000
+    NSString *numStr = [NSString stringWithFormat:@"%@人订阅",item.sub_number] ;
+    NSInteger num = item.sub_number.integerValue;
+    if (num > 10000) {
+        CGFloat numF = num / 10000.0;
+        numStr = [NSString stringWithFormat:@"%.1f万人订阅",numF];
+        numStr = [numStr stringByReplacingOccurrencesOfString:@".0" withString:@""];
+    }
+    
+    _numView.text = numStr;
+    
+   // [_iconView sd_setImageWithURL:[NSURL URLWithString:item.image_list] placeholderImage:[UIImage imageNamed:@"defaultUserIcon"]];
+       [_iconView sd_setImageWithURL:[NSURL URLWithString:item.image_list] placeholderImage:[UIImage imageNamed:@"defaultUserIcon"] options:SDWebImageCacheMemoryOnly completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+            // 1.开启图形上下文
+            // 比例因素:当前点与像素比例
+            UIGraphicsBeginImageContextWithOptions(image.size, NO, 0);
+            // 2.描述裁剪区域
+            UIBezierPath *path = [UIBezierPath bezierPathWithOvalInRect:CGRectMake(0, 0, image.size.width, image.size.height)];
+            // 3.设置裁剪区域;
+            [path addClip];
+            // 4.画图片
+            [image drawAtPoint:CGPointZero];
+            // 5.取出图片
+            image = UIGraphicsGetImageFromCurrentImageContext();
+            // 6.关闭上下文
+            UIGraphicsEndImageContext();
+
+            _iconView.image = image;
+    }];
+}
+// 从xib加载就会调用一次
+- (void)awakeFromNib {
+    // Initialization code
+    // 设置头像圆角,iOS9苹果修复
+    _iconView.layer.cornerRadius = 30;
+    _iconView.layer.masksToBounds = YES;
+    
+    
+}
+ 
+  // 处理cell分割线 1.自定义分割线 2.系统属性(iOS8才支持) 3.万能方式(重写cell的setFrame) 了解tableView底层实现了解 1.取消系统自带分割线 2.把tableView背景色设置为分割线的背景色 3.重写setFrame
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    
+    // 220 220 221
+    self.tableView.backgroundColor = XMGColor(220, 220, 221);
+	
+@implementation XMGSubTagCell
+- (void)setFrame:(CGRect)frame
+{
+    XMGLog(@"%@",NSStringFromCGRect(frame));
+    frame.size.height -= 1;
+    // 才是真正去给cell赋值
+    [super setFrame:frame];
+}
+ // 提示用户当前正在加载数据 SVPro
+    [SVProgressHUD showWithStatus:@"正在加载ing....."];
+}
+
+static NSString * const ID = @"cell";
+
+@interface XMGSubTagViewController ()
+@property (nonatomic, strong) NSArray *subTags;
+@property (nonatomic, weak) AFHTTPSessionManager *mgr;
+@end
+
+// 界面即将消失调用
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
+    // 销毁指示器
+    [SVProgressHUD dismiss];
+    
+    // 取消之前的请求
+    [_mgr.tasks makeObjectsPerformSelector:@selector(cancel)];
+    
+}
+
+登录：// 1.划分结构(顶部 中间 底部) // 2.一个结构一个结构
+
+// 越复杂的界面 越要封装(复用)
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+    
+    // 创建登录view
+//    XMGLoginRegisterView *loginView = [XMGLoginRegisterView loginView];
+//    
+//    // 添加到中间的view
+//    [self.middleView addSubview:loginView];
+    
+    // 添加注册界面
+    XMGLoginRegisterView *registerView = [XMGLoginRegisterView registerView];
+    
+    // 添加到中间的view
+    [self.middleView addSubview:registerView];
+}
+
+@implementation XMGLoginRegisterView
+
++ (instancetype)loginView
+{
+    return [[[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self) owner:nil options:nil] firstObject];
+}
+
++ (instancetype)registerView
+{
+     return [[[NSBundle mainBundle] loadNibNamed:NSStringFromClass(self) owner:nil options:nil] lastObject];
+}
+
+
+- (void)awakeFromNib
+{
+    UIImage *image = _loginRegisterButton.currentBackgroundImage;
+    
+    image = [image stretchableImageWithLeftCapWidth:image.size.width * 0.5 topCapHeight:image.size.height * 0.5];
+    
+   // 让按钮背景图片不要被拉伸
+    [_loginRegisterButton setBackgroundImage:image forState:UIControlStateNormal];
+    
+}
+
+
+- (IBAction)clickRegister:(UIButton *)sender {
+    
+    sender.selected = !sender.selected;
+    
+    // 平移中间view
+    _leadCons.constant = _leadCons.constant == 0? -self.middleView.xmg_width * 0.5:0;
+    
+    [UIView animateWithDuration:0.3 animations:^{
+        [self.view layoutIfNeeded];
+    }];
+    
+}
+/*
+ 屏幕适配:
+ 1.一个view从xib加载,需不需在重新固定尺寸 一定要在重新设置一下
+ 
+ 2.在viewDidLoad设置控件frame好不好,开发中一般在viewDidLayoutSubviews布局子控件
+ */
+ 
+ 
+// viewDidLayoutSubviews:才会根据布局调整控件的尺寸
+- (void)viewDidLayoutSubviews
+{
+    // 一定要调用super
+    [super viewDidLayoutSubviews];
+    
+    XMGLoginRegisterView *loginView = self.middleView.subviews[0];
+    loginView.frame = CGRectMake(0, 0, self.middleView.xmg_width * 0.5, self.middleView.xmg_height);
+    
+    XMGLoginRegisterView *registerView = self.middleView.subviews[1];
+    registerView.frame = CGRectMake( self.middleView.xmg_width * 0.5, 0,self.middleView.xmg_width * 0.5, self.middleView.xmg_height);
+    
+}
+
+
+@interface XMGLoginField : UITextField
+@implementation XMGLoginField
+/*
+ 1.文本框光标变成白色
+ 2.文本框开始编辑的时候,占位文字颜色变成白色
+ */
+
+@implementation UITextField (Placeholder)
++ (void)load
+{
+    // setPlaceholder
+    Method setPlaceholderMethod = class_getInstanceMethod(self, @selector(setPlaceholder:));
+    Method setXmg_PlaceholderMethod = class_getInstanceMethod(self, @selector(setXmg_Placeholder:));
+    
+    method_exchangeImplementations(setPlaceholderMethod, setXmg_PlaceholderMethod);
+}
+- (void)setPlaceholderColor:(UIColor *)placeholderColor
+{
+    
+    // 给成员属性赋值 runtime给系统的类添加成员属性
+    // 添加成员属性
+    objc_setAssociatedObject(self, @"placeholderColor", placeholderColor, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    
+    // 获取占位文字label控件
+    UILabel *placeholderLabel = [self valueForKey:@"placeholderLabel"];
+    
+    // 设置占位文字颜色
+    placeholderLabel.textColor = placeholderColor;
+}
+
+- (void)awakeFromNib
+{
+    // 设置光标的颜色为白色
+    self.tintColor = [UIColor whiteColor];
+    
+    // 监听文本框编辑: 1.代理 2.通知 3.target
+    // 原则:不要自己成为自己代理
+    // 开始编辑
+    [self addTarget:self action:@selector(textBegin) forControlEvents:UIControlEventEditingDidBegin];
+    // 结束编辑
+    [self addTarget:self action:@selector(textEnd) forControlEvents:UIControlEventEditingDidEnd];
+    
+
+    // 获取占位文字控件
+    self.placeholderColor = [UIColor redColor];
+    
+ 
+    // 快速设置占位文字颜色 => 文本框占位文字可能是label => 验证占位文字是label => 拿到label => 查看label属性名(1.runtime 2.断点)
+    // self.placeholderColor = [UIColor redColor];
+    
+}
+
+// 文本框开始编辑调用
+- (void)textBegin
+{
+    self.placeholderColor = [UIColor whiteColor];
+    // 设置占位文字颜色变成白色
+//    NSMutableDictionary *attrs = [NSMutableDictionary dictionary];
+//    attrs[NSForegroundColorAttributeName] = [UIColor whiteColor];
+//    self.attributedPlaceholder = [[NSAttributedString alloc] initWithString:self.placeholder attributes:attrs];
+}
+
+
+// 文本框结束编辑调用
+- (void)textEnd
+{
+    self.placeholderColor = [UIColor redColor];
+//    UILabel *placeholderLabel = [self valueForKey:@"placeholderLabel"];
+//    placeholderLabel.textColor = [UIColor redColor];
+//    NSMutableDictionary *attrs = [NSMutableDictionary dictionary];
+//    attrs[NSForegroundColorAttributeName] = [UIColor lightGrayColor];
+//    self.attributedPlaceholder = [[NSAttributedString alloc] initWithString:self.placeholder attributes:attrs];
+}
+
+    // 处理cell间距,默认tableView分组样式,有额外头部和尾部间距
+    self.tableView.sectionHeaderHeight = 0;
+    self.tableView.sectionFooterHeight = 10;
+    
+    self.tableView.contentInset = UIEdgeInsetsMake(-25, 0, 0, 0);
+
+	
+ // 获取缓存尺寸字符串
+- (NSString *)sizeStr
+{
+    // 获取Caches文件夹路径
+    NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
+    
+    NSInteger totalSize = [self getFileSize:cachePath];
+    
+    NSString *sizeStr = @"清除缓存";
+    // MB KB B
+    if (totalSize > 1000 * 1000) {
+        // MB
+        CGFloat sizeF = totalSize / 1000.0 / 1000.0;
+        sizeStr = [NSString stringWithFormat:@"%@(%.1fMB)",sizeStr,sizeF];
+    } else if (totalSize > 1000) {
+        // KB
+        CGFloat sizeF = totalSize / 1000.0;
+        sizeStr = [NSString stringWithFormat:@"%@(%.1fKB)",sizeStr,sizeF];
+    } else if (totalSize > 0) {
+        // B
+        sizeStr = [NSString stringWithFormat:@"%@(%.ldB)",sizeStr,totalSize];
+    }
+
+    return sizeStr;
+}	
+	// 自己去计算SDWebImage做的缓存
+- (void)getFileSize:(NSString *)directoryPath
+{
+    // NSFileManager
+    // attributesOfItemAtPath:指定文件路径,就能获取文件属性
+    // 把所有文件尺寸加起来
+    
+    // 获取文件管理者
+   NSFileManager *mgr = [NSFileManager defaultManager];
+    
+    // 获取文件夹下所有的子路径
+    NSArray *subPaths = [mgr subpathsAtPath:directoryPath];
+    
+    NSInteger totalSize = 0;
+    
+    for (NSString *subPath in subPaths) {
+        // 获取文件全路径
+        NSString *filePath = [directoryPath stringByAppendingPathComponent:subPath];
+        
+        // 判断隐藏文件
+        if ([filePath containsString:@".DS"]) continue;
+        
+        // 判断是否文件夹
+        BOOL isDirectory;
+        // 判断文件是否存在,并且判断是否是文件夹
+        BOOL isExist = [mgr fileExistsAtPath:filePath isDirectory:&isDirectory];
+        if (!isExist || isDirectory) continue;
+        
+        // 获取文件属性
+        // attributesOfItemAtPath:只能获取文件尺寸,获取文件夹不对,
+        NSDictionary *attr = [mgr attributesOfItemAtPath:filePath error:nil];
+        
+        // 获取文件尺寸
+        NSInteger fileSize = [attr fileSize];
+
+        totalSize += fileSize;
+    }
+    
+    XMGLog(@"%ld",totalSize);
+    
+}
+
+
+// 清空缓存
+    // 获取文件管理者
+    NSFileManager *mgr = [NSFileManager defaultManager];
+    
+    // 获取cache文件夹下所有文件,不包括子路径的子路径
+    NSArray *subPaths = [mgr contentsOfDirectoryAtPath:CachePath error:nil];
+    
+    for (NSString *subPath in subPaths) {
+        // 拼接完成全路径
+        NSString *filePath = [CachePath stringByAppendingPathComponent:subPath];
+        
+        // 删除路径
+        [mgr removeItemAtPath:filePath error:nil];
+    }
+	
+    // 获取文件夹尺寸
+    // 文件夹非常小,如果我的文件非常大
+    [XMGFileTool getFileSize:CachePath completion:^(NSInteger totalSize) {
+        
+        _totalSize = totalSize;
+        
+        [self.tableView reloadData];
+        
+        [SVProgressHUD dismiss];
+    }];
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+    
+    // 初始化子控制器
+    [self setupAllChildVcs];
+    
+    // 设置导航条
+    [self setupNavBar];
+    
+    // scrollView
+    [self setupScrollView];
+    
+    // 标题栏
+    [self setupTitlesView];
+}
+
+/**
+ *  初始化子控制器
+ */
+- (void)setupAllChildVcs
+{
+    [self addChildViewController:[[XMGAllViewController alloc] init]];
+    [self addChildViewController:[[XMGVideoViewController alloc] init]];
+    [self addChildViewController:[[XMGVoiceViewController alloc] init]];
+    [self addChildViewController:[[XMGPictureViewController alloc] init]];
+    [self addChildViewController:[[XMGWordViewController alloc] init]];
+}
+
+/**
+ *  设置导航条
+ */
+- (void)setupNavBar
+{
+    // 左边按钮
+    // 把UIButton包装成UIBarButtonItem.就导致按钮点击区域扩大
+    self.navigationItem.leftBarButtonItem = [UIBarButtonItem itemWithimage:[UIImage imageNamed:@"nav_item_game_icon"] highImage:[UIImage imageNamed:@"nav_item_game_click_icon"] target:self action:@selector(game)];
+    
+    // 右边按钮
+    self.navigationItem.rightBarButtonItem = [UIBarButtonItem itemWithimage:[UIImage imageNamed:@"navigationButtonRandom"] highImage:[UIImage imageNamed:@"navigationButtonRandomClick"] target:nil action:nil];
+    
+    // titleView
+    self.navigationItem.titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"MainTitle"]];
+}
+
+/**
+ *  scrollView
+ */
+- (void)setupScrollView
+{
+    // 不允许自动修改UIScrollView的内边距
+    self.automaticallyAdjustsScrollViewInsets = NO;
+    
+    UIScrollView *scrollView = [[UIScrollView alloc] init];
+    scrollView.backgroundColor = [UIColor blueColor];
+    scrollView.frame = self.view.bounds;
+    scrollView.showsHorizontalScrollIndicator = NO;
+    scrollView.showsVerticalScrollIndicator = NO;
+    scrollView.pagingEnabled = YES;
+    [self.view addSubview:scrollView];
+    
+    // 添加子控制器的view
+    NSUInteger count = self.childViewControllers.count;
+    CGFloat scrollViewW = scrollView.xmg_width;
+    CGFloat scrollViewH = scrollView.xmg_height;
+    
+    for (NSUInteger i = 0; i < count; i++) {
+        // 取出i位置子控制器的view
+        UIView *childVcView = self.childViewControllers[i].view;
+        childVcView.frame = CGRectMake(i * scrollViewW, 0, scrollViewW, scrollViewH);
+        [scrollView addSubview:childVcView];
+    }
+    
+    scrollView.contentSize = CGSizeMake(count * scrollViewW, 0);
+}
+
+/**
+ *  标题栏
+ */
+- (void)setupTitlesView
+{
+    UIView *titlesView = [[UIView alloc] init];
+    titlesView.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.5];
+    titlesView.frame = CGRectMake(0, 64, self.view.xmg_width, 35);
+    [self.view addSubview:titlesView];
+    self.titlesView = titlesView;
+    
+    // 标题栏按钮
+    [self setupTitleButtons];
+    
+    // 标题下划线
+    [self setupTitleUnderline];
+}
+
+/**
+ *  标题栏按钮
+ */
+- (void)setupTitleButtons
+{
+    // 文字
+    NSArray *titles = @[@"全部", @"视频", @"声音", @"图片", @"段子"];
+    NSUInteger count = titles.count;
+    
+    // 标题按钮的尺寸
+    CGFloat titleButtonW = self.titlesView.xmg_width / count;
+    CGFloat titleButtonH = self.titlesView.xmg_height;
+    
+    // 创建5个标题按钮
+    for (NSUInteger i = 0; i < count; i++) {
+        XMGTitleButton *titleButton = [[XMGTitleButton alloc] init];
+        [titleButton addTarget:self action:@selector(titleButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+        [self.titlesView addSubview:titleButton];
+        // frame
+        titleButton.frame = CGRectMake(i * titleButtonW, 0, titleButtonW, titleButtonH);
+        // 文字
+        [titleButton setTitle:titles[i] forState:UIControlStateNormal];
+    }
+}
+
+/**
+ *  标题下划线
+ */
+- (void)setupTitleUnderline
+{
+    // 标题按钮
+    XMGTitleButton *firstTitleButton = self.titlesView.subviews.firstObject;
+    
+    // 下划线
+    UIView *titleUnderline = [[UIView alloc] init];
+    titleUnderline.xmg_height = 2;
+    titleUnderline.xmg_y = self.titlesView.xmg_height - titleUnderline.xmg_height;
+    titleUnderline.backgroundColor = [firstTitleButton titleColorForState:UIControlStateSelected];
+    [self.titlesView addSubview:titleUnderline];
+    self.titleUnderline = titleUnderline;
+    
+    // 切换按钮状态
+    firstTitleButton.selected = YES;
+    self.previousClickedTitleButton = firstTitleButton;
+    
+    [firstTitleButton.titleLabel sizeToFit]; // 让label根据文字内容计算尺寸
+    self.titleUnderline.xmg_width = firstTitleButton.titleLabel.xmg_width + 10;
+    self.titleUnderline.xmg_centerX = firstTitleButton.xmg_centerX;
+}
+
+
+@interface XMGEssenceViewController () <UIScrollViewDelegate>
+/** 用来存放所有子控制器view的scrollView */
+@property (nonatomic, weak) UIScrollView *scrollView;
+/** 标题栏 */
+@property (nonatomic, weak) UIView *titlesView;
+/** 标题下划线 */
+@property (nonatomic, weak) UIView *titleUnderline;
+/** 上一次点击的标题按钮 */
+@property (nonatomic, weak) XMGTitleButton *previousClickedTitleButton;
+@end
+
+UIImageView *imageView;
+
+
+ self.imageView.userInteractionEnabled = YES;
+    [self.imageView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(seeBigPicture)]];
+
+
+/**
+ *  查看大图
+ */
+- (void)seeBigPicture
+{
+    XMGSeeBigPictureViewController *vc = [[XMGSeeBigPictureViewController alloc] init];
+    vc.topic = self.topic;
+    [self.window.rootViewController presentViewController:vc animated:YES completion:nil];
+}
+
+
+
+    // 滚到最下面
+    [self xmg_scrollToBottom];
+}
+- (void)xmg_scrollToBottom
+{
+    if (!self.chatMsgs.count) return;
+    NSIndexPath *lastIndexPath = [NSIndexPath indexPathForRow: self.chatMsgs.count - 1 inSection:0];
+    [self.tableView scrollToRowAtIndexPath: lastIndexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+}
+
+
+九宫格
+
+static NSInteger const cols = 4;
+static CGFloat const margin = 1;
+#define itemWH (XMGScreenW - (cols - 1) * margin) / cols
+
+
+  // 每一个商品的尺寸
+    CGFloat shopW = 50;
+    CGFloat shopH = 70;
+    
+    // 一行的列数
+    int cols = 4;
+    
+    // 每一列之间的间距
+    CGFloat colMargin = (self.shopsView.frame.size.width - cols * shopW) / (cols - 1);
+    // 每一行之间的间距
+    CGFloat rowMargin = 10;
+    
+    // 创建一个父控件（整体：存放图片和文字）
+    UIView *shopView = [[UIView alloc] init];
+    shopView.backgroundColor = [UIColor redColor];
+    
+    // 商品的索引
+    NSUInteger index = self.shopsView.subviews.count;
+    
+    // 商品的x值
+    NSUInteger col = index % cols;
+    CGFloat shopX = col * (shopW + colMargin);
+    
+    // 商品的y值
+    NSUInteger row = index / cols;
+    CGFloat shopY = row * (shopH + rowMargin);
+    
+    shopView.frame = CGRectMake(shopX, shopY, shopW, shopH);
+	
+	
+
+/*
+        1.初始化要设置流水布局
+        2.cell必须要注册
+        3.cell必须自定义
+     */
+    // 创建布局
+    UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
+    
+    // 设置cell尺寸
+    layout.itemSize = CGSizeMake(itemWH, itemWH);
+    layout.minimumInteritemSpacing = margin;
+    layout.minimumLineSpacing = margin;
+    
+    // 创建UICollectionView
+    UICollectionView *collectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, 0, 0, 300) collectionViewLayout:layout];
+    _collectionView = collectionView;
+    collectionView.backgroundColor = self.tableView.backgroundColor;
+    self.tableView.tableFooterView = collectionView;
+    
+    collectionView.dataSource = self;
+    collectionView.delegate = self;
+    collectionView.scrollEnabled = NO;
+    
+    // 注册cell
+    [collectionView registerNib:[UINib nibWithNibName:@"XMGSquareCell" bundle:nil] forCellWithReuseIdentifier:ID];
+
+
+	
+
+
+	
+	- (void)setScale:(CGFloat)scale
+{
+    _scale = scale;
+    
+    //      R G B
+    // 默认：0.4 0.6 0.7
+    // 红色：1   0   0
+    
+    CGFloat red = XMGRed + (1 - XMGRed) * scale;
+    CGFloat green = XMGGreen + (0 - XMGGreen) * scale;
+    CGFloat blue = XMGBlue + (0 - XMGBlue) * scale;
+    self.textColor = [UIColor colorWithRed:red green:green blue:blue alpha:1.0];
+    
+    // 大小缩放比例
+    CGFloat transformScale = 1 + scale * 0.3; // [1, 1.3]
+    self.transform = CGAffineTransformMakeScale(transformScale, transformScale);
+}
+
+
+@interface XMGHomeViewController () <UIScrollViewDelegate>
+@property (weak, nonatomic) IBOutlet UIScrollView *titleScrollView;
+@property (weak, nonatomic) IBOutlet UIScrollView *contentScrollView;
+@end
+
+@implementation XMGHomeViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    // 添加子控制器
+    [self setupChildVc];
+    
+    // 添加标题
+    [self setupTitle];
+    
+    // 默认显示第0个子控制器
+    [self scrollViewDidEndScrollingAnimation:self.contentScrollView];
+}
+
+/**
+ * setupChildVc
+ */
+- (void)setupChildVc
+{
+    XMGSocialViewController *social0 = [[XMGSocialViewController alloc] init];
+    social0.title = @"国际";
+    [self addChildViewController:social0];
+    
+    XMGSocialViewController *social1 = [[XMGSocialViewController alloc] init];
+    social1.title = @"军事";
+    [self addChildViewController:social1];
+    
+    XMGSocialViewController *social2 = [[XMGSocialViewController alloc] init];
+    social2.title = @"社会";
+    [self addChildViewController:social2];
+    
+    XMGSocialViewController *social3 = [[XMGSocialViewController alloc] init];
+    social3.title = @"政治";
+    [self addChildViewController:social3];
+    
+    XMGSocialViewController *social4 = [[XMGSocialViewController alloc] init];
+    social4.title = @"经济";
+    [self addChildViewController:social4];
+    
+    XMGSocialViewController *social5 = [[XMGSocialViewController alloc] init];
+    social5.title = @"体育";
+    [self addChildViewController:social5];
+    
+    XMGSocialViewController *social6 = [[XMGSocialViewController alloc] init];
+    social6.title = @"娱乐";
+    [self addChildViewController:social6];
+}
+
+/**
+ * 添加标题
+ */
+- (void)setupTitle
+{
+    // 定义临时变量
+    CGFloat labelW = 100;
+    CGFloat labelY = 0;
+    CGFloat labelH = self.titleScrollView.frame.size.height;
+    
+    // 添加label
+    for (NSInteger i = 0; i<7; i++) {
+        UILabel *label = [[UILabel alloc] init];
+        label.text = [self.childViewControllers[i] title];
+        CGFloat labelX = i * labelW;
+        label.frame = CGRectMake(labelX, labelY, labelW, labelH);
+        label.textAlignment = NSTextAlignmentCenter;
+        label.backgroundColor = [UIColor colorWithRed:arc4random_uniform(100)/100.0 green:arc4random_uniform(100)/100.0 blue:arc4random_uniform(100)/100.0 alpha:1.0];
+        [label addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(labelClick:)]];
+        label.userInteractionEnabled = YES;
+        label.tag = i;
+        [self.titleScrollView addSubview:label];
+		 if (i == 0) { // 最前面的label
+            label.scale = 1.0;
+        }
+    }
+    
+    // 设置contentSize
+    self.titleScrollView.contentSize = CGSizeMake(7 * labelW, 0);
+    self.contentScrollView.contentSize = CGSizeMake(7 * [UIScreen mainScreen].bounds.size.width, 0);
+}
+
+/**
+ * 监听顶部label点击
+ */
+- (void)labelClick:(UITapGestureRecognizer *)tap
+{
+    // 取出被点击label的索引
+    NSInteger index = tap.view.tag;
+    
+    // 让底部的内容scrollView滚动到对应位置
+    CGPoint offset = self.contentScrollView.contentOffset;
+    offset.x = index * self.contentScrollView.frame.size.width;
+    [self.contentScrollView setContentOffset:offset animated:YES];
+}
+
+#pragma mark - <UIScrollViewDelegate>
+/**
+ * scrollView结束了滚动动画以后就会调用这个方法（比如- (void)setContentOffset:(CGPoint)contentOffset animated:(BOOL)animated;方法执行的动画完毕后）
+ */
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
+{
+    // 一些临时变量
+    CGFloat width = scrollView.frame.size.width;
+    CGFloat height = scrollView.frame.size.height;
+    CGFloat offsetX = scrollView.contentOffset.x;
+    
+    // 当前位置需要显示的控制器的索引
+    NSInteger index = offsetX / width;
+    
+    // 让对应的顶部标题居中显示
+    XMGHomeLabel *label = self.titleScrollView.subviews[index];
+    CGPoint titleOffset = self.titleScrollView.contentOffset;
+    titleOffset.x = label.center.x - width * 0.5;
+    // 左边超出处理
+    if (titleOffset.x < 0) titleOffset.x = 0;
+    // 右边超出处理
+    CGFloat maxTitleOffsetX = self.titleScrollView.contentSize.width - width;
+    if (titleOffset.x > maxTitleOffsetX) titleOffset.x = maxTitleOffsetX;
+    
+    [self.titleScrollView setContentOffset:titleOffset animated:YES];
+    
+    // 让其他label回到最初的状态
+    for (XMGHomeLabel *otherLabel in self.titleScrollView.subviews) {
+        if (otherLabel != label) otherLabel.scale = 0.0;
+    }
+    
+    // 取出需要显示的控制器
+    UIViewController *willShowVc = self.childViewControllers[index];
+    
+    // 如果当前位置的位置已经显示过了，就直接返回
+    if ([willShowVc isViewLoaded]) return;
+    
+    // 添加控制器的view到contentScrollView中;
+    willShowVc.view.frame = CGRectMake(offsetX, 0, width, height);
+    [scrollView addSubview:willShowVc.view];
+}
+
+/**
+ * 手指松开scrollView后，scrollView停止减速完毕就会调用这个
+ */
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    [self scrollViewDidEndScrollingAnimation:scrollView];
+}
+
+/**
+ * 只要scrollView在滚动，就会调用
+ */
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    CGFloat scale = scrollView.contentOffset.x / scrollView.frame.size.width;
+    if (scale < 0 || scale > self.titleScrollView.subviews.count - 1) return;
+    
+    // 获得需要操作的左边label
+    NSInteger leftIndex = scale;
+    XMGHomeLabel *leftLabel = self.titleScrollView.subviews[leftIndex];
+    
+    // 获得需要操作的右边label
+    NSInteger rightIndex = leftIndex + 1;
+    XMGHomeLabel *rightLabel = (rightIndex == self.titleScrollView.subviews.count) ? nil : self.titleScrollView.subviews[rightIndex];
+    
+    // 右边比例
+    CGFloat rightScale = scale - leftIndex;
+    // 左边比例
+    CGFloat leftScale = 1 - rightScale;
+    
+    // 设置label的比例
+    leftLabel.scale = leftScale;
+    rightLabel.scale = rightScale;
+}
+
+@end
+
+@property (nonatomic, strong) void(^clickSettingBlock)();
+
+
+- (IBAction)clickSetting:(id)sender {
+    if (_clickSettingBlock) {
+        _clickSettingBlock();
+    }
+}
+
+- (void)awakeFromNib
+{
+    // 初始化布局
+    UICollectionViewFlowLayout *layout = _collectionView.collectionViewLayout;
+    layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+    
+    CGFloat width = [UIScreen mainScreen].bounds.size.width / 3;
+    layout.itemSize = CGSizeMake(width, 120);
+    layout.minimumLineSpacing = 0;
+    layout.minimumInteritemSpacing = 0;
+    
+    // 注册
+    _collectionView.dataSource = self;
+    _collectionView.pagingEnabled = YES;
+    _collectionView.showsHorizontalScrollIndicator = NO;
+    [_collectionView registerNib:[UINib nibWithNibName:@"XMGHomeTeacherCell" bundle:nil] forCellWithReuseIdentifier:topTeachId];
+    
+}
+
+@interface XMGInterestRowItem : NSObject
+@property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSArray *data;
+@property (nonatomic, assign) CGFloat cellH;
+@end
+
++ (NSDictionary *)mj_objectClassInArray
+{
+    return @{@"data":@"XMGInterestItem"};
+}
+
+- (void)setData:(NSArray *)data
+{
+    _data = data;
+    
+    CGFloat originY = 27;
+    CGFloat margin = 10;
+    CGFloat itemH = 30;
+    NSInteger cols = 4;
+    NSInteger rows = (self.data.count - 1) / cols + 1;
+    
+    _cellH = rows * (itemH + margin) + originY;
+    
+}
+
+
+
+@interface XMGTagListView : UIView
+
+
+- (void)addTag:(NSString *)tag;
+
+- (void)deleteTag:(NSString *)tag;
+
+@property (nonatomic, strong) NSMutableArray *tags;
+
+@property (nonatomic, strong) void (^clickTag)(NSString *tag);
+
+@property (nonatomic, assign) CGFloat cellH;
+
+@end
+
+
+@interface XMGTagListView ()
+{
+    NSMutableArray *_tags;
+}
+@property (nonatomic, strong) NSMutableDictionary *tagsDict;
+
+@end
+
+@implementation XMGTagListView
+
+- (NSMutableArray *)tags
+{
+    if (_tags == nil) {
+        _tags = [NSMutableArray array];
+    }
+    return _tags;
+}
+
+- (NSMutableDictionary *)tagsDict
+{
+    if (_tagsDict == nil) {
+        _tagsDict = [NSMutableDictionary dictionary];
+    }
+    return _tagsDict;
+}
+- (void)setTags:(NSMutableArray *)tags
+{
+    for (NSString *tag in tags) {
+        
+        [self addTag:tag];
+    }
+}
+- (void)deleteTag:(NSString *)tag
+{
+    // 根据标签，获取之前的标签View
+    UIButton *btn = self.tagsDict[tag];
+    
+    // 移除View
+    [btn removeFromSuperview];
+    
+     [self.tags removeObject:tag];
+    
+    // 更新高度
+    UIButton *lastBtn = self.subviews.lastObject;
+    
+    _cellH = CGRectGetMaxY(lastBtn.frame) + 10;
+    
+    self.height = _cellH;
+    
+    // 移除字典
+    [self.tagsDict removeObjectForKey:tag];
+    
+    // 设置其他标签的位置，删除标签会影响其他标签
+    
+    // 获取当前标签的位置
+    NSInteger i = [self.subviews indexOfObject:btn];
+    
+    // 如果是最后一个标签不需要设置,但是也是需要移除标签
+    if (i == self.tags.count - 1) {
+        
+        // 删除标签View
+
+        
+        return;
+    }
+    // 0 1 2
+    
+    // 从当前角标遍历标签View，更新frame
+    [UIView animateWithDuration:0.25 animations:^{
+        
+        for (NSInteger index = i; index < self.tags.count; index++) {
+            
+            UIButton *btn = self.tags[index];
+            
+            [self setupBtnFrame:btn i:index];
+        }
+    }];
+
+   
+}
+
+- (void)delete:(UIButton *)button
+{
+    
+    if (_clickTag) {
+        _clickTag(button.currentTitle);
+    }
+       
+}
+
+- (void)addTag:(NSString *)tag
+{
+    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    btn.backgroundColor =  [UIColor colorWithRed:20 / 255.0 green:145 / 255.0 blue:255 / 255.0 alpha:1];
+    btn.layer.cornerRadius = 7;
+    btn.titleLabel.font = [UIFont systemFontOfSize:13];
+    [btn setTitle:tag forState:UIControlStateNormal];
+    [btn sizeToFit];
+    [btn addTarget:self action:@selector(delete:) forControlEvents:UIControlEventTouchUpInside];
+    
+    [self setupBtnFrame:btn i:self.tags.count];
+    
+    // 记录到字典
+    self.tagsDict[tag] = btn;
+    
+    // 添加按钮
+    [self addSubview:btn];
+    
+    [self.tags addObject:tag];
+    
+    // 更新tagList高度
+    _cellH = CGRectGetMaxY(btn.frame) + 10;
+    self.height = _cellH;
+}
+
+// 设置一个按钮位置
+- (void)setupBtnFrame:(UIButton *)button i:(NSInteger)i
+{
+    CGFloat margin = 10;
+    
+    CGFloat btnX = margin;
+    
+    CGFloat btnY = margin;
+    
+    CGFloat btnW = button.width + 7;
+    
+    CGFloat btnH = 30;
+    
+    // 获取上一个按钮
+    if (i == 0) {
+         btnX =  margin;
+        
+    } else {
+        
+        UIButton *lastBtn = self.subviews[i - 1];
+        
+         btnX = CGRectGetMaxX(lastBtn.frame) + margin;
+        // 判断是否需要换行显示，当前按钮最大的X值是否超过标签宽度
+        // 最大x = 按钮x + 按钮宽度 + 间距
+        CGFloat maxW = btnX + btnW + margin;
+        
+        if (maxW > self.width) {
+            //换行
+            btnX = margin;
+            btnY = CGRectGetMaxY(lastBtn.frame) + margin;
+        }
+    }
+    
+    button.frame = CGRectMake(btnX, btnY, btnW, btnH);
+}
+
+	
+ 
+  // 刷新第0组
+    NSIndexSet *indexSex = [NSIndexSet indexSetWithIndex:0];
+    [self.tableView reloadSections:indexSex withRowAnimation:UITableViewRowAnimationNone];
+	
+
+	
+ NSArray *tags = [XMGInterestManager interestes];
+ 
+ // 保存所有已选兴趣
+    [XMGInterestManager storageAllInterest:_tagListView.tags];
+	
+ #import <Foundation/Foundation.h>
+
+@interface XMGInterestManager : NSObject
+
+//+ (void)storageInterestGroup:(NSArray *)group;
+
+//+ (NSMutableArray *)interestGroup;
+//
++ (void)storageAllInterest:(NSArray *)interests;
+
++ (NSArray *)interestes;
+
++ (NSMutableDictionary *)cellDict;
+
+@end
+
+#import "XMGInterestManager.h"
+#define XMGInterestFilePath [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)[0] stringByAppendingPathComponent:@"interest.data"]
+
+#define XMGInterestesFilePath [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)[0] stringByAppendingPathComponent:@"interestes.data"]
+
+static NSMutableDictionary *_interestDicts = nil;
+@implementation XMGInterestManager
+
++ (NSMutableDictionary *)cellDict
+{
+    if (_interestDicts == nil) {
+        _interestDicts = [NSMutableDictionary dictionary];
+    }
+    
+    return _interestDicts;
+}
+
++ (void)storageInterestGroup:(NSArray *)group
+{
+    [NSKeyedArchiver archiveRootObject:group toFile:XMGInterestFilePath];
+}
+
++ (NSMutableArray *)interestGroup
+{
+    return [NSKeyedUnarchiver unarchiveObjectWithFile:XMGInterestFilePath];
+}
+
++ (void)storageAllInterest:(NSArray *)interests
+{
+    [NSKeyedArchiver archiveRootObject:interests toFile:XMGInterestesFilePath];
+}
+
++ (NSArray *)interestes
+{
+    return [NSKeyedUnarchiver unarchiveObjectWithFile:XMGInterestesFilePath];
+}
+
+@end
+
+  // NSNULL
+     [responseObject writeToFile:@"/Users/xiaomagejiaoyu/Desktop/课堂共享/02-码哥课堂项目/1217/代码/04-码哥课堂(解析)/home.plist" atomically:YES];
+	 
+	 
+	 + (NSURLSessionDataTask *)POST:(NSString *)URLString parameters:(id)parameters progress:(void (^)(NSProgress *))uploadProgress success:(void (^)(NSURLSessionDataTask *, id))success failure:(void (^)(NSURLSessionDataTask *, NSError *))failure
+{
+    // 管理请求和响应
+    AFHTTPSessionManager *mgr = [AFHTTPSessionManager manager];
+    
+    // 自定义请求
+    AFJSONRequestSerializer *res = [AFJSONRequestSerializer serializer];
+    mgr.requestSerializer = res;
+    
+    // 自定义响应
+    AFJSONResponseSerializer *rsp = [AFJSONResponseSerializer serializer];
+    rsp.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript",@"text/html", nil];
+    mgr.responseSerializer = rsp;
+    
+    return [mgr POST:URLString parameters:parameters progress:uploadProgress success:success failure:failure];
+}
+
+
++ (NSString *)getSystemVersion {
+    UIDevice *device = [[UIDevice alloc] init];
+    NSString *systemVersion = device.systemVersion;
+    return systemVersion;
+}
+
+//  判断当前网络连接状态
++(NSString *)getNetWorkStates{
+    UIApplication *app = [UIApplication sharedApplication];
+    NSArray *children = [[[app valueForKeyPath:@"statusBar"]valueForKeyPath:@"foregroundView"]subviews];
+    NSString *state = [[NSString alloc]init];
+    int netType = 0;
+    //获取到网络返回码
+    for (id child in children) {
+        if ([child isKindOfClass:NSClassFromString(@"UIStatusBarDataNetworkItemView")]) {
+            //获取到状态栏
+            netType = [[child valueForKeyPath:@"dataNetworkType"]intValue];
+            
+            switch (netType) {
+                case 0:
+                    //                    state = @"无网络"; // 5
+                    state = @"5";
+                    //无网模式
+                    break;
+                case 1:
+                    //                    state = @"2G"; // 1
+                    state = @"1";
+                    break;
+                case 2:
+                    //                    state = @"3G"; // 2
+                    state = @"3";
+                    break;
+                case 3:
+                    //                    state = @"4G"; //3
+                    state = @"4";
+                    break;
+                case 5:
+                    //                    state = @"WIFI"; //5
+                    state = @"5";
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    //根据状态选择
+    return state;
+}
+
+
+           NSLog(@"categoryTableView - %@", NSStringFromUIEdgeInsets(self.categoryTableView.contentInset));
+		   
+		
+
+@implementation XMGTitleButton
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    if (self = [super initWithFrame:frame]) {
+        self.titleLabel.font = [UIFont systemFontOfSize:16];
+        [self setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+        [self setTitleColor:[UIColor redColor] forState:UIControlStateSelected];
+    }
+    return self;
+}
+
+- (void)setHighlighted:(BOOL)highlighted
+{ // 只要重写了这个方法，按钮就无法进入highlighted状态
+    
+}
+
+
+
+/**
+ *  标题栏按钮
+ */
+- (void)setupTitleButtons
+{
+    // 文字
+    NSArray *titles = @[@"全部", @"视频", @"声音", @"图片", @"段子"];
+    NSUInteger count = titles.count;
+    
+    // 标题按钮的尺寸
+    CGFloat titleButtonW = self.titlesView.xmg_width / count;
+    CGFloat titleButtonH = self.titlesView.xmg_height;
+    
+    // 创建5个标题按钮
+    for (NSUInteger i = 0; i < count; i++) {
+        XMGTitleButton *titleButton = [[XMGTitleButton alloc] init];
+        titleButton.tag = i;
+        [titleButton addTarget:self action:@selector(titleButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+        [self.titlesView addSubview:titleButton];
+        // frame
+        titleButton.frame = CGRectMake(i * titleButtonW, 0, titleButtonW, titleButtonH);
+        // 文字
+        [titleButton setTitle:titles[i] forState:UIControlStateNormal];
+    }
+}
+
+/**
+ *  标题下划线
+ */
+- (void)setupTitleUnderline
+{
+    // 标题按钮
+    XMGTitleButton *firstTitleButton = self.titlesView.subviews.firstObject;
+    
+    // 下划线
+    UIView *titleUnderline = [[UIView alloc] init];
+    titleUnderline.xmg_height = 2;
+    titleUnderline.xmg_y = self.titlesView.xmg_height - titleUnderline.xmg_height;
+    titleUnderline.backgroundColor = [firstTitleButton titleColorForState:UIControlStateSelected];
+    [self.titlesView addSubview:titleUnderline];
+    self.titleUnderline = titleUnderline;
+    
+    // 切换按钮状态
+    firstTitleButton.selected = YES;
+    self.previousClickedTitleButton = firstTitleButton;
+    
+    [firstTitleButton.titleLabel sizeToFit]; // 让label根据文字内容计算尺寸
+    self.titleUnderline.xmg_width = firstTitleButton.titleLabel.xmg_width + XMGMarin;
+    self.titleUnderline.xmg_centerX = firstTitleButton.xmg_centerX;
+}
+#pragma mark - 监听
+/**
+ *  点击标题按钮
+ */
+- (IBAction)titleButtonClick:(XMGTitleButton *)titleButton
+{
+    // 重复点击了标题按钮
+    if (self.previousClickedTitleButton == titleButton) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:XMGTitleButtonDidRepeatClickNotification object:nil];
+    }
+    
+    // 处理标题按钮点击
+    [self dealTitleButtonClick:titleButton];
+}
+
+/**
+ *  处理标题按钮点击
+ */
+- (void)dealTitleButtonClick:(XMGTitleButton *)titleButton
+{
+    // 切换按钮状态
+    self.previousClickedTitleButton.selected = NO;
+    titleButton.selected = YES;
+    self.previousClickedTitleButton = titleButton;
+    
+    NSUInteger index = titleButton.tag;
+    [UIView animateWithDuration:0.25 animations:^{
+        // 处理下划线
+        self.titleUnderline.xmg_width = titleButton.titleLabel.xmg_width + XMGMarin;
+        self.titleUnderline.xmg_centerX = titleButton.xmg_centerX;
+        
+        // 滚动scrollView
+        CGFloat offsetX = self.scrollView.xmg_width * index;
+        self.scrollView.contentOffset = CGPointMake(offsetX, self.scrollView.contentOffset.y);
+    } completion:^(BOOL finished) {
+        // 添加子控制器的view
+        [self addChildVcViewIntoScrollView:index];
+    }];
+    
+    // 设置index位置对应的tableView.scrollsToTop = YES， 其他都设置为NO
+    for (NSUInteger i = 0; i < self.childViewControllers.count; i++) {
+        UIViewController *childVc = self.childViewControllers[i];
+        // 如果view还没有被创建，就不用去处理
+        if (!childVc.isViewLoaded) continue;
+        
+        UIScrollView *scrollView = (UIScrollView *)childVc.view;
+        if (![scrollView isKindOfClass:[UIScrollView class]]) continue;
+        
+        scrollView.scrollsToTop = (i == index);
+    }
+}
+
+#pragma mark - <UIScrollViewDelegate>
+/**
+ *  当用户松开scrollView并且滑动结束时调用这个代理方法（scrollView停止滚动的时候）
+ */
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    // 求出标题按钮的索引
+    NSUInteger index = scrollView.contentOffset.x / scrollView.xmg_width;
+    
+    // 点击对应的标题按钮
+    XMGTitleButton *titleButton = self.titlesView.subviews[index];
+//    [self titleButtonClick:titleButton];
+    [self dealTitleButtonClick:titleButton];
+}
+
+#pragma mark - 其他
+/**
+ *  添加第index个子控制器的view到scrollView中
+ */
+- (void)addChildVcViewIntoScrollView:(NSUInteger)index
+{
+    UIViewController *childVc = self.childViewControllers[index];
+    
+    // 如果view已经被加载过，就直接返回
+    if (childVc.isViewLoaded) return;
+    
+    // 取出index位置对应的子控制器view
+    UIView *childVcView = childVc.view;
+    
+    // 设置子控制器view的frame
+    CGFloat scrollViewW = self.scrollView.xmg_width;
+    childVcView.fr
+	
+	ame = CGRectMake(index * scrollViewW, 0, scrollViewW, self.scrollView.xmg_height);
+    // 添加子控制器的view到scrollView中
+    [self.scrollView addSubview:childVcView];
+}	
+
+
+
+	
+ 
