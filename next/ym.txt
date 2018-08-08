@@ -8,9 +8,9 @@ LFLiveSession
 
 LFLiveVideoConfiguration
 
-    /***  ?Ä¬ÈÏ·Ö±æÂÊ368 £ª 640  ÒôÆµ£º44.1 iphone6ÒÔÉÏ48  Ë«ÉùµÀ  ·½ÏòÊúÆÁ ***/
+    /***  ?é»˜è®¤åˆ†è¾¨ç‡368 ï¼Š 640  éŸ³é¢‘ï¼š44.1 iphone6ä»¥ä¸Š48  åŒå£°é“  æ–¹å‘ç«–å± ***/
  
-ÊÓÆµÅäÖÃ£¬ÅäÖÃÏà¹ØÊÓÆµµÄ»ù±¾ĞÅÏ¢£¨ÊÓÆµÖÊÁ¿¡¢ÂëÂÊ¡¢Ö¡Êı¡¢·Ö±æÂÊ£©ºÍÓ¦ÓÃÅäÖÃÈç×î´ó¡¢×îĞ¡Ö¡ÂÊµÈ¡£       
+è§†é¢‘é…ç½®ï¼Œé…ç½®ç›¸å…³è§†é¢‘çš„åŸºæœ¬ä¿¡æ¯ï¼ˆè§†é¢‘è´¨é‡ã€ç ç‡ã€å¸§æ•°ã€åˆ†è¾¨ç‡ï¼‰å’Œåº”ç”¨é…ç½®å¦‚æœ€å¤§ã€æœ€å°å¸§ç‡ç­‰ã€‚       
 LFLiveVideoConfiguration *videoConfiguration = [LFLiveVideoConfiguration new];
         videoConfiguration.videoSize = CGSizeMake(360, 640);
         
@@ -27,11 +27,11 @@ videoConfiguration.landscape = NO;
         
 videoConfiguration.sessionPreset = LFCaptureSessionPreset720x1280;
 
-/// Ä¬ÈÏÒôÆµÖÊÁ¿ audio sample rate: 44MHz(Ä¬ÈÏ44.1Hz iphoneg6ÒÔÉÏ48Hz), audio bitrate: 64Kbps
-   /**  ??×Ô¼º¶¨ÖÆµ¥ÉùµÀ  */
+/// é»˜è®¤éŸ³é¢‘è´¨é‡ audio sample rate: 44MHz(é»˜è®¤44.1Hz iphoneg6ä»¥ä¸Š48Hz), audio bitrate: 64Kbps
+   /**  ??è‡ªå·±å®šåˆ¶å•å£°é“  */
         /*
  
-ÒôÅäÅäÖÃ£¬ÅäÖÃÏà¹ØÒôÆµĞÅÏ¢£¨ÒôÆµÖÊÁ¿¡¢ÂëÂÊ¡¢²ÉÑùÂÊ¡¢ÉùµÀÊı£©        
+éŸ³é…é…ç½®ï¼Œé…ç½®ç›¸å…³éŸ³é¢‘ä¿¡æ¯ï¼ˆéŸ³é¢‘è´¨é‡ã€ç ç‡ã€é‡‡æ ·ç‡ã€å£°é“æ•°ï¼‰        
 LFLiveAudioConfiguration *audioConfiguration = [LFLiveAudioConfiguration new];
          audioConfiguration.numberOfChannels = 1;
          
@@ -66,7 +66,7 @@ _session.warterMarkView = imageView;
 self.session.beautyFace = !self.session.beautyFace;
 
 /**
- *  ÇĞ»»ÉãÏñÍ·
+ *  åˆ‡æ¢æ‘„åƒå¤´
  */
 
 - (void)clickConvert:(UIButton *)sender{
@@ -87,13 +87,13 @@ self.session=nil;
 
 
 
-SDCycleScrollView ÎŞÏŞÑ­»·×Ô¶¯Í¼Æ¬ÂÖ²¥Æ÷(Ò»²½ÉèÖÃ¼´¿ÉÊ¹ÓÃ)
+SDCycleScrollView æ— é™å¾ªç¯è‡ªåŠ¨å›¾ç‰‡è½®æ’­å™¨(ä¸€æ­¥è®¾ç½®å³å¯ä½¿ç”¨)
 
 //_url = [NSURL URLWithString:@"rtmp://live.yimizb.com/live/iphone?auth_key=1469700310-0-0-44fca2e32869b27859c3892bd2b14183"];
     
 self.player = [[IJKFFMoviePlayerController alloc] initWithContentURL:_url withOptions:options];
 
-ijkplayerÊÇ»ùÓÚFFmpegµÄ¿çÆ½Ì¨²¥·ÅÆ÷£¬Õâ¸ö¿ªÔ´ÏîÄ¿ÒÑ¾­±»¶à¸ö App Ê¹ÓÃ£¬ÆäÖĞÓ³¿Í¡¢ÃÀÅÄºÍ¶·ÓãÊ¹ÓÃÁË ijkplayer£¨5700+??£© 
+ijkplayeræ˜¯åŸºäºFFmpegçš„è·¨å¹³å°æ’­æ”¾å™¨ï¼Œè¿™ä¸ªå¼€æºé¡¹ç›®å·²ç»è¢«å¤šä¸ª App ä½¿ç”¨ï¼Œå…¶ä¸­æ˜ å®¢ã€ç¾æ‹å’Œæ–—é±¼ä½¿ç”¨äº† ijkplayerï¼ˆ5700+??ï¼‰ 
 
    //_url = [NSURL URLWithString:@"rtmp://live.yimizb.com/live/iphone?auth_key=1469700310-0-0-44fca2e32869b27859c3892bd2b14183"];
     self.player = [[IJKFFMoviePlayerController alloc] initWithContentURL:_url withOptions:options];
@@ -104,7 +104,7 @@ ijkplayerÊÇ»ùÓÚFFmpegµÄ¿çÆ½Ì¨²¥·ÅÆ÷£¬Õâ¸ö¿ªÔ´ÏîÄ¿ÒÑ¾­±»¶à¸ö App Ê¹ÓÃ£¬ÆäÖĞÓ³¿Í¡¢
     [self.view addSubview:self.player.view];
     [self.player play];
 	
-ÇëÇó¼ÓÃÜ
+è¯·æ±‚åŠ å¯†
   [ProgressHUD show:nil];
     NSString *postUrl = [NSString stringWithFormat:@"%@api/action/postLogin",ALLURL];
     NSString *crypt_string = [DES3Util AES128Encrypt:[NSString stringWithFormat:@"?phone=%@&password=%@",_phoneTF.text,_passTF.text]];
@@ -113,17 +113,17 @@ ijkplayerÊÇ»ùÓÚFFmpegµÄ¿çÆ½Ì¨²¥·ÅÆ÷£¬Õâ¸ö¿ªÔ´ÏîÄ¿ÒÑ¾­±»¶à¸ö App Ê¹ÓÃ£¬ÆäÖĞÓ³¿Í¡¢
 	
 	 
 
-//¼ÓÃÜ²ÎÊı
+//åŠ å¯†å‚æ•°
 -(NSMutableDictionary *) encryptParams:(NSDictionary *)params{
     NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
     
     if(params==nil)return parameters;
     
-    if([params objectForKey:@"action"]){//Èç¹û´æÔÚaction Ìí¼Óµ½ÍâÃæ
+    if([params objectForKey:@"action"]){//å¦‚æœå­˜åœ¨action æ·»åŠ åˆ°å¤–é¢
         [parameters setValue:params[@"action"] forKey:@"action"];
     }
     
-   // if([params objectForKey:@"os"]){//Èç¹û´æÔÚaction Ìí¼Óµ½ÍâÃæ
+   // if([params objectForKey:@"os"]){//å¦‚æœå­˜åœ¨action æ·»åŠ åˆ°å¤–é¢
    //     [parameters setValue:params[@"os"] forKey:@"os"];
    // }
     
@@ -152,7 +152,7 @@ ijkplayerÊÇ»ùÓÚFFmpegµÄ¿çÆ½Ì¨²¥·ÅÆ÷£¬Õâ¸ö¿ªÔ´ÏîÄ¿ÒÑ¾­±»¶à¸ö App Ê¹ÓÃ£¬ÆäÖĞÓ³¿Í¡¢
     
     
     
-    //È¥µô×îÇ°ÃæµÄ¡°&¡±
+    //å»æ‰æœ€å‰é¢çš„â€œ&â€
  //   dataStr = [dataStr substringFromIndex:1];
  //   NSLog(@"data:%@",dataStr);
     
@@ -162,7 +162,7 @@ ijkplayerÊÇ»ùÓÚFFmpegµÄ¿çÆ½Ì¨²¥·ÅÆ÷£¬Õâ¸ö¿ªÔ´ÏîÄ¿ÒÑ¾­±»¶à¸ö App Ê¹ÓÃ£¬ÆäÖĞÓ³¿Í¡¢
     NSString *base64StringDataStr = [[dataStr base64String] getSSString:[dataStr base64String] andKey:randomInteger];
     
     
-    // ²åÈëµ½¼ÓÃÜºóµÄdataµÚ¶şÎ» abc   a1bc
+    // æ’å…¥åˆ°åŠ å¯†åçš„dataç¬¬äºŒä½ abc   a1bc
     NSString *strindex = [NSString stringWithFormat:@"%@%ld%@",[base64StringDataStr substringToIndex:1],(long)randomInteger,[base64StringDataStr substringFromIndex:1]];
     
     
@@ -178,7 +178,7 @@ ijkplayerÊÇ»ùÓÚFFmpegµÄ¿çÆ½Ì¨²¥·ÅÆ÷£¬Õâ¸ö¿ªÔ´ÏîÄ¿ÒÑ¾­±»¶à¸ö App Ê¹ÓÃ£¬ÆäÖĞÓ³¿Í¡¢
     return parameters;
 }
 
-½âÑ¹Ëõ
+è§£å‹ç¼©
 // id decodeJson = [LFCGzipUtillity MyEncoding:response];	 
 	
  _segBgView = [UIView new];
@@ -192,7 +192,7 @@ ijkplayerÊÇ»ùÓÚFFmpegµÄ¿çÆ½Ì¨²¥·ÅÆ÷£¬Õâ¸ö¿ªÔ´ÏîÄ¿ÒÑ¾­±»¶à¸ö App Ê¹ÓÃ£¬ÆäÖĞÓ³¿Í¡¢
 	 
 	 
     self.segmentedControl = [[HMSegmentedControl alloc] initWithFrame:CGRectMake(0, 0, SCREENWIDTH, 60)];
-    self.segmentedControl.sectionTitles = @[@"¼ò½é",@"ÁÄÌì",@"ÅÅĞĞ"];
+    self.segmentedControl.sectionTitles = @[@"ç®€ä»‹",@"èŠå¤©",@"æ’è¡Œ"];
     self.segmentedControl.backgroundColor = DEFAULTCOLOR_LINGTGRAY;
     self.segmentedControl.titleTextAttributes = @{NSForegroundColorAttributeName : [UIColor darkGrayColor]};
     self.segmentedControl.selectedTitleTextAttributes = @{NSForegroundColorAttributeName : DEFAULTCOLOR};
@@ -222,13 +222,13 @@ ijkplayerÊÇ»ùÓÚFFmpegµÄ¿çÆ½Ì¨²¥·ÅÆ÷£¬Õâ¸ö¿ªÔ´ÏîÄ¿ÒÑ¾­±»¶à¸ö App Ê¹ÓÃ£¬ÆäÖĞÓ³¿Í¡¢
     self.scrollView.delegate = self;
     [self.view addSubview:self.scrollView];
     self.scrollView.sd_layout.topSpaceToView(_segBgView,0).leftSpaceToView(self.view,0).bottomSpaceToView(self.view,0).rightSpaceToView(self.view,0);
-#pragma mark scrollViewÌí¼ÓÊÖÊÆ
+#pragma mark scrollViewæ·»åŠ æ‰‹åŠ¿
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideUIViewAction)];
     [self.scrollView addGestureRecognizer:tapGesture];
 	
 	
 	
-	#pragma mark ÉèÖÃÀñÎïµÄUI
+	#pragma mark è®¾ç½®ç¤¼ç‰©çš„UI
     UICollectionViewFlowLayout *flowLayout=[[UICollectionViewFlowLayout alloc] init];
     [flowLayout setScrollDirection: UICollectionViewScrollDirectionHorizontal];
     flowLayout.minimumInteritemSpacing = 0.01;
@@ -243,7 +243,7 @@ ijkplayerÊÇ»ùÓÚFFmpegµÄ¿çÆ½Ì¨²¥·ÅÆ÷£¬Õâ¸ö¿ªÔ´ÏîÄ¿ÒÑ¾­±»¶à¸ö App Ê¹ÓÃ£¬ÆäÖĞÓ³¿Í¡¢
     [_scrollView addSubview:_giftCollectionView];
     _giftCollectionView.hidden = YES;
 	
-//¹ã¸æÍ¼	
+//å¹¿å‘Šå›¾	
 #import <SDCycleScrollView.h>   	
 @property (weak, nonatomic) IBOutlet SDCycleScrollView *bannerView;
 
@@ -261,6 +261,292 @@ ijkplayerÊÇ»ùÓÚFFmpegµÄ¿çÆ½Ì¨²¥·ÅÆ÷£¬Õâ¸ö¿ªÔ´ÏîÄ¿ÒÑ¾­±»¶à¸ö App Ê¹ÓÃ£¬ÆäÖĞÓ³¿Í¡¢
     
     _bannerView.imageURLStringsGroup = urls;
 }
+
+å¼¹å¹•
+UIImageView *_avatarView;
+UILabel *_contentLabel;
+
+ CGFloat speed = 75.;
+        speed += random()%20;
+        CGFloat time = (item.width+[[UIScreen mainScreen] bounds].size.width) / speed;
+        
+        [UIView animateWithDuration:time delay:0.f options:UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionCurveEaseInOut  animations:^{
+            item.left = -item.width;
+        } completion:^(BOOL finished) {
+            [item removeFromSuperview];
+        }];
+
+
+		
+  _barrageList = [NSMutableArray array];
+                    [self.barrageList addObject:@{@"icon":[self getImageFromURL:model.small_portrait],@"content":model.msg}];
+                    self.showView.dataArray = self.barrageList;
+                    [self.showView start];
+                    //[self.showView stop];
+					
+					
+@interface KSBarrageView : UIView
+
+/**
+ *  dataArray's object is NSDictionary
+ *  key "avatar" is NSString or UIImage or ImageUrl
+ *  key "content" is NSString
+ */
+@property (strong, nonatomic)NSArray *dataArray;
+
+- (void)start;
+- (void)stop;
+
+@end
+
+
+	
+ç¤¼ç‰©ï¼š
+ //å‘UIImageçš„æ¡ƒå¿ƒå›¾ç‰‡ä¸­å¡«å…¥éšæœºé¢œè‰²
+4å¼ éšæœºå›¾
+UIImage * flakeImage = [UIImage imageNamed:[zanArray objectAtIndex:myRandom]];
+ UIImageView* flakeView = [[UIImageView alloc] initWithImage:flakeImage];
+    float fXBase = SCREENWIDTH-100;//HEART_BK_VIEW_WIDTHæ˜¯çª—ä½“viewçš„å®½åº¦
+    
+    float fYBase = SCREENHEIGHT-80;//HEART_BK_VIEW_HEIGHTæ˜¯çª—ä½“viewçš„é«˜åº¦
+    
+    
+    
+    // è®¾ç½®å°æ¡ƒå¿ƒåŠ¨ç”»èµ·å§‹ç‚¹ï¼ŒXä½ç½®å‘å³éšæœºåç§»0~19
+    
+    long lRandom = random();
+    
+    int startX = fXBase+lRandom%20;
+    
+    int startY = fYBase;
+    
+    //è®¾ç½®å°æ¡ƒå¿ƒåŠ¨ç”»ç»“æŸç‚¹ï¼ŒXä½ç½®å·¦å³åç§»0~74
+    
+    int endX = ((lRandom%2)==0) ? (startX - lRandom%75) : (startX + lRandom%75);
+    
+    double scale = 1 / round(random() % 100) + 1.0;//è®¾ç½®æ¡ƒå¿ƒå¤§å°çš„éšæœºåç§»ï¼Œè¿™æ ·å‡ºæ¥çš„æ¡ƒå¿ƒå¤§å°å°±å¯ä»¥ä¸ä¸€æ ·
+    
+    double speed = 1 / round(random() % 100) + 1.0;//è®¾ç½®æ¡ƒå¿ƒé£è¡Œçš„é€Ÿåº¦åç§»ï¼Œè¿™æ ·æ¯ä¸ªæ¡ƒå¿ƒé£å‡ºæ¥çš„é€Ÿåº¦å°±å¯ä»¥ä¸ä¸€æ ·
+    
+    
+    
+    scale = (scale > 1.5) ? 1.5 : scale;
+    
+    
+    
+    flakeView.frame = CGRectMake(startX, startY, 25.0 * scale, 25.0 * scale);//åˆå§‹åŒ–æ¡ƒå¿ƒçš„frame
+    
+
+   
+    @try {
+        
+        // æŠŠè¯¥æ¡ƒå¿ƒåŠ å…¥åˆ°ä¸»è§†å›¾ä¸­ï¼Œæ³¨æ„åœ¨åŠ¨ç”»å®Œæˆåï¼Œéœ€è¦æŠŠè¿™ä¸ªæ¡ƒå¿ƒä»ä¸»è§†å›¾ä¸­removeæ‰
+        
+        [self.view addSubview:flakeView];
+        
+        
+        
+        [UIView beginAnimations:nil context:(__bridge void *)(flakeView)];
+        
+        // è®¾ç½®æ¡ƒå¿ƒé£è¡Œçš„æ—¶é—´ï¼Œä¹Ÿå°±æ˜¯å…¶é£è¡Œçš„é€Ÿåº¦
+        
+        float fSpeedBase = random()%5;
+        
+        fSpeedBase = (fSpeedBase < 3.0) ? 3.0 : fSpeedBase;
+        
+        float fDuration = fSpeedBase * speed;
+        
+        fDuration = (fDuration > 5.0) ? 5.0 : fDuration;
+        
+        fDuration = (fDuration <= 0) ? 2.5 : fDuration;
+        
+        fDuration = fDuration - 1;
+        
+        [UIView setAnimationDuration:fDuration];
+        
+        
+        // è®¾ç½®æ¡ƒå¿ƒçš„é£è¡Œç»ˆç‚¹ï¼
+        
+        flakeView.frame = CGRectMake(endX, fYBase-SCREENHEIGHT/3-random()%50, 25.0 * scale, 25.0 * scale);
+        
+        
+        
+        // è®¾ç½®æ¡ƒå¿ƒåŠ¨ç”»ç»“æŸåçš„callbackå‡½æ•°ï¼Œéœ€è¦åœ¨callbackä¸­å°†flakeViewç§»é™¤self.view
+        
+        [UIView setAnimationDidStopSelector:@selector(onAnimationComplete:finished:context:)];
+        
+        [UIView setAnimationDelegate:self];
+        
+        [UIView commitAnimations];//å¼€å§‹åŠ¨ç”»
+        
+    }
+    
+    @catch (NSException *exception) {
+        
+        NSLog(@"StartLoveShow exception...");
+        
+    }
+	
+//åœ¨åŠ¨ç”»ç»“æŸåï¼ŒonAnimationCompleteå‡½æ•°ä¸­ç§»é™¤flakeView
+
+- (void)onAnimationComplete:(NSString *)animationID finished:(NSNumber *)finished context:(void *)context {
+    
+    UIImageView *flakeView = (__bridge UIImageView *)(context);
+    
+    flakeView.hidden = YES;
+    
+    [flakeView removeFromSuperview];
+    
+}
+
+//æœ€åæ”¾å…¥ä¸€ä¸ªå…¨å±çš„clickäº‹ä»¶ä¸­ï¼Œå°±å¯ä»¥äº†ï¼Œç‚¹å‡»ä»»ä½•ä¸€ä¸ªåœ°æ–¹éƒ½å¯ä»¥å‡ºæ¡ƒå¿ƒ
+
+//é€ç¤¼ç‰©
+- (void)showMyPorsche918 {
+    CGFloat durTime = 3.0;
+    
+    UIImageView *porsche918 = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"porsche"]];
+    
+    //è®¾ç½®æ±½è½¦åˆå§‹ä½ç½®
+    porsche918.frame = CGRectMake(0, 0, 0, 0);
+    [self.view addSubview:porsche918];
+    
+    //ç»™æ±½è½¦æ·»åŠ åŠ¨ç”»
+    [UIView animateWithDuration:durTime animations:^{
+        
+        porsche918.frame = CGRectMake(SCREENWIDTH * 0.5 - 100, SCREENHEIGHT * 0.5 - 100 * 0.5, 240, 120);
+    }];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(durTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        //
+        [UIView animateWithDuration:0.8 animations:^{
+            porsche918.alpha = 0;
+        } completion:^(BOOL finished) {
+            [porsche918 removeFromSuperview];
+        }];
+    });
+    
+    
+    
+//    //çƒŸèŠ±
+//    
+//    CALayer *fireworksL = [CALayer layer];
+//    fireworksL.frame = CGRectMake((SCREENWIDTH - 250) * 0.5, 100, 250, 50);
+//    fireworksL.contents = (id)[UIImage imageNamed:@"gift_fireworks_0"].CGImage;
+//    [self.view.layer addSublayer:fireworksL];
+//    
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(durTime * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        [UIView animateWithDuration:0.5 animations:^{
+//            //æ²¡æ‰¾åˆ°è®¾ç½®é€æ˜åº¦çš„æ–¹æ³•ï¼Œæœ‰åˆ›æ„å¯ä»¥è‡ªå·±å†™
+//            //            fireworksL.alpha = 0;
+//        } completion:^(BOOL finished) {
+//            [fireworksL removeFromSuperlayer];
+//        }];
+//    });
+//    _fireworksL = fireworksL;
+//    
+//    
+//    
+//    NSMutableArray *tempArray = [NSMutableArray array];
+//    
+//    for (int i = 1; i < 3; i++) {
+//        
+//        UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"gift_fireworks_%d",i]];
+//        [tempArray addObject:image];
+//    }
+//    _fireworksArray = tempArray;
+//    
+//    
+//    [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(update) userInfo:nil repeats:YES];
+}
+
+static int _fishIndex = 0;
+
+- (void)update {
+    
+    _fishIndex++;
+    
+    if (_fishIndex > 1) {
+        _fishIndex = 0;
+    }
+    UIImage *image = self.fireworksArray[_fishIndex];
+    _fireworksL.contents = (id)image.CGImage;
+}
+
+UIImageView *_avatarView;
+ CGFloat speed = 75.;
+        speed += random()%20;
+        CGFloat time = (item.width+[[UIScreen mainScreen] bounds].size.width) / speed;
+        
+        [UIView animateWithDuration:time delay:0.f options:UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionCurveEaseInOut  animations:^{
+            item.left = -item.width;
+        } completion:^(BOOL finished) {
+            [item removeFromSuperview];
+        }];
+
+
+@interface KSBarrageItemView : UIView
+
+@property (assign, nonatomic) NSInteger itemIndex;
+
+//- (void)setAvatarUrl:(NSString *)imageUrl withContent:(NSString *)content;
+
+- (void)setAvatarWithImage:(UIImage *)image withContent:(NSString *)content;
+- (void)setAvatarWithImageString:(NSString *)imageStr withContent:(NSString *)content;
+
+@end
+
+
+é€ç¤¼ç‰©ï¼šå¤šçº¿ç¨‹ 
+
+  NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    queue.maxConcurrentOperationCount = 2; // é˜Ÿåˆ—åˆ†å‘
+    _queue = queue;
+	
+	
+  AnimOperation *op = [[AnimOperation alloc] init]; // åˆå§‹åŒ–æ“ä½œ
+	giftCount=1;
+	giftIndex++;
+	GiftModel *model1 = [[GiftModel alloc] init];
+	model1.headImage = [self getImageFromURL:model.portrait];
+
+	;
+	for(int i=0;i<giftArray.count;i++){
+		//containsObject åˆ¤æ–­å…ƒç´ æ˜¯å¦å­˜åœ¨äºæ•°ç»„ä¸­(æ ¹æ®ä¸¤è€…çš„å†…å­˜åœ°å€åˆ¤æ–­ï¼Œç›¸åŒï¼šYES  ä¸åŒï¼šNOï¼‰
+		if([@[giftModel.num] containsObject:[[giftArray objectAtIndex:i] objectForKey:@"gid"]]) {
+		   model1.giftImage = [self getImageFromURL:[[giftArray objectAtIndex:i] objectForKey:@"url"]];
+			 model1.giftName = [NSString stringWithFormat:@"é€äº†%@",[[giftArray objectAtIndex:i] objectForKey:@"name"]];
+		}  
+	}
+	model1.name = model.name;
+	model1.giftCount = giftCount;
+	op.listView = self.view; // è¦æ·»åŠ åˆ°çš„çˆ¶è§†å›¾
+	op.index = giftIndex; // è®¾ç½®æ“ä½œçš„ index
+	op.model = model1; // æ•°æ®æº
+	[_queue addOperation:op];
+						
+					
+
+
+@interface AnimOperation : NSOperation
+@property (nonatomic,strong) PresentView *presentView;
+@property (nonatomic,strong) UIView *listView;
+@property (nonatomic,strong) GiftModel *model;
+@property (nonatomic,assign) NSInteger index;
+@end
+
+
+@interface PresentView : UIView
+@property (nonatomic,strong) GiftModel *model;
+@property (nonatomic,strong) UIImageView *headImageView; // å¤´åƒ
+@property (nonatomic,strong) UIImageView *giftImageView; // ç¤¼ç‰©
+@property (nonatomic,strong) UILabel *nameLabel; // é€ç¤¼ç‰©è€…
+@property (nonatomic,strong) UILabel *giftLabel; // ç¤¼ç‰©åç§°
+@property (nonatomic,assign) NSInteger giftCount; // ç¤¼ç‰©ä¸ªæ•°
+
+@implementation PresentView
+// æ ¹æ®ç¤¼ç‰©ä¸ªæ•°æ’­æ”¾åŠ¨ç”»
+
 
 	
 
