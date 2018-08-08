@@ -1,0 +1,11 @@
+1.在podfile中写入：pod 'MobileVLCKit'
+2.终端执行pod install即可（成功后会在项目里看到MoblieVLCKit.framework库）
+3.添加依赖库：libz.tbd、libbz2.tbd、libiconv.tbd、libstdc++.6.0.9.tbd
+```
+
+作者：Pocket
+链接：https://www.jianshu.com/p/178627b085c3
+來源：简书
+简书著作权归作者所有，任何形式的转载都请联系作者获得授权并注明出处。
+
+
