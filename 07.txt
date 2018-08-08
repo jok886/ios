@@ -174,3 +174,8 @@ return s;
 3、http和https使用的是完全不同的连接方式，用的端口也不一样，前者是80，后者是443。
 
 4、http的连接很简单，是无状态的；HTTPS协议是由SSL+HTTP协议构建的可进行加密传输、身份认证的网络协议，比http协议安全。
+
+解释weak,assgin,什么时候使用Weak和assign
+    ARC:才有weak 
+    weak:__weak 弱指针,不会让引用计数器+1,如果指向对象被销毁,指针会自动清空
+    assgin:__unsafe_unretained修饰,不会让引用计数器+1,如果指向对象被销毁,指针不会清空
