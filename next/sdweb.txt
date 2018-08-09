@@ -1,0 +1,142 @@
+
+/Library/Caches/default/com.hackemist.SDWebImageCache.default/
+
+- (void)saveImageToCache:(UIImage *)image forURL:(NSURL *)url {
+    
+   if (image && url) 
+   {
+        
+        NSString *key = [self cacheKeyForURL:url];
+        [self.imageCache storeImage:image forKey:key toDisk:YES];
+    }
+}
+
+- (NSString *)cacheKeyForURL:(NSURL *)url
+ {
+    if (!url) {
+        return @"";
+    }
+    
+    if (self.cacheKeyFilter) {
+        return self.cacheKeyFilter(url);
+    } else {
+        return [url absoluteString];
+    }
+}
+
+二级缓存处理过程: 
+       1.在显示图片之前,先检查内存缓存中时候有该图片
+       2.如果内存缓存中有图片,那么就直接使用,不下载
+       3.如果内存缓存中无图片,那么再检查是否有磁盘缓存
+       4.如果磁盘缓存中有图片,那么直接使用,还需要保存一份到内存缓存中(方便下一次使用)
+       5.如果磁盘缓存中无图片,那么再去下载,并且把下载完的图片保存到内存缓存和磁盘缓存
+
+
+-(void)didReceiveMemoryWarning
+{
+    //清空内存缓存
+    [self.images removeAllObjects];
+    
+    //取消队列中所有的操作
+    [self.queue cancelAllOperations];
+}
+
+cleanDisk执行过程：
+
+1.获取磁盘路径URL，根据路径获取资源(存入NSArray)
+
+2.定义一个可变字典，记录所有缓存文件
+
+3.定义一个可变数组，遍历资源，将过期文件记录到可变数组里边，累加文件的总大小，然后遍历过期文件数组删除过期文件
+
+4.如果剩余磁盘缓存空间超出最大限额，再次执行清理操作，删除最早的文件 循环依次删除文件，直到低于期望的缓存限额，SDWebimage里边的期望限额为最大限额的一半
+
+GCD定时器
+/**
+ *  获取短信验证码
+ */
+- (void)clickMessage{
+    if (![Judgement validateMobile:phoneTF.text]) {
+        [ProgressHUD showError:@"请输入正确的手机号码"];
+        return;
+    }else{//获取验证码网络请求
+        [self postAuthCodeData];
+    }
+}
+
+
+[ProgressHUD showSuccess:@"发送成功"];
+            __block int timeout=60; //倒计时时间
+            dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+            dispatch_source_t _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0,queue);
+            dispatch_source_set_timer(_timer,dispatch_walltime(NULL, 0),1.0*NSEC_PER_SEC, 0); //每秒执行
+            dispatch_source_set_event_handler(_timer, ^{
+                if(timeout<=0){ //倒计时结束，关闭
+                    dispatch_source_cancel(_timer);
+                    //dispatch_release(_timer);
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [codeBtn setTitle:@"获取验证码" forState:UIControlStateNormal];
+                        [codeBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+                        [codeBtn addTarget:self action:@selector(clickMessage) forControlEvents:UIControlEventTouchUpInside];
+                        
+                    });
+                }else{
+                    int seconds = timeout % 60;
+                    NSString *strTime = [NSString stringWithFormat:@"%.2ds后重发", seconds];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        //设置界面的按钮显示 根据自己需求设置
+                        [codeBtn setTitle:strTime forState:UIControlStateNormal];
+                        [codeBtn setTitleColor:[UIColor colorWithWhite:0.85 alpha:1] forState:UIControlStateNormal];
+                        [codeBtn removeTarget:self action:@selector(clickMessage) forControlEvents:UIControlEventTouchUpInside];
+                    });
+                    timeout--;
+                }
+            });
+            dispatch_resume(_timer);
+			
+			
+			
+			
+@interface ViewController ()
+/** 定时器(这里不用带*，因为dispatch_source_t就是个类，内部已经包含了*) */
+@property (nonatomic, strong) dispatch_source_t timer;
+@end
+
+    int count = 0;
+
+     // 获得队列
+    dispatch_queue_t queue = dispatch_get_main_queue();
+
+    // 创建一个定时器(dispatch_source_t本质还是个OC对象)
+    self.timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
+
+    // 设置定时器的各种属性（几时开始任务，每隔多长时间执行一次）
+    // GCD的时间参数，一般是纳秒（1秒 == 10的9次方纳秒）
+    // 何时开始执行第一个任务
+    // dispatch_time(DISPATCH_TIME_NOW, 1.0 * NSEC_PER_SEC) 比当前时间晚3秒
+    dispatch_time_t start = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC));
+    uint64_t interval = (uint64_t)(1.0 * NSEC_PER_SEC);
+    dispatch_source_set_timer(self.timer, start, interval, 0);
+
+    // 设置回调
+    dispatch_source_set_event_handler(self.timer, ^{
+        NSLog(@"------------%@", [NSThread currentThread]);
+        count++;
+
+        if (count == 4) {
+            // 取消定时器
+            dispatch_cancel(self.timer);
+            self.timer = nil;
+        }
+    });
+
+    // 启动定时器
+    dispatch_resume(self.timer);
+
+
+
+
+
+
+
+
