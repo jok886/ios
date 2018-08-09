@@ -1,0 +1,316 @@
+ Person *p = [[Person alloc] init];
+    
+    // 执行某个方法
+//    [p performSelector:@selector(eat)];
+    
+    [p performSelector:@selector(run:) withObject:@10];
+	
+	
+	// 没有返回值,也没有参数
+// void,(id,SEL)
+void aaa(id self, SEL _cmd, NSNumber *meter) {
+    
+    NSLog(@"跑了%@", meter);
+    
+}
+
+// 任何方法默认都有两个隐式参数,self,_cmd
+// 什么时候调用:只要一个对象调用了一个未实现的方法就会调用这个方法,进行处理
+// 作用:动态添加方法,处理未实现
++ (BOOL)resolveInstanceMethod:(SEL)sel
+{
+    // [NSStringFromSelector(sel) isEqualToString:@"eat"];
+    if (sel == NSSelectorFromString(@"run:")) {
+        // eat
+        // class: 给哪个类添加方法
+        // SEL: 添加哪个方法
+        // IMP: 方法实现 => 函数 => 函数入口 => 函数名
+        // type: 方法类型
+        class_addMethod(self, sel, (IMP)aaa, "v@:@");
+        
+        return YES;
+    }
+    
+    return [super resolveInstanceMethod:sel];
+
+}
+
+
+
+- (void)setName:(NSString *)name
+{
+    // 让这个字符串与当前对象产生联系
+    
+//    _name = name;
+    // object:给哪个对象添加属性
+    // key:属性名称
+    // value:属性值
+    // policy:保存策略
+    objc_setAssociatedObject(self, @"name", name, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (NSString *)name
+{
+    return objc_getAssociatedObject(self, @"name");
+}
+
+
+// 把类加载进内存的时候调用,只会调用一次
++ (void)load
+{
+   // self -> UIImage
+    // 获取imageNamed
+    // 获取哪个类的方法
+    // SEL:获取哪个方法
+    Method imageNamedMethod = class_getClassMethod(self, @selector(imageNamed:));
+    // 获取xmg_imageNamed
+    Method xmg_imageNamedMethod = class_getClassMethod(self, @selector(xmg_imageNamed:));
+    
+    // 交互方法:runtime
+    method_exchangeImplementations(imageNamedMethod, xmg_imageNamedMethod);
+    // 调用imageNamed => xmg_imageNamedMethod
+    // 调用xmg_imageNamedMethod => imageNamed
+
+	
+	
+	
+	
+// 类方法本质:类对象调用[NSObject class]
+// id:谁发送消息
+// SEL:发送什么消息
+// ((NSObject *(*)(id, SEL))(void *)objc_msgSend)([NSObject class], @selector(alloc));
+// xcode6之前,苹果运行使用objc_msgSend.而且有参数提示
+// xcode6苹果不推荐我们使用runtime
+
+// 解决消息机制方法提示步骤
+// 查找build setting -> 搜索msg
+// 最终生成消息机制,编译器做的事情
+// 最终代码,需要把当前代码重新编译,用xcode编译器,clang
+// clang -rewrite-objc main.m 查看最终生成代码
+
+/*
+    内容5大区
+    1.栈 2.堆 3.静态区 4.常量区 5.方法区
+    1.栈:不需要手动管理内存,自动管理
+    2.堆,需要手动管理内存,自己去释放
+ */
+
+
+
+@implementation NSDictionary (Property)
+// isKindOfClass:判断是否是当前类或者子类
+// 生成属性代码 => 根据字典中所有key
+- (void)createPropertyCode
+{
+    NSMutableString *codes = [NSMutableString string];
+    // 遍历字典
+    [self enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull value, BOOL * _Nonnull stop) {
+        
+        NSString *code;
+        if ([value isKindOfClass:[NSString class]]) {
+            code = [NSString stringWithFormat:@"@property (nonatomic, strong) NSString *%@;",key];
+        } else if ([value isKindOfClass:NSClassFromString(@"__NSCFBoolean")]) {
+            code = [NSString stringWithFormat:@"@property (nonatomic, assign) BOOL %@;",key];
+        } else if ([value isKindOfClass:[NSNumber class]]) {
+             code = [NSString stringWithFormat:@"@property (nonatomic, assign) NSInteger %@;",key];
+        } else if ([value isKindOfClass:[NSArray class]]) {
+             code = [NSString stringWithFormat:@"@property (nonatomic, strong) NSArray *%@;",key];
+        } else if ([value isKindOfClass:[NSDictionary class]]) {
+             code = [NSString stringWithFormat:@"@property (nonatomic, strong) NSDictionary *%@;",key];
+        }
+
+        // @property (nonatomic, strong) NSString *source;
+        
+        [codes appendFormat:@"\n%@\n",code];
+        
+    }];
+    
+    NSLog(@"%@",codes);
+    
+}
+/*
+        static: 1.修饰局部变量,被static修饰局部变量,延长生命周期,跟整个应用程序有关
+                    * 被static修饰局部变量,只会分配一次内存
+                    * 被static修饰局部变量什么分配内存? 程序一运行就会给static修饰变量分配内存
+ 
+                2.修饰全局变量,被static修饰全局变量,作用域会修改,只能在当前文件下使用
+ 
+        extern:声明外部全局变量,注意:extern只能用于声明,不能用于定义
+ 
+        extern工作原理:先会去当前文件下查找有没有对应全局变量,如果没有,才回去其他文件查找
+ */
+
+解释weak,assgin,什么时候使用Weak和assign
+    ARC:才有weak 
+    weak:__weak 弱指针,不会让引用计数器+1,如果指向对象被销毁,指针会自动清空
+    assgin:__unsafe_unretained修饰,不会让引用计数器+1,如果指向对象被销毁,指针不会清空
+ */
+
+
+ // block声明:返回值(^block变量名)(参数)
+    void(^block)();
+    
+    // block定义:三种方式 = ^(参数){};
+    // 第一种
+    void(^block1)() = ^{
+        NSLog(@"调用了block1");
+    };
+    
+    // 第二种 如果没有参数,参数可以隐藏,如果有参数,定义的时候,必须要写参数,而且必须要有参数变量名
+    void(^block2)(int) = ^(int a){
+        
+    };
+    
+    // 第三种 block返回可以省略,不管有没有返回值,都可以省略
+    int(^block3)() = ^int{
+        return 3;
+    };
+    
+    
+    // block类型:int(^)(NSString *)
+    int(^block4)(NSString *) = ^(NSString *name){
+        return 2;
+    };
+    
+    // block调用
+    block1();
+    
+    // block快捷方式 inline
+//    <#returnType#>(^<#blockName#>)(<#parameterTypes#>) = ^(<#parameters#>) {
+//        <#statements#>
+//    };
+
+/*
+    block是不是一个对象?是一个对象
+ 
+    如何判断当前文件是MRC,还是ARC
+    1.dealloc 能否调用super,只有MRC才能调用super
+    2.能否使用retain,release.如果能用就是MRC
+ 
+    ARC管理原则:只要一个对象没有被强指针修饰就会被销毁,默认局部变量对象都是强指针,存放到堆里面
+ 
+    MRC了解开发常识:1.MRC没有strong,weak,局部变量对象就是相当于基本数据类型
+                  2.MRC给成员属性赋值,一定要使用set方法,不能直接访问下划线成员属性赋值
+ 
+    总结:只要block没有引用外部局部变量,block放在全局区
+ 
+    MRC:管理block
+            只要Block引用外部局部变量,block放在栈里面.
+            block只能使用copy,不能使用retain,使用retain,block还是在栈里面
+ 
+ 
+    ARC:管理block
+        只要block引用外部局部变量,block放在堆里面
+        block使用strong.最好不要使用copy
+ */
+
+
+
+ // Do any additional setup after loading the view, typically from a nib.
+    
+    // UICollectionView使用注意点
+    // 1.创建UICollectionView必须要有布局参数
+    // 2.cell必须通过注册
+    // 3.cell必须自定义,系统cell没有任何子控件
+    
+    // 流水布局:跳转cell尺寸
+    UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
+    
+    // 创建UICollectionView:黑色
+    UICollectionView *collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
+    collectionView.backgroundColor = [UIColor brownColor];
+    collectionView.center = self.view.center;
+    collectionView.bounds = CGRectMake(0, 0, self.view.bounds.size.width, 200);
+    [self.view addSubview:collectionView];
+    
+    // 设置数据源
+    collectionView.dataSource = self;
+    
+    // 注册cell
+    [collectionView registerNib:[UINib nibWithNibName:NSStringFromClass([PhotoCell class])  bundle:nil] forCellWithReuseIdentifier:ID];
+    
+}
+
+ // 利用布局就做效果 => 如何让cell尺寸不一样 => 自定义流水布局
+    // 流水布局:调整cell尺寸
+    FlowLayout *layout = ({
+        
+        FlowLayout *layout = [[FlowLayout alloc] init];
+        
+        // 设置尺寸
+        layout.itemSize = CGSizeMake(160, 160);
+        
+        layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
+        CGFloat margin = (ScreenW - 160) * 0.5;
+        layout.sectionInset = UIEdgeInsetsMake(0, margin, 0, margin);
+        // 设置最小行间距
+        layout.minimumLineSpacing = 50;
+        layout;
+        
+    });
+    
+    // 创建UICollectionView:黑色
+    UICollectionView *collectionView = ({
+        
+      UICollectionView *collectionView =  [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
+        collectionView.backgroundColor = [UIColor brownColor];
+        collectionView.center = self.view.center;
+        collectionView.bounds = CGRectMake(0, 0, self.view.bounds.size.width, 200);
+        collectionView.showsHorizontalScrollIndicator = NO;
+        [self.view addSubview:collectionView];
+        
+        // 设置数据源
+        collectionView.dataSource = self;
+        
+        collectionView;
+        
+    });
+    
+    // 注册cell
+    [collectionView registerNib:[UINib nibWithNibName:NSStringFromClass([PhotoCell class])  bundle:nil] forCellWithReuseIdentifier:ID];
+    
+	
+	
+	
+	    // block造成循环利用:Block会对里面所有强指针变量都强引用一次
+    
+    __weak typeof(self) weakSelf = self;
+    
+    _block = ^{
+//        NSLog(@"%@",weakSelf);
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+             NSLog(@"%@",strongSelf);
+            
+        });
+        
+    };
+    
+    _block();
+	
+	
+	
+
+#pragma mark - UICollectionViewDataSource
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
+    return 10;
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+    PhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:ID forIndexPath:indexPath];
+
+    NSString *imageName = [NSString stringWithFormat:@"%ld",indexPath.item + 1];
+    
+    cell.image = [UIImage imageNamed:imageName];
+    
+    return cell;
+}
+@end
+ 
+	
+	

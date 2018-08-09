@@ -1,0 +1,606 @@
+/** 图片1 */
+@property (nonatomic, strong) UIImage *image1;
+/** 图2 */
+@property (nonatomic, strong) UIImage *image2;
+
+@property (weak, nonatomic) IBOutlet UIImageView *imageView;
+@end
+
+
+-(void)group3
+{
+    /*
+     1.下载图片1 开子线程
+     2.下载图片2 开子线程
+     3.合成图片并显示图片 开子线程
+     */
+    
+    //-1.获得队列组
+    dispatch_group_t group = dispatch_group_create();
+    
+    //0.获得并发队列
+    dispatch_queue_t queue =  dispatch_get_global_queue(0, 0);
+    
+    // 1.下载图片1 开子线程
+    dispatch_group_async(group, queue,^{
+        
+        NSLog(@"download1---%@",[NSThread currentThread]);
+        //1.1 确定url
+        NSURL *url = [NSURL URLWithString:@"http://www.qbaobei.com/tuku/images/13.jpg"];
+        
+        //1.2 下载二进制数据
+        NSData *imageData = [NSData dataWithContentsOfURL:url];
+        
+        //1.3 转换图片
+        self.image1 = [UIImage imageWithData:imageData];
+    });
+    
+    // 2.下载图片2 开子线程
+     dispatch_group_async(group, queue,^{
+         
+         NSLog(@"download2---%@",[NSThread currentThread]);
+         //2.1 确定url
+        NSURL *url = [NSURL URLWithString:@"http://pic1a.nipic.com/2008-09-19/2008919134941443_2.jpg"];
+        
+        //2.2 下载二进制数据
+        NSData *imageData = [NSData dataWithContentsOfURL:url];
+        
+        //2.3 转换图片
+        self.image2 = [UIImage imageWithData:imageData];
+    });
+
+    //3.合并图片
+    //主线程中执行
+    dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+       
+        NSLog(@"combie---%@",[NSThread currentThread]);
+        //3.1 创建图形上下文
+        UIGraphicsBeginImageContext(CGSizeMake(200, 200));
+        
+        //3.2 画图1
+        [self.image1 drawInRect:CGRectMake(0, 0, 200, 100)];
+        self.image1 = nil;
+        
+        //3.3 画图2
+        [self.image2 drawInRect:CGRectMake(0, 100, 200, 100)];
+        self.image2 = nil;
+        
+        //3.4 根据上下文得到一张图片
+        UIImage *image =  UIGraphicsGetImageFromCurrentImageContext();
+        
+        //3.5 关闭上下文
+        UIGraphicsEndImageContext();
+        
+        //3.6 更新UI
+//        dispatch_async(dispatch_get_main_queue(), ^{
+        
+            NSLog(@"UI----%@",[NSThread currentThread]);
+            self.imageView.image = image;
+//        });
+    });
+    
+//    dispatch_release(group)
+}
+
+
+/*
+ 1.下载图片1
+ 2.下载图片2
+ 3.合并图片
+ */
+-(void)comBie
+{
+    //1.创建队列
+    NSOperationQueue *queue = [[NSOperationQueue alloc]init];
+    
+    __block UIImage *image1;
+    __block UIImage *image2;
+    //2 封装操作,下载图片1
+    NSBlockOperation *download1 = [NSBlockOperation blockOperationWithBlock:^{
+        
+        NSURL *url = [NSURL URLWithString:@"http://s15.sinaimg.cn/bmiddle/4c0b78455061c1b7f1d0e"];
+        NSData *imageData = [NSData dataWithContentsOfURL:url];
+        image1 = [UIImage imageWithData:imageData];
+        
+        NSLog(@"download---%@",[NSThread currentThread]);
+        
+    }];
+    
+    //3 封装操作,下载图片2
+    NSBlockOperation *download2 = [NSBlockOperation blockOperationWithBlock:^{
+        
+        NSURL *url = [NSURL URLWithString:@"http://www.027art.com/feizhuliu/UploadFiles_6650/201109/2011091718442835.jpg"];
+        NSData *imageData = [NSData dataWithContentsOfURL:url];
+        image2 = [UIImage imageWithData:imageData];
+        
+        NSLog(@"download---%@",[NSThread currentThread]);
+        
+    }];
+    
+    //4.封装合并图片的操作
+    NSBlockOperation *combie = [NSBlockOperation blockOperationWithBlock:^{
+        //4.1 开上下文
+        UIGraphicsBeginImageContext(CGSizeMake(200, 200));
+        
+        //4.2 画图1
+        [image1 drawInRect:CGRectMake(0, 0, 100, 200)];
+        
+        //4.3 画图2
+        [image2 drawInRect:CGRectMake(100, 0, 100, 200)];
+        
+        //4.4 根据上下文得到图片
+        UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+        
+        //4.5 关闭上下文
+        UIGraphicsEndImageContext();
+        
+        //7.更新UI
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            self.imageView.image = image;
+            NSLog(@"UI----%@",[NSThread currentThread]);
+        }];
+        
+    }];
+    
+    //5.设置依赖关系
+    [combie addDependency:download1];
+    [combie addDependency:download2];
+    
+    //6.添加操作到队列中
+    [queue addOperation:download2];
+    [queue addOperation:download1];
+    [queue addOperation:combie];
+}
+@end
+
+
+
+//1.alloc init 创建线程,需要手动启动线程
+//线程的生命周期:当任务执行完毕之后被释放掉
+-(void)createNewThread1
+{
+    //1.创建线程
+    /*
+     第一个参数:目标对象  self
+     第二个参数:方法选择器 调用的方法
+     第三个参数:前面调用方法需要传递的参数 nil
+     */
+    XMGThread *threadA = [[XMGThread alloc]initWithTarget:self selector:@selector(run:) object:@"ABC"];
+    
+    //设置属性
+    threadA.name = @"线程A";
+    //设置优先级  取值范围 0.0 ~ 1.0 之间 最高是1.0 默认优先级是0.5
+    threadA.threadPriority = 1.0;
+    
+    //2.启动线程
+    [threadA start];
+
+    
+//    NSThread *threadB = [[NSThread alloc]initWithTarget:self selector:@selector(run:) object:@"ABC"];
+//    threadB.name = @"线程b";
+//    threadB.threadPriority = 0.1;
+//    [threadB start];
+//    
+//    NSThread *threadC = [[NSThread alloc]initWithTarget:self selector:@selector(run:) object:@"ABC"];
+//    threadC.name = @"线程C";
+//    [threadC start];
+}
+
+//2.分离子线程,自动启动线程
+-(void)createNewThread2
+{
+    [NSThread detachNewThreadSelector:@selector(run:) toTarget:self withObject:@"分离子线程"];
+}
+
+//3.开启一条后台线程
+-(void)createNewThread3
+{
+    [self performSelectorInBackground:@selector(run:) withObject:@"开启后台线程"];
+}
+
+-(void)run:(NSString *)param
+{
+//    NSLog(@"---run----%@---%@",[NSThread currentThread].name,param);
+    for (NSInteger i = 0; i<10000; i++) {
+        NSLog(@"%zd----%@",i,[NSThread currentThread].name);
+    }
+}
+ [self.imageView performSelectorOnMainThread:@selector(setImage:) withObject:image waitUntilDone:YES];
+    
+	
+	
+/*
+ Documents:会备份,不允许
+ Libray
+    Preferences:偏好设置 保存账号
+    caches:缓存文件
+ tmp:临时路径(随时会被删除)
+ */
+
+ //1.清空缓存
+    //clear:直接删除缓存目录下面的文件,然后重新创建空的缓存文件
+    //clean:清除过期缓存,计算当前缓存的大小,和设置的最大缓存数量比较,如果超出那么会继续删除(按照文件了创建的先后顺序)
+    //过期时间:7天
+    [[SDWebImageManager sharedManager].imageCache clearMemory];
+    
+    //2.取消当前所有的操作
+    [[SDWebImageManager sharedManager] cancelAll];
+    
+    //3.最大并发数量 == 6
+    //4.缓存文件的保存名称如何处理? 拿到图片的URL路径,对该路径进行MD5加密
+    //5.该框架内部对内存警告的处理方式? 内部通过监听通知的方式请你缓存
+    //6.该框架进行缓存处理的方式:可变字典--->NSCache
+    //7.如何判断图片的类型: 在判断图片类型的时候，只匹配第一个字节
+    //8.队列中任务的处理方式:FIFO
+    //9.如何下载图片的? 发送网络请求下载图片,NSURLConnection
+    //10.请求超时的时间 15秒 
+	
+	
+	
+	
+	//在runloop中有多个运行模式,但是runloop只能选择一种模式运行
+//mode里面至少要有一个timer或者是source
+
+//    NSRunLoopCommonModes = NSDefaultRunLoopMode + UITrackingRunLoopMode
+    //占用,标签,凡是添加到NSRunLoopCommonModes中的事件爱你都会被同时添加到打上commmon标签的运行模式上
+    /*
+     0 : <CFString 0x10af41270 [0x10a0457b0]>{contents = "UITrackingRunLoopMode"}
+     2 : <CFString 0x10a065b60 [0x10a0457b0]>{contents = "kCFRunLoopDefaultMode"
+     */
+//    [[NSRunLoop currentRunLoop]addTimer:timer forMode:NSRunLoopCommonModes];
+
+ //1.创建GCD中的定时器
+ 
+ /** 注释 */
+@property (nonatomic, strong) dispatch_source_t timer;
+
+    /*
+     第一个参数:source的类型DISPATCH_SOURCE_TYPE_TIMER 表示是定时器
+     第二个参数:描述信息,线程ID
+     第三个参数:更详细的描述信息
+     第四个参数:队列,决定GCD定时器中的任务在哪个线程中执行
+     */
+    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_global_queue(0, 0));
+    
+    //2.设置定时器(起始时间|间隔时间|精准度)
+    /*
+     第一个参数:定时器对象
+     第二个参数:起始时间,DISPATCH_TIME_NOW 从现在开始计时
+     第三个参数:间隔时间 2.0 GCD中时间单位为纳秒
+     第四个参数:精准度 绝对精准0
+     */
+    dispatch_source_set_timer(timer, DISPATCH_TIME_NOW, 2.0 * NSEC_PER_SEC, 0 * NSEC_PER_SEC);
+    
+    //3.设置定时器执行的任务
+    dispatch_source_set_event_handler(timer, ^{
+        NSLog(@"GCD---%@",[NSThread currentThread]);
+    });
+    
+    //4.启动执行
+    dispatch_resume(timer);
+    
+    self.timer = timer;
+	
+	
+	
+   /*
+         kCFRunLoopEntry = (1UL << 0),        即将进入runloop
+         kCFRunLoopBeforeTimers = (1UL << 1), 即将处理timer事件
+         kCFRunLoopBeforeSources = (1UL << 2),即将处理source事件
+         kCFRunLoopBeforeWaiting = (1UL << 5),即将进入睡眠
+         kCFRunLoopAfterWaiting = (1UL << 6), 被唤醒
+         kCFRunLoopExit = (1UL << 7),         runloop退出
+         kCFRunLoopAllActivities = 0x0FFFFFFFU
+         */
+		 
+		 
+    NSString *urlStr = @"http://120.25.226.186:32812/login2?username=小码哥&pwd=520it&type=JSON";
+    
+    NSLog(@"转码前: %@",urlStr);
+    
+    //中文转码处理
+    urlStr =  [urlStr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    
+    NSLog(@"转码后: %@",urlStr);
+    
+    //1.url
+    NSURL *url = [NSURL URLWithString:urlStr];
+
+   id obj = [NSJSONSerialization JSONObjectWithData:[strM dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingAllowFragments error:nil];
+        
+        NSLog(@"%@---%@",[obj class],obj);
+
+  //4.解析数据
+        NSDictionary *dictM = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:0];
+        
+        //复杂JOSN 1)在线格式化 2)write
+        //http://tool.oschina.net/codeformat/json
+        //[dictM writeToFile:@"/Users/xiaomage/Desktop/video.plist" atomically:YES];
+		
+		
+    /*
+     第一个参数:要解压的文件在哪里
+     第二个参数:文件应该解压到什么地方
+     */
+    //[SSZipArchive unzipFileAtPath:@"/Users/xiaomage/Desktop/demo.zip" toDestination:@"/Users/xiaomage/Desktop/xx"];
+    
+    [SSZipArchive unzipFileAtPath:@"/Users/xiaomage/Desktop/demo.zip" toDestination:@"/Users/xiaomage/Desktop/xx" progressHandler:^(NSString *entry, unz_file_info zipInfo, long entryNumber, long total) {
+        NSLog(@"%zd---%zd",entryNumber,total);
+        
+    } completionHandler:^(NSString *path, BOOL succeeded, NSError *error) {
+        
+        NSLog(@"%@",path);
+    }];
+
+
+-(void)post
+{
+    //1.确定URL
+    NSURL *url = [NSURL URLWithString:@"http://120.25.226.186:32812/login"];
+    
+    //2.创建请求对象
+    NSMutableURLRequest *request =[NSMutableURLRequest requestWithURL:url];
+    
+    //2.1 设置请求方法为post
+    request.HTTPMethod = @"POST";
+    
+    //2.2 设置请求体
+    request.HTTPBody = [@"username=520it&pwd=520it&type=JSON" dataUsingEncoding:NSUTF8StringEncoding];
+    
+    //3.创建会话对象
+    NSURLSession *session = [NSURLSession sharedSession];
+    
+    //4.创建Task
+    /*
+     第一个参数:请求对象
+     第二个参数:completionHandler 当请求完成之后调用 !!! 在子线程中调用
+     data:响应体信息
+     response:响应头信息
+     error:错误信息当请求失败的时候 error有值
+     */
+    NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        
+        NSLog(@"%@",[NSThread currentThread]);
+        //6.解析数据
+        NSLog(@"%@",[[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding]);
+    }];
+    
+    //5.执行Task
+    [dataTask resume];
+}
+
+-(void)get2
+{
+    //1.确定URL
+    NSURL *url = [NSURL URLWithString:@"http://120.25.226.186:32812/login?username=520it&pwd=520it&type=JSON"];
+    
+    //2.创建请求对象
+    //NSURLRequest *request =[NSURLRequest requestWithURL:url];
+    
+    //3.创建会话对象
+    NSURLSession *session = [NSURLSession sharedSession];
+    
+    //4.创建Task
+    /*
+     第一个参数:请求路径
+     第二个参数:completionHandler 当请求完成之后调用
+     data:响应体信息
+     response:响应头信息
+     error:错误信息当请求失败的时候 error有值
+     注意:dataTaskWithURL 内部会自动的将请求路径作为参数创建一个请求对象(GET)
+     */
+    NSURLSessionDataTask *dataTask = [session dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        
+        //6.解析数据
+        NSLog(@"%@",[[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding]);
+    }];
+    
+    //5.执行Task
+    [dataTask resume];
+}
+
+/** 注释 */
+@property (nonatomic, strong) NSURLSession *session;
+@end
+
+@implementation ViewController
+
+-(NSURLSession *)session
+{
+    if (_session == nil) {
+        NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
+        
+        //是否运行蜂窝访问
+        config.allowsCellularAccess = YES;
+        config.timeoutIntervalForRequest = 15;
+        
+        _session = [NSURLSession sessionWithConfiguration:config delegate:self delegateQueue:[NSOperationQueue mainQueue]];
+    }
+    return _session;
+}
+
+-(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    [self upload2];
+}
+
+-(void)upload
+{
+    //1.url
+    NSURL *url = [NSURL URLWithString:@"http://120.25.226.186:32812/upload"];
+    
+    //2.创建请求对象
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    
+    //2.1 设置请求方法
+    request.HTTPMethod = @"POST";
+
+    //2.2 设请求头信息
+    [request setValue:[NSString stringWithFormat:@"multipart/form-data; boundary=%@",Kboundary] forHTTPHeaderField:@"Content-Type"];
+    
+    //3.创建会话对象
+//    NSURLSession *session = [NSURLSession sharedSession];
+    
+    //4.创建上传TASK
+    /*
+     第一个参数:请求对象
+     第二个参数:传递是要上传的数据(请求体)
+     第三个参数:
+     */
+   NSURLSessionUploadTask *uploadTask = [self.session uploadTaskWithRequest:request fromData:[self getBodyData] completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+       
+       //6.解析
+       NSLog(@"%@",[[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding]);
+    }];
+    
+    //5.执行Task
+    [uploadTask resume];
+}
+
+-(void)upload2
+{
+    //1.url
+    NSURL *url = [NSURL URLWithString:@"http://120.25.226.186:32812/upload"];
+    
+    //2.创建请求对象
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    
+    //2.1 设置请求方法
+    request.HTTPMethod = @"POST";
+    
+    //2.2 设请求头信息
+    [request setValue:[NSString stringWithFormat:@"multipart/form-data; boundary=%@",Kboundary] forHTTPHeaderField:@"Content-Type"];
+    
+    //3.创建会话对象
+    
+    //4.创建上传TASK
+    /*
+     第一个参数:请求对象
+     第二个参数:传递是要上传的数据(请求体)
+     */
+    NSURLSessionUploadTask *uploadTask = [self.session uploadTaskWithRequest:request fromData:[self getBodyData] completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        
+        //6.解析
+        NSLog(@"%@",[[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding]);
+    }];
+    
+    //5.执行Task
+    [uploadTask resume];
+}
+
+-(NSData *)getBodyData
+{
+    NSMutableData *fileData = [NSMutableData data];
+    //5.1 文件参数
+    /*
+     --分隔符
+     Content-Disposition: form-data; name="file"; filename="Snip20160225_341.png"
+     Content-Type: image/png(MIMEType:大类型/小类型)
+     空行
+     文件参数
+     */
+    [fileData appendData:[[NSString stringWithFormat:@"--%@",Kboundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    [fileData appendData:KNewLine];
+    
+    //name:file 服务器规定的参数
+    //filename:Snip20160225_341.png 文件保存到服务器上面的名称
+    //Content-Type:文件的类型
+    [fileData appendData:[@"Content-Disposition: form-data; name=\"file\"; filename=\"Sss.png\"" dataUsingEncoding:NSUTF8StringEncoding]];
+    [fileData appendData:KNewLine];
+    [fileData appendData:[@"Content-Type: image/png" dataUsingEncoding:NSUTF8StringEncoding]];
+    [fileData appendData:KNewLine];
+    [fileData appendData:KNewLine];
+    
+    UIImage *image = [UIImage imageNamed:@"Snip20160226_90"];
+    //UIImage --->NSData
+    NSData *imageData = UIImagePNGRepresentation(image);
+    [fileData appendData:imageData];
+    [fileData appendData:KNewLine];
+    
+    //5.2 非文件参数
+    /*
+     --分隔符
+     Content-Disposition: form-data; name="username"
+     空行
+     123456
+     */
+    [fileData appendData:[[NSString stringWithFormat:@"--%@",Kboundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    [fileData appendData:KNewLine];
+    [fileData appendData:[@"Content-Disposition: form-data; name=\"username\"" dataUsingEncoding:NSUTF8StringEncoding]];
+    [fileData appendData:KNewLine];
+    [fileData appendData:KNewLine];
+    [fileData appendData:[@"123456" dataUsingEncoding:NSUTF8StringEncoding]];
+    [fileData appendData:KNewLine];
+    
+    //5.3 结尾标识
+    /*
+     --分隔符--
+     */
+    [fileData appendData:[[NSString stringWithFormat:@"--%@--",Kboundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    return fileData;
+}
+
+#pragma mark ----------------------
+#pragma mark NSURLSessionDataDelegate
+/*
+ *  @param bytesSent                本次发送的数据
+ *  @param totalBytesSent           上传完成的数据大小
+ *  @param totalBytesExpectedToSend 文件的总大小
+ */
+-(void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didSendBodyData:(int64_t)bytesSent totalBytesSent:(int64_t)totalBytesSent totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
+{
+    NSLog(@"%f",1.0 *totalBytesSent / totalBytesExpectedToSend);
+}
+
+//对一个字符串进行base64编码,并且返回
+-(NSString *)base64EncodeString:(NSString *)string
+{
+    //1.先转换为二进制数据
+    NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
+    
+    //2.对二进制数据进行base64编码,完成之后返回字符串
+    return [data base64EncodedStringWithOptions:0];
+}
+
+//对base64编码之后的字符串解码,并且返回
+-(NSString *)base64DecodeString:(NSString *)string
+{
+    //注意:该字符串是base64编码后的字符串
+    //1.转换为二进制数据(完成了解码的过程)
+    NSData *data = [[NSData alloc]initWithBase64EncodedString:string options:0];
+    
+    //2.把二进制数据在转换为字符串
+    return [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
+}
+
+//足够长+足够咸+足够复杂
+#define salt @"shdcskjfcbskfnslfhs.kfsfvmsf8348390(*^^6R%@@IJEKHRKWKFGKF"
+
+//(明文+加盐)MD5
+    
+    NSLog(@"%@",[@"520it" md5String]);
+    NSLog(@"%@",[[@"520it" stringByAppendingString:salt] md5String]);
+
+	
+	
+https	
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    
+    //更改解析方式
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    
+    //设置对证书的处理方式
+    manager.securityPolicy.allowInvalidCertificates = YES;
+    manager.securityPolicy.validatesDomainName = NO;
+    
+    [manager GET:@"https://kyfw.12306.cn/otn" parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        NSLog(@"success---%@",[[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding]);
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        NSLog(@"error---%@",error);
+    }];	
+		
+		
+		
+		
+		
