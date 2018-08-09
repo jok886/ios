@@ -1,0 +1,153 @@
+ 
+
+ 
+ #pragma mark - KVO监听
+- (void)addObservers
+{
+    NSKeyValueObservingOptions options = NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld;
+    [self.scrollView addObserver:self forKeyPath:MJRefreshKeyPathContentOffset options:options context:nil];
+    [self.scrollView addObserver:self forKeyPath:MJRefreshKeyPathContentSize options:options context:nil];
+    self.pan = self.scrollView.panGestureRecognizer;
+    [self.pan addObserver:self forKeyPath:MJRefreshKeyPathPanState options:options context:nil];
+}
+
+
+
+
+ [self willChangeValueForKey:@"mj_reloadDataBlock"]; // KVO
+    
+objc_setAssociatedObject(self, &MJRefreshReloadDataBlockKey, mj_reloadDataBlock, OBJC_ASSOCIATION_COPY_NONATOMIC);
+    [self didChangeValueForKey:@"mj_reloadDataBlock"]; // KVO
+
+
+
+
+
+#pragma mark - 内部方法
+- (void)executeRefreshingCallback
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.refreshingBlock) {
+            self.refreshingBlock();
+        }
+        if ([self.refreshingTarget respondsToSelector:self.refreshingAction]) {
+            MJRefreshMsgSend(MJRefreshMsgTarget(self.refreshingTarget), self.refreshingAction, self);
+        }
+        if (self.beginRefreshingCompletionBlock) {
+            self.beginRefreshingCompletionBlock();
+        }
+    });
+}
+
+- (CGFloat)mj_textWith {
+    CGFloat stringWidth = 0;
+    CGSize size = CGSizeMake(MAXFLOAT, MAXFLOAT);
+    if (self.text.length > 0) {
+#if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 70000
+        stringWidth =[self.text
+                      boundingRectWithSize:size
+                      options:NSStringDrawingUsesLineFragmentOrigin
+                      attributes:@{NSFontAttributeName:self.font}
+                      context:nil].size.width;
+#else
+        
+        stringWidth = [self.text sizeWithFont:self.font
+                             constrainedToSize:size
+                                 lineBreakMode:NSLineBreakByCharWrapping].width;
+#endif
+    }
+    return stringWidth;
+}
+
+   // 保存刷新时间
+        [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:self.lastUpdatedTimeKey];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        
+        // 恢复inset和offset
+        [UIView animateWithDuration:MJRefreshSlowAnimationDuration animations:^{
+            self.scrollView.mj_insetT += self.insetTDelta;
+            
+            // 自动调整透明度
+            if (self.isAutomaticallyChangeAlpha) self.alpha = 0.0;
+        } completion:^(BOOL finished) {
+            self.pullingPercent = 0.0;
+            
+            if (self.endRefreshingCompletionBlock) {
+                self.endRefreshingCompletionBlock();
+            }
+        }];
+		
+		
+gif
+@property (weak, nonatomic, readonly) UIImageView *gifView;
+    // 根据状态做事情
+    if (state == MJRefreshStatePulling || state == MJRefreshStateRefreshing) {
+        NSArray *images = self.stateImages[@(state)];
+        if (images.count == 0) return;
+        
+        [self.gifView stopAnimating];
+        if (images.count == 1) { // 单张图片
+            self.gifView.image = [images lastObject];
+        } else { // 多张图片
+            self.gifView.animationImages = images;
+            self.gifView.animationDuration = [self.stateDurations[@(state)] doubleValue];
+            [self.gifView startAnimating];
+        }
+    } else if (state == MJRefreshStateIdle) {
+        [self.gifView stopAnimating];
+    }
+
+if (oldState == MJRefreshStateRefreshing) {
+            self.arrowView.transform = CGAffineTransformIdentity;
+            
+            [UIView animateWithDuration:MJRefreshSlowAnimationDuration animations:^{
+                self.loadingView.alpha = 0.0;
+            } completion:^(BOOL finished) {
+                // 如果执行完动画发现不是idle状态，就直接返回，进入其他状态
+                if (self.state != MJRefreshStateIdle) return;
+                
+                self.loadingView.alpha = 1.0;
+                [self.loadingView stopAnimating];
+                self.arrowView.hidden = NO;
+            }];
+        } 
+
+#pragma mark - 日历获取在9.x之后的系统使用currentCalendar会出异常。在8.0之后使用系统新API。
+- (NSCalendar *)currentCalendar {
+    if ([NSCalendar respondsToSelector:@selector(calendarWithIdentifier:)]) {
+        return [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
+    }
+    return [NSCalendar currentCalendar];
+}
+
+  // 1.获得年月日
+        NSCalendar *calendar = [self currentCalendar];
+        NSUInteger unitFlags = NSCalendarUnitYear| NSCalendarUnitMonth | NSCalendarUnitDay |NSCalendarUnitHour |NSCalendarUnitMinute;
+        NSDateComponents *cmp1 = [calendar components:unitFlags fromDate:lastUpdatedTime];
+        NSDateComponents *cmp2 = [calendar components:unitFlags fromDate:[NSDate date]];
+        
+        // 2.格式化日期
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        BOOL isToday = NO;
+        if ([cmp1 day] == [cmp2 day]) { // 今天
+            formatter.dateFormat = @" HH:mm";
+            isToday = YES;
+        } else if ([cmp1 year] == [cmp2 year]) { // 今年
+            formatter.dateFormat = @"MM-dd HH:mm";
+        } else {
+            formatter.dateFormat = @"yyyy-MM-dd HH:mm";
+        }
+        NSString *time = [formatter stringFromDate:lastUpdatedTime];
+
+kvc
+/**
+ *  设置成员变量的值
+ */
+- (void)setValue:(id)value forObject:(id)object
+{
+    if (self.type.KVCDisabled || value == nil) return;
+    [object setValue:value forKey:self.name];
+}
+
+
+		
