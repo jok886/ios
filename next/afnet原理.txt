@@ -1,7 +1,8 @@
 AFNetworking由五个模块组成：
 分别由NSURLSession,Security,Reachability,Serialization,UIKit五部分组成
 
-NSURLSession：网络通信模块（核心模块） 对应 AFNetworking中的 AFURLSessionManager和对HTTP协议进行特化处理的AFHTTPSessionManager,AFHTTPSessionManager是继承于AFURLSessionmanager的
+NSURLSession：网络通信模块（核心模块） 对应 AFNetworking中的 AFURLSessionManager和
+对HTTP协议进行特化处理的AFHTTPSessionManager,AFHTTPSessionManager是继承于AFURLSessionmanager的
 
 Security：网络通讯安全策略模块  对应 AFSecurityPolicy
 
@@ -12,7 +13,8 @@ Seriaalization：网络通信信息序列化、反序列化模块 对应 AFURLRe
 UIKit：对于IOSUIKit的扩展库
 
 在AFNetworking 3.0之前，底层是通过封装NSURLConnection来实现的。 
-在AFNetworking 3.0之后，也就是在iOS 9.0 之后，NSURLConnection被弃用，苹果推荐使用NSURLSession来管理网络请求，所以AFNetworking 3.0之后，
+在AFNetworking 3.0之后，也就是在iOS 9.0 之后，NSURLConnection被弃用，
+苹果推荐使用NSURLSession来管理网络请求，所以AFNetworking 3.0之后，
 底层是通过封装NSURLSession来实现的。
 
 从AFNetworking 3.0中之后，下面三个方法被弃用了。
@@ -49,7 +51,8 @@ AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
 
 
 网络请求的过程：
-创建NSURLSessionConfig对象--用创建的config对象配置初始化NSURLSession--创建NSURLSessionTask对象并resume执行，用delegate或者block回调返回数据
+创建NSURLSessionConfig对象--用创建的config对象配置初始化NSURLSession--
+创建NSURLSessionTask对象并resume执行，用delegate或者block回调返回数据
 。
 
 AFURLSessionManager封装了上述网络交互功能
@@ -65,12 +68,14 @@ AFURLSessionManager请求过程
 AFURLSessionManager会为每一个Task创建一个AFURLSessionmanagerTaskDelegate对象，manager会让其处理各个Task的具体事务，
 从而实现了manager对多个Task的管理
 
-初始化好manager后，获取一个网络请求的Task，生成一个Task对象，并创建了一个AFURLSessionmanagerTaskDelegate并将其关联，设置Task的上传和下载delegate，通过KVO监听download进度和upload进度
+初始化好manager后，获取一个网络请求的Task，生成一个Task对象，
+并创建了一个AFURLSessionmanagerTaskDelegate并将其关联，设置Task的上传和下载delegate，通过KVO监听download进度和upload进度
 
 NSURLSessionDelegate的响应
 因为AFURLSessionmanager所管理的AFURLSession的delegate指向其自身，因此所有的
 
-NSURLSessiondelegate的回调地址都是AFURLSessionmanager，而AFURLSessionmanager又会根据是否需要具体处理会将AF delegate所响应的delegate，
+NSURLSessiondelegate的回调地址都是AFURLSessionmanager，
+而AFURLSessionmanager又会根据是否需要具体处理会将AF delegate所响应的delegate，
 传递到对应的AF delegate去
 
 
@@ -105,7 +110,9 @@ AFHttpSessionManager 使用方法
  
  
   普通任务和上传
-NSURLSession针对下载/上传等复杂的网络操作提供了专门的解决方案，针对普通、上传和下载分别对应三种不同的网络请求任务：NSURLSessionDataTask, NSURLSessionUploadTask和NSURLSessionDownloadTask.。创建的task都是挂起状态，需要resume才能执行。
+NSURLSession针对下载/上传等复杂的网络操作提供了专门的解决方案，
+针对普通、上传和下载分别对应三种不同的网络请求任务：NSURLSessionDataTask, NSURLSessionUploadTask和NSURLSessionDownloadTask.。
+创建的task都是挂起状态，需要resume才能执行。
 
 当服务器返回的数据较小时，NSURLSession与NSURLConnection执行普通任务的操作步骤没有区别。
 
@@ -114,7 +121,9 @@ NSURLSession针对下载/上传等复杂的网络操作提供了专门的解决�
  
 
  下载任务方式
-NSURLConnection下载文件时，先将整个文件下载到内存，然后再写入沙盒，如果文件比较大，就会出现内存暴涨的情况。而使用NSURLSessionUploadTask下载文件，会默认下载到沙盒中的tem文件夹中，不会出现内存暴涨的情况，但在下载完成后会将tem中的临时文件删除，需要在初始化任务方法时，在completionHandler回调中
+NSURLConnection下载文件时，先将整个文件下载到内存，然后再写入沙盒，如果文件比较大，
+就会出现内存暴涨的情况。而使用NSURLSessionUploadTask下载文件，会默认下载到沙盒中的tem文件夹中，
+不会出现内存暴涨的情况，但在下载完成后会将tem中的临时文件删除，需要在初始化任务方法时，在completionHandler回调中
 增加保存文件的代码。
 
 以下代码是实例化网络下载任务时将下载的文件保存到沙盒的caches文件夹中：
@@ -136,7 +145,8 @@ NSURLConnection下载文件时，先将整个文件下载到内存，然后再�
  
 
  请求方法的控制
-NSURLConnection实例化对象，实例化开始，默认请求就发送（同步发送），不需要调用start方法。而cancel 可以停止请求的发送，停止后不能继续访问，
+NSURLConnection实例化对象，实例化开始，默认请求就发送（同步发送），不需要调用start方法。
+而cancel 可以停止请求的发送，停止后不能继续访问，
 需要创建新的请求。
 
 NSURLSession有三个控制方法，取消（cancel），暂停（suspend），继续（resume），暂停后可以通过继续恢复当前的请求任务。
@@ -144,10 +154,12 @@ NSURLSession有三个控制方法，取消（cancel），暂停（suspend），�
  
 
  断点续传的方式
-NSURLConnection进行断点下载，通过设置访问请求的HTTPHeaderField的Range属性，开启运行循环，NSURLConnection的代理方法作为运行循环的事件源，
+NSURLConnection进行断点下载，通过设置访问请求的HTTPHeaderField的Range属性，开启运行循环，
+NSURLConnection的代理方法作为运行循环的事件源，
 接收到下载数据时代理方法就会持续调用，并使用NSOutputStream管道流进行数据保存。
 
-NSURLSession进行断点下载，当暂停下载任务后，如果 downloadTask （下载任务）为非空，调用 cancelByProducingResumeData:(void (^)(NSData *resumeData))completionHandler 这个方法，这个方法接收一个参数，完成处理代码块，这个代码块有一个 NSData 参数 resumeData，如果 resumeData 
+NSURLSession进行断点下载，当暂停下载任务后，如果 downloadTask （下载任务）为非空，调用 cancelByProducingResumeData:(void (^)(NSData *resumeData))completionHandler 这个方法，这个方法接收一个参数，完成处理代码块，
+这个代码块有一个 NSData 参数 resumeData，如果 resumeData 
 非空，我们就保存这个对象到视图控制器的 resumeData 属性中。在点击再次下载时，通过调用 [ [self.session downloadTaskWithResumeData:self.resumeData]resume]方法进行继续下载操作。   
 
 经过以上比较可以发现，使用NSURLSession进行断点下载更加便捷。
@@ -161,9 +173,11 @@ NSURLSession的构造方法（sessionWithConfiguration:delegate:delegateQueue）
 
 NSURLSession可以设置三种配置信息，分别通过调用三个累方法返回配置对象：
 
-+ (NSURLSessionConfiguration *)defaultSessionConfiguration，配置信息使用基于硬盘的持久话Cache，保存用户的证书到钥匙串,使用共享cookie存储；
++ (NSURLSessionConfiguration *)defaultSessionConfiguration，
+配置信息使用基于硬盘的持久话Cache，保存用户的证书到钥匙串,使用共享cookie存储；
 
-+ (NSURLSessionConfiguration *)ephemeralSessionConfiguration ，配置信息和default大致相同。除了，不会把cache，证书，或者任何和Session
++ (NSURLSessionConfiguration *)ephemeralSessionConfiguration ，配置信息和default大致相同。除了，
+不会把cache，证书，或者任何和Session
 相关的数据存储到硬盘，而是存储在内存中，生命周期和Session一致。比如浏览器无痕浏览等功能就可以基于这个来做；
 
 + (NSURLSessionConfiguration *)backgroundSessionConfigurationWithIdentifier:(NSString *)identifier，
@@ -198,8 +212,10 @@ AFSecurityPolicy
 复制代码
  
 
-1、GET，或者POST等方法调用抽象的请求方法，指明相应的请求参数，（类似全能初始化方法的作用一下，最后不管多少个初始化参数的方法，
-都最后是调用了全能初始化方法），不管是什么形式的数据请求，最后是调用了全能数据请求的方法。指明数据请求的方式以及全能的参数。
+1、GET，或者POST等方法调用抽象的请求方法，指明相应的请求参数，
+（类似全能初始化方法的作用一下，最后不管多少个初始化参数的方法，
+都最后是调用了全能初始化方法），不管是什么形式的数据请求，最后是调用了全能数据请求的方法。
+指明数据请求的方式以及全能的参数。
 
 复制代码
 - (NSURLSessionDataTask *)GET:(NSString *)URLString
@@ -320,13 +336,16 @@ AFSecurityPolicy
 #pragma clang diagnostic pop
  
 
-表示在这个区间里忽略一些特定的clang的编译警告，因为AFNetworking作为一个库被其他项目引用，所以不能全局忽略clang的一些警告，
+表示在这个区间里忽略一些特定的clang的编译警告，因为AFNetworking作为一个库被其他项目引用，
+所以不能全局忽略clang的一些警告，
 只能在有需要的时候局部这样做，作者喜欢用?:符号，所以经常见忽略-Wgnu警告的写法
 
  
 
-NSURLConnection 是 Foundation URL 加载系统的基石。一个 NSURLConnection 异步地加载一个 NSURLRequest 对象，调用 delegate 的 NSURLResponse
-/ NSHTTPURLResponse 方法，其 NSData 被发送到服务器或从服务器读取；delegate 还可用来处理 NSURLAuthenticationChallenge、重定向响应、或是决定 NSCachedURLResponse 如何存储在共享的 NSURLCache 上。
+NSURLConnection 是 Foundation URL 加载系统的基石。一个 NSURLConnection 异步地加载一个 NSURLRequest 对象，
+调用 delegate 的 NSURLResponse
+/ NSHTTPURLResponse 方法，其 NSData 被发送到服务器或从服务器读取；delegate 
+还可用来处理 NSURLAuthenticationChallenge、重定向响应、或是决定 NSCachedURLResponse 如何存储在共享的 NSURLCache 上。
 
 NSOperation 是抽象类，模拟单个计算单元，有状态、优先级、依赖等功能，可以取消。
 
