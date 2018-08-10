@@ -1,4 +1,4 @@
-﻿AFNetworking由五个模块组成：
+AFNetworking由五个模块组成：
 分别由NSURLSession,Security,Reachability,Serialization,UIKit五部分组成
 
 NSURLSession：网络通信模块（核心模块） 对应 AFNetworking中的 AFURLSessionManager和对HTTP协议进行特化处理的AFHTTPSessionManager,AFHTTPSessionManager是继承于AFURLSessionmanager的
@@ -25,6 +25,22 @@ AFURLSessionManager
 AFHTTPSessionManager 
 AFNetworkReachabilityManager
 
+
+
+AFNetworking 2.x
+AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+[manager GET:@"http://example.com/resources.json" parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    NSLog(@"JSON: %@", responseObject);
+} failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    NSLog(@"Error: %@", error);
+}];
+AFNetworking 3.x
+AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+[manager GET:@"http://example.com/resources.json" parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
+    NSLog(@"JSON: %@", responseObject);
+} failure:^(NSURLSessionTask *operation, NSError *error) {
+    NSLog(@"Error: %@", error);
+}];
 
 
 
@@ -331,6 +347,46 @@ AFURLConnectionOperation将两者结合， 作为 NSOperation 的子类，遵循
     } else {
         return [url absoluteString];
     }
+}
+
+
+- (NSURLSessionDataTask *)POST:(NSString *)URLString
+                    parameters:(id)parameters
+                       headers:(NSDictionary<NSString *,NSString *> *)headers
+     constructingBodyWithBlock:(void (^)(id<AFMultipartFormData> _Nonnull))block
+                      progress:(void (^)(NSProgress * _Nonnull))uploadProgress
+                       success:(void (^)(NSURLSessionDataTask * _Nonnull, id _Nullable))success failure:(void (^)(NSURLSessionDataTask * _Nullable, NSError * _Nonnull))failure
+{
+    NSError *serializationError = nil;
+    NSMutableURLRequest *request = [self.requestSerializer multipartFormRequestWithMethod:@"POST" URLString:[[NSURL URLWithString:URLString relativeToURL:self.baseURL] absoluteString] parameters:parameters constructingBodyWithBlock:block error:&serializationError];
+    for (NSString *headerField in headers.keyEnumerator) {
+        [request addValue:headers[headerField] forHTTPHeaderField:headerField];
+    }
+    if (serializationError) {
+        if (failure) {
+            dispatch_async(self.completionQueue ?: dispatch_get_main_queue(), ^{
+                failure(nil, serializationError);
+            });
+        }
+        
+        return nil;
+    }
+    
+    __block NSURLSessionDataTask *task = [self uploadTaskWithStreamedRequest:request progress:uploadProgress completionHandler:^(NSURLResponse * __unused response, id responseObject, NSError *error) {
+        if (error) {
+            if (failure) {
+                failure(task, error);
+            }
+        } else {
+            if (success) {
+                success(task, responseObject);
+            }
+        }
+    }];
+    
+    [task resume];
+    
+    return task;
 }
 
 
