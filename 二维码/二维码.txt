@@ -1,38 +1,38 @@
 
-Éú³É
-
+ç”Ÿæˆ
+#import <CoreImage/CoreImage.h>
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    // 1.´´½¨ÂË¾µ¶ÔÏó
+    // 1.åˆ›å»ºæ»¤é•œå¯¹è±¡
     CIFilter *fiter = [CIFilter filterWithName:@"CIQRCodeGenerator"];
     
-    // 2.ÉèÖÃÏà¹ØÊôĞÔ
+    // 2.è®¾ç½®ç›¸å…³å±æ€§
     [fiter setDefaults];
     
-    // 3.ÉèÖÃÊäÈëÊı¾İ
+    // 3.è®¾ç½®è¾“å…¥æ•°æ®
     NSString *inputData = @"http://www.520it.com";
     NSData *data = [inputData dataUsingEncoding:NSUTF8StringEncoding];
     [fiter setValue:data forKeyPath:@"inputMessage"];
     
-    // 4.»ñÈ¡Êä³ö½á¹û
+    // 4.è·å–è¾“å‡ºç»“æœ
     CIImage *outputImage = [fiter outputImage];
     
-    // 5.ÏÔÊ¾¶şÎ¬Âë
+    // 5.æ˜¾ç¤ºäºŒç»´ç 
     self.imageView.image = [self createNonInterpolatedUIImageFormCIImage:outputImage withSize:200];
 }
 
 /**
- *  ¸ù¾İCIImageÉú³ÉÖ¸¶¨´óĞ¡µÄUIImage
+ *  æ ¹æ®CIImageç”ŸæˆæŒ‡å®šå¤§å°çš„UIImage
  *
  *  @param image CIImage
- *  @param size  Í¼Æ¬¿í¶È
+ *  @param size  å›¾ç‰‡å®½åº¦
  */
 - (UIImage *)createNonInterpolatedUIImageFormCIImage:(CIImage *)image withSize:(CGFloat) size
 {
     CGRect extent = CGRectIntegral(image.extent);
     CGFloat scale = MIN(size/CGRectGetWidth(extent), size/CGRectGetHeight(extent));
     
-    // 1.´´½¨bitmap;
+    // 1.åˆ›å»ºbitmap;
     size_t width = CGRectGetWidth(extent) * scale;
     size_t height = CGRectGetHeight(extent) * scale;
     CGColorSpaceRef cs = CGColorSpaceCreateDeviceGray();
@@ -43,7 +43,7 @@
     CGContextScaleCTM(bitmapRef, scale, scale);
     CGContextDrawImage(bitmapRef, extent, bitmapImage);
     
-    // 2.±£´æbitmapµ½Í¼Æ¬
+    // 2.ä¿å­˜bitmapåˆ°å›¾ç‰‡
     CGImageRef scaledImage = CGBitmapContextCreateImage(bitmapRef);
     CGContextRelease(bitmapRef);
     CGImageRelease(bitmapImage);
@@ -51,37 +51,37 @@
 }
 
 
-É¨Ãè
+æ‰«æ
 #import <AVFoundation/AVFoundation.h>
 
 @interface ViewController () <AVCaptureMetadataOutputObjectsDelegate>
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    // 1.´´½¨²¶×½»á»°
+    // 1.åˆ›å»ºæ•æ‰ä¼šè¯
     AVCaptureSession *session = [[AVCaptureSession alloc] init];
     
-    // 2.ÉèÖÃÊäÈëÉè±¸
+    // 2.è®¾ç½®è¾“å…¥è®¾å¤‡
     AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
     AVCaptureDeviceInput *inputDevice = [AVCaptureDeviceInput deviceInputWithDevice:device error:nil];
     [session addInput:inputDevice];
     
-    // 3.ÉèÖÃÊäÈë·½Ê½
+    // 3.è®¾ç½®è¾“å…¥æ–¹å¼
     AVCaptureMetadataOutput *output = [[AVCaptureMetadataOutput alloc] init];
     [output setMetadataObjectsDelegate:self queue:dispatch_get_main_queue()];
     [session addOutput:output];
     [output setMetadataObjectTypes:@[AVMetadataObjectTypeQRCode]];
     
-    // 4.Ìí¼ÓÒ»¸öÏÔÊ¾µÄlayer
+    // 4.æ·»åŠ ä¸€ä¸ªæ˜¾ç¤ºçš„layer
     AVCaptureVideoPreviewLayer *layer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:session];
     layer.frame = self.view.bounds;
     [self.view.layer addSublayer:layer];
     
-    // 5.¿ªÊ¼É¨Ãè
+    // 5.å¼€å§‹æ‰«æ
     [session startRunning];
 }
 
-#pragma mark - »ñÈ¡É¨Ãè½á¹û
+#pragma mark - è·å–æ‰«æç»“æœ
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputMetadataObjects:(NSArray *)metadataObjects fromConnection:(AVCaptureConnection *)connection
 {
     if (metadataObjects.count > 0) {
@@ -91,7 +91,7 @@
 }
 
 
-// ¿ªÊ¼É¨Ãè
+// å¼€å§‹æ‰«æ
 - (void)beginScan
 {
 
