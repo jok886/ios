@@ -1,5 +1,134 @@
 
 
+后端现在 RTMP/HTTP-FLV 清一色
+
+
+其实最难的难点是提高首播时间、服务质量即Qos（Quality of Service，服务质量），如何在丢包率
+
+20%的情况下还能保障稳定、流畅的直播体验，需要考虑以下方案：
+
+1.为加快首播时间，收流服务器主动
+
+推送 GOP :（Group of Pictures:策略影响编码质量)所谓GOP，意思是画面组，一个GOP就是一组连续的
+
+画面至边缘节点，边缘节点缓存 GOP，播放端则可以快速加载，减少回源延迟
+
+2.GOP丢帧，为解决延时，为什么会有延时，网络抖动、网络拥塞导致的数据发送不出去，丢完之后所有
+
+的时间戳都要修改，切记，要不客户端就会卡一个 GOP的时间，是由于 PTS（Presentation Time Stamp
+
+，PTS主要用于度量解码后的视频帧什么时候被显示出来） 和 DTS 的原因，或者播放器修正 DTS 和 
+
+PTS 也行（推流端丢GOD更复杂，丢 p 帧之前的 i 帧会花屏）
+
+3.纯音频丢帧，要解决音视频不同步的问题，要让视频的 delta增量到你丢掉音频的delta之后，再发音
+
+频，要不就会音视频不同步
+
+
+4.源站主备切换和断线重连
+
+
+5.根据TCP拥塞窗口做智能调度，当拥塞窗口过大说明节点服务质量不佳，需要切换节点和故障排查
+
+
+6.增加上行、下行带宽探测接口，当带宽不满足时降低视频质量，即降低码率
+
+
+7.定时获取最优的推流、拉流链路IP，尽可能保证提供最好的服务
+
+
+8.监控必须要，监控各个节点的Qos状态，来做整个平台的资源配置优化和调度
+
+9.如果产品从推流端、CDN、播放器都是自家的，保障 Qos 优势非常大
+
+10.当直播量非常大时，要加入集群管理和调度，保障 Qos
+
+11.播放端通过增加延时来减少网络抖动，通过快播来减少延时
+
+3.运营成本和客户体验
+
+
+3.RTMP：RTMP一个专门为高效传输视频，音频和数据而设计的协议。它通过建立一个二进制TCP连接或者
+
+连接HTTP隧道实现实时的视频和声音传输。
+
+
+4.FFmpeg：FFmpeg是一套可以用来记录、转换数字音频、视频，并能将其转化为流的开源计算机程序。
+
+采用LGPL或GPL许可证。它提供了录制、转换以及流化音视频的完整解决方案
+
+
+
+
+4.美颜功能
+
+美颜的话一般都是使用的GPUImage基于OpenGl开发，纯OC语言，这个框架十分强大，可以做出各种不同
+
+滤镜，可拓展性高。如果对美颜没有具体思路可以直接用BeautifyFace，
+
+
+
+
+
+
+LFLiveKit架构简介
+LFLiveSession
+LFLiveSession 是整个sdk的核心，提供对外部的主要接口。主要功能有：管理推流开关、管理音视频录
+
+制及渲染、管理录制渲染后的音视频编码、管理编码后的数据上传、管理音视频的基础配置，回调推流
+
+状态和异常上报等。
+
+LFLiveAudioConfiguration
+音配配置，配置相关音频信息（音频质量、码率、采样率、声道数）
+
+LFLiveVideoConfiguration
+视频配置，配置相关视频的基本信息（视频质量、码率、帧数、分辨率）和应用配置如最大、最小帧率
+
+等。
+
+LFVideoCapture 
+视频管理类，管理视频的输入和输出。同时处理业务需求，如：美颜、亮度、水印等效果，使用了一个
+
+第三方GPUImage处理渲染效果。
+
+LFAudioCapture
+音频管理，管理音频的输入开关，这一块儿没有多大的定制，应用原声的API即可。
+
+LFH264VideoEncoder,LFHardwareVideoEncoder
+视频编码类，分别对应8.0之前和8.0以后的两种设备的视频编码类。都遵守LFVideoEncoding协议，并设
+
+置LFStreamSocketDelegate协议给session管理。
+
+LFHardwareAudioEncoder
+音频编码类，遵守LFVideoEncoding协议，并设置LFStreamSocketDelegate协议给session管理。
+
+LFFrame
+数据信息的基类，作为上传到服务器数据的基本模型。
+
+LFVideoFrame
+视频信息，作为上传到服务器视频数据的模型。
+
+LFAudioFrame
+音频信息，作为上传到服务器音频数据的模型。
+
+LFLiveStreamInfo
+推流信息：推流地址（目前主要应用rtmp推流），流状态，音视频配置信息，异常信息
+
+LFStreamRTMPSocket 
+数据上传管理类：开关数据上传，回调连接状态和异常，遵循LFStreamSocket协议，并配置
+
+LFStreamSocketDelegate给session管理。
+
+LFLiveDebug
+调试信息：这个事开发时候的内部标示，主要用于记录调试作用。
+
+LFStreamingBuffer
+本地采样：通过本地采样监控缓冲区，可实现相关切换帧率码率等策略
+
+
+
 /// 音频配置
 @property (nonatomic, strong) LFLiveAudioConfiguration *audioConfiguration;
 /// 视频配置
@@ -33,17 +162,27 @@
 @end
 
 
- UIInterfaceOrientation statusBar = [[UIApplication sharedApplication] statusBarOrientation];
+ UIInterfaceOrientation statusBar = [[UIApplication sharedApplication] 
+
+statusBarOrientation];
         if (self.configuration.landscape) {
-            if (statusBar != UIInterfaceOrientationLandscapeLeft && statusBar != UIInterfaceOrientationLandscapeRight) {
-                @throw [NSException exceptionWithName:@"当前设置方向出错" reason:@"LFLiveVideoConfiguration landscape error" userInfo:nil];
+            if (statusBar != UIInterfaceOrientationLandscapeLeft && statusBar != 
+
+UIInterfaceOrientationLandscapeRight) {
+                @throw [NSException exceptionWithName:@"当前设置方向出错" 
+
+reason:@"LFLiveVideoConfiguration landscape error" userInfo:nil];
                 _videoCamera.outputImageOrientation = UIInterfaceOrientationLandscapeLeft;
             } else {
                 _videoCamera.outputImageOrientation = statusBar;
             }
         } else {
-            if (statusBar != UIInterfaceOrientationPortrait && statusBar != UIInterfaceOrientationPortraitUpsideDown) {
-                @throw [NSException exceptionWithName:@"当前设置方向出错" reason:@"LFLiveVideoConfiguration landscape error" userInfo:nil];
+            if (statusBar != UIInterfaceOrientationPortrait && statusBar != 
+
+UIInterfaceOrientationPortraitUpsideDown) {
+                @throw [NSException exceptionWithName:@"当前设置方向出错" 
+
+reason:@"LFLiveVideoConfiguration landscape error" userInfo:nil];
                 _videoCamera.outputImageOrientation = UIInterfaceOrientationPortrait;
             } else {
                 _videoCamera.outputImageOrientation = statusBar;
@@ -83,5 +222,59 @@ typedef NS_ENUM (NSUInteger, LFLiveVideoSessionPreset){
         configuration.videoSize = CGSizeMake(720, 1280);
     }
 
+
+视频配置
+
+分辨率：视频画面的大小，分辨率越高画面越清晰，分辨率控制着画面的清晰度。
+
+采样帧数：每秒的画面数，视频是由很多帧画面连贯起来的。帧数越高越流畅。人眼识别16帧(别人统计
+
+的数字我也不清楚)以上就很难感觉出来画面的卡顿。帧率控制画面的流畅度。
+
+码率：每秒显示的图片压缩后的数据量。码率控制着画面的清晰度。
+
+注：
+
+1、体积 = 码率 * 时间
+
+2、压缩前每秒的数据量= 帧率 * 分辨率 = 码率 * 压缩比
+
+1.分辨率是被AVCaptureSession控制的，它有长宽固定比例的值提供选择，不能自定义比例。例：
+
+AVCaptureSessionPreset640x480
+ 2.帧率和码率虽然能自定义设置，但是不建议自定义设置，可以通过直接设置LFLiveVideoQuality来配
+
+套的配置这些属性的值。
+ 3.LFLiveVideoConfiguration还包含了最大最小帧率、最大最小码率和最大关键帧的设置。
+
+声道数：单声道的声道数为1个声道，双声道的声道数为2个声道，立体声道的声道数默认是2个声道，立
+
+体声道(4声道)的声道数为4个声道。普通食品是两个声道，左右声道。也就是左耳麦和右耳麦，多数视
+
+频都是左右混合到一起了，有的配音视频区分左右声道，一边是原声，一边是配音。还有第三种声道形
+
+式，就是2.1省道，那个.1只的是低频段环绕立体声。
+
+采样率：音频采样率是指录音设备在一秒钟内对声音信号的采样次数，采样频率越高声音的还原就越真
+
+是自然。在当今的主流的采集卡上，采样频率一般分为22.05KHz、44.1KHz、48KHz三个等级。22.05KHz
+
+只能达到FM广播的声音品质，44.1KHz则是理论上的CD音质界限，48KHz则更加准确一些。LFLiveKit中默
+
+认是44.1KHz。
+
+音频码率（比特率）比特率是指将数字声音由模拟格式转化成数字格式的采样率。比特率表示单位时间
+
+（1秒）内传送的比特数bps的速度。通常我们使用kbps（通俗的讲就是每秒钟1000比特）作为单位。
+
+128kbps = 磁带（手机立体声MP3播放器最佳设定值，低档MP3播放器最佳设定值)。LFLive默认是96kbps
+
+。
+
+缓存区的长度：这个也是SDK自己定义的，用于声音在视频编码的时候判断，内存过大的时候暂缓编码的
+
+作用，保证内存的稳定性的作用。缓存区长度和声道数相关，这个在SDK里面是定位1024*2* 
+
+numberOfChannels
 
 	
