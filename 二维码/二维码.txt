@@ -1,0 +1,109 @@
+
+生成
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    // 1.创建滤镜对象
+    CIFilter *fiter = [CIFilter filterWithName:@"CIQRCodeGenerator"];
+    
+    // 2.设置相关属性
+    [fiter setDefaults];
+    
+    // 3.设置输入数据
+    NSString *inputData = @"http://www.520it.com";
+    NSData *data = [inputData dataUsingEncoding:NSUTF8StringEncoding];
+    [fiter setValue:data forKeyPath:@"inputMessage"];
+    
+    // 4.获取输出结果
+    CIImage *outputImage = [fiter outputImage];
+    
+    // 5.显示二维码
+    self.imageView.image = [self createNonInterpolatedUIImageFormCIImage:outputImage withSize:200];
+}
+
+/**
+ *  根据CIImage生成指定大小的UIImage
+ *
+ *  @param image CIImage
+ *  @param size  图片宽度
+ */
+- (UIImage *)createNonInterpolatedUIImageFormCIImage:(CIImage *)image withSize:(CGFloat) size
+{
+    CGRect extent = CGRectIntegral(image.extent);
+    CGFloat scale = MIN(size/CGRectGetWidth(extent), size/CGRectGetHeight(extent));
+    
+    // 1.创建bitmap;
+    size_t width = CGRectGetWidth(extent) * scale;
+    size_t height = CGRectGetHeight(extent) * scale;
+    CGColorSpaceRef cs = CGColorSpaceCreateDeviceGray();
+    CGContextRef bitmapRef = CGBitmapContextCreate(nil, width, height, 8, 0, cs, (CGBitmapInfo)kCGImageAlphaNone);
+    CIContext *context = [CIContext contextWithOptions:nil];
+    CGImageRef bitmapImage = [context createCGImage:image fromRect:extent];
+    CGContextSetInterpolationQuality(bitmapRef, kCGInterpolationNone);
+    CGContextScaleCTM(bitmapRef, scale, scale);
+    CGContextDrawImage(bitmapRef, extent, bitmapImage);
+    
+    // 2.保存bitmap到图片
+    CGImageRef scaledImage = CGBitmapContextCreateImage(bitmapRef);
+    CGContextRelease(bitmapRef);
+    CGImageRelease(bitmapImage);
+    return [UIImage imageWithCGImage:scaledImage];
+}
+
+
+扫描
+#import <AVFoundation/AVFoundation.h>
+
+@interface ViewController () <AVCaptureMetadataOutputObjectsDelegate>
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    // 1.创建捕捉会话
+    AVCaptureSession *session = [[AVCaptureSession alloc] init];
+    
+    // 2.设置输入设备
+    AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    AVCaptureDeviceInput *inputDevice = [AVCaptureDeviceInput deviceInputWithDevice:device error:nil];
+    [session addInput:inputDevice];
+    
+    // 3.设置输入方式
+    AVCaptureMetadataOutput *output = [[AVCaptureMetadataOutput alloc] init];
+    [output setMetadataObjectsDelegate:self queue:dispatch_get_main_queue()];
+    [session addOutput:output];
+    [output setMetadataObjectTypes:@[AVMetadataObjectTypeQRCode]];
+    
+    // 4.添加一个显示的layer
+    AVCaptureVideoPreviewLayer *layer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:session];
+    layer.frame = self.view.bounds;
+    [self.view.layer addSublayer:layer];
+    
+    // 5.开始扫描
+    [session startRunning];
+}
+
+#pragma mark - 获取扫描结果
+- (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputMetadataObjects:(NSArray *)metadataObjects fromConnection:(AVCaptureConnection *)connection
+{
+    if (metadataObjects.count > 0) {
+        AVMetadataMachineReadableCodeObject *object = [metadataObjects lastObject];
+        NSLog(@"%@", object.stringValue);
+    }
+}
+
+
+// 开始扫描
+- (void)beginScan
+{
+
+    [XMGQRCodeTool sharedXMGQRCodeTool].isDrawQRCodeRect = YES;
+    [[XMGQRCodeTool sharedXMGQRCodeTool] setInsteretRect:self.scanBackView.frame];
+    [[XMGQRCodeTool sharedXMGQRCodeTool] beginScanInView:self.view result:^(NSArray<NSString *> *resultStrs) {
+        NSLog(@"%@", resultStrs);
+        [[XMGQRCodeTool sharedXMGQRCodeTool] stopScan];
+
+    }];
+
+
+
+}
+
