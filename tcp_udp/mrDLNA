@@ -18,6 +18,8 @@ PLT_MicroMediaController::setRendererMute()
 }
 
 
+https://www.jianshu.com/p/fbc7c700cdb5
+
 
 mrDLNA纯OC实现的iOS DLNA 投屏功能, 支持各大主流电视盒子(小米,华为,乐视,移动魔百盒等), 可以播放,暂停,快进退,调音量,退出
 
@@ -34,6 +36,63 @@ static NSString *serviceType_RenderingControl   = @"urn:schemas-upnp-org:service
 向多播地址发送一个UDP请求  ，收到设备的所有信息 xml信息，播放，设置声音是向设备发post请求
 
 @"M-SEARCH * HTTP/1.1\r\nHOST: %@:%d\r\nMAN: \"ssdp:discover\"\r\nMX: 3\r\nST: %@\r\nUSER-AGENT: iOS UPnP/1.1 mccree/1.0\r\n\r\n", ssdpAddres, ssdpPort, serviceType_AVTransport];
+
+
+HTTP/1.1 200 OK
+
+Cache-control: max-age=1800
+
+Date: Thu, 16 Feb 2017 09:09:45 GMT
+
+EXT:
+
+LOCATION: http://10.2.9.152:49152/TxMediaRenderer_desc.xml //URL for UPnP description for device
+
+Server: search target
+
+USN: uuid:3c970e3c0c0d0000_MR::upnp:rootdevice //composite identifier for the advertisment
+
+BOOTID.UPNP.ORG: 1487062102 //number increased each time device sends an initial announce or an update message
+
+CONFIGID.UPNP.ORG: 499354 //number used for caching description information
+
+SEARCHPORT.UPNP.ORG: number identifies port on which device responds to unicast M-SEARCH
+
+ST: upnp:rootdevice //device type
+
+//
+http://10.2.9.152:49152/TxMediaRenderer_desc.xml
+发出一个GET请求，成功后会返回如下响应消息：
+
+<root xmlns="urn:schemas-upnp-org:device-1-0" xmlns:dlna="urn:schemas-dlna-org:device-1-0" configId="499354">
+  <specVersion>
+    <major>1</major>
+    <minor>1</minor>
+  </specVersion>
+  <device>
+    <deviceType>urn:schemas-upnp-org:device:MediaRenderer:1</deviceType>
+    <friendlyName>卧室的创维盒子Q+</friendlyName>
+    <manufacturer>Plutinosoft LLC</manufacturer>
+    <manufacturerURL>http://www.plutinosoft.com</manufacturerURL>
+    <modelDescription>Plutinosoft AV Media Renderer Device</modelDescription>
+    <modelName>AV Renderer Device</modelName>
+    <modelURL>http://www.plutinosoft.com/platinum</modelURL>
+    <UDN>uuid:9c443d47158b-dmr</UDN>
+    <dlna:X_DLNADOC xmlns:dlna="urn:schemas-dlna-org:device-1-0">DMR-1.50</dlna:X_DLNADOC>
+    <serviceList>
+      <service>
+        <serviceType>urn:schemas-upnp-org:service:AVTransport:1</serviceType>
+        <serviceId>urn:upnp-org:serviceId:AVTransport</serviceId>
+        <SCPDURL>/AVTransport/9c443d47158b-dmr/scpd.xml</SCPDURL>
+        <controlURL>/AVTransport/9c443d47158b-dmr/control.xml</controlURL>
+        <eventSubURL>/AVTransport/9c443d47158b-dmr/event.xml</eventSubURL>
+      </service>
+      ...
+    </serviceList>
+  </device>
+</root>
+
+
 
 
 
