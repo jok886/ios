@@ -370,7 +370,7 @@ withFilterContext:(nullable id)filterContext{
     }
 }
 
-
+大致是通过系统的AssetsLibrary框架获取本地相册图片，然后选中某张图片后用GCDWebServer将图片共享然后获取到图片的url地址
 
 
 
