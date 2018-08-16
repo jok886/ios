@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lhg-Pn-vRf">
+                                <rect key="frame" x="200" y="200" width="200" height="200"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="qrcode_border" translatesAutoresizingMaskIntoConstraints="NO" id="JsP-hP-UjP">
+                                        <rect key="frame" x="0.0" y="0.0" width="200" height="200"/>
+                                    </imageView>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="qrcode_scanline_qrcode" translatesAutoresizingMaskIntoConstraints="NO" id="4la-is-LwD">
+                                        <rect key="frame" x="0.0" y="0.0" width="200" height="200"/>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="JsP-hP-UjP" firstAttribute="top" secondItem="lhg-Pn-vRf" secondAttribute="top" id="34z-lY-j1T"/>
+                                    <constraint firstAttribute="bottom" secondItem="4la-is-LwD" secondAttribute="bottom" id="8MU-NX-Uon"/>
+                                    <constraint firstItem="4la-is-LwD" firstAttribute="width" secondItem="JsP-hP-UjP" secondAttribute="width" id="FAj-Li-fcZ"/>
+                                    <constraint firstAttribute="width" constant="200" id="MRh-lj-NwX"/>
+                                    <constraint firstAttribute="trailing" secondItem="JsP-hP-UjP" secondAttribute="trailing" id="Qfb-mU-pkL"/>
+                                    <constraint firstItem="JsP-hP-UjP" firstAttribute="leading" secondItem="lhg-Pn-vRf" secondAttribute="leading" id="gWv-oa-sYD"/>
+                                    <constraint firstItem="4la-is-LwD" firstAttribute="height" secondItem="JsP-hP-UjP" secondAttribute="height" id="lwu-D3-2um"/>
+                                    <constraint firstAttribute="height" constant="200" id="m3X-mc-h8d"/>
+                                    <constraint firstItem="4la-is-LwD" firstAttribute="leading" secondItem="lhg-Pn-vRf" secondAttribute="leading" id="vSs-Tp-7Js"/>
+                                    <constraint firstAttribute="bottom" secondItem="JsP-hP-UjP" secondAttribute="bottom" id="w3B-5O-hDD"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="lhg-Pn-vRf" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="ef9-9R-ulU"/>
+                            <constraint firstItem="lhg-Pn-vRf" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="xWu-J3-mlt"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="scanBackView" destination="lhg-Pn-vRf" id="Wzd-hd-Ngv"/>
+                        <outlet property="toBottom" destination="8MU-NX-Uon" id="q5k-I1-0Sk"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="245" y="210"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="qrcode_border" width="51" height="51"/>
+        <image name="qrcode_scanline_qrcode" width="218" height="170"/>
+    </resources>
+</document>
