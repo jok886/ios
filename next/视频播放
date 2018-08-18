@@ -1,0 +1,215 @@
+# 视频播放
+## 一. 视频播放介绍
+### **实现方案四种**
+
+1. AVPlayer
+	
+		> 优点: 
+			可以自定义UI, 进行控制
+		> 缺点: 
+			单纯的播放, 没有控制UI, 而且如果要显示播放界面, 需要借助AVPlayerLayer, 添加图层到需要展示的图层上
+
+		
+2. MPMoviePlayerController
+		
+		
+		> 优点: 
+			自带的播放控制UI, 不需要手动添加
+			
+		> 缺点:
+			不能自定义UI
+			只能将此控制器视图添加到其他视图进行展示
+			此控制器不是视图控制器, 不能弹出
+		
+
+3. MPMoviePlayerViewController
+
+		> 优点: 
+			自带的播放控制UI, 不需要手动添加
+			此控制器是视图控制器, 可以弹出, 可以压栈
+			也可以手动调整视图大小, 添加到其他视图上
+			
+		> 缺点:
+			不能自定义UI
+
+
+4. 针对于第2种和第3种实现方案, 在iOS9.0之后, 统一使用AVPlayerViewController
+
+		> 优点: 
+			自带的播放控制UI, 不需要手动添加
+			此控制器是视图控制器, 可以弹出, 可以压栈
+			也可以手动调整视图大小, 添加到其他视图上
+			
+		> 缺点:
+			不能自定义UI
+
+---
+
+## 二. 使用AVPlayer 播放远程视频
+### 1. 实现播放功能
+1. 通过远程URL创建AVPlayer对象
+	
+		NSURL *remoteURL = [NSURL URLWithString:@"http://v1.mukewang.com/57de8272-38a2-4cae-b734-ac55ab528aa8/L.mp4"];
+        _player = [AVPlayer playerWithURL:remoteURL];
+
+2. 开始播放
+	
+		[self.player play];
+
+3. 存在问题
+
+		只能播放声音, 看不到图像
+		解决方案: 需要借助AVPlayerLayer对象, 根据player创建图层, 添加到视图上
+		
+### 2. 实现视频显示功能
+1. 根据player对象, 创建 AVPlayerLayer 对象
+	
+		AVPlayerLayer *layer = [AVPlayerLayer playerLayerWithPlayer:self.player];
+
+2. 设置图层 AVPlayerLayer 的大小	
+		
+		layer.frame = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height * 9 / 16);
+	
+3. 添加到需要展示的视图上即可
+	
+		[self.view.layer addSublayer:layer];
+
+### 3. 封装专门用于播放的视图
+**主要封装一些操作的工具条**
+
+
+
+### 备注
+iOS9.0 网络请求适配 (HTTPS-->HTTP)
+
+<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	
+---
+
+## 三. 使用MPMoviePlayerController播放视频
+### **相比于AVPlayer播放, 自带一些控制按钮**
+
+0. 导入框架
+	
+		#import <MediaPlayer/MediaPlayer.h>
+	
+1. 根据URL, 创建控制器 MPMoviePlayerController
+
+		 NSURL *remoteURL = [NSURL URLWithString:@"http://v1.mukewang.com/57de8272-38a2-4cae-b734-ac55ab528aa8/L.mp4"];
+        _moviePlayer = [[MPMoviePlayerController alloc] initWithContentURL:remoteURL];
+        
+2. 设置播放视图frame, 添加到需要展示的视图上
+
+		 // 设置播放视图的frame
+    	self.moviePlayer.view.frame = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height * 9 / 16);
+    	// 设置播放视图控制样式
+    	self.moviePlayer.controlStyle = MPMovieControlStyleFullscreen;
+    	// 添加播放视图到要显示的视图
+    	[self.view addSubview:self.moviePlayer.view];
+	
+3. 播放
+
+		[self.moviePlayer play];
+		
+**注意: 此控制器不是视图控制器, 不能直接弹出**
+
+**播放器的播放状态, 是通过通知的方式告诉外界**
+		
+### **iOS9.0之后, 需要使用AVPlayerViewController**
+0. 导入框架
+	
+		#import <AVFoundation/AVFoundation.h>
+		#import <AVKit/AVKit.h>
+	
+1. 根据URL创建AVPlayer
+
+		NSURL *remoteURL = [NSURL URLWithString:@"http://v1.mukewang.com/57de8272-38a2-4cae-b734-ac55ab528aa8/L.mp4"];
+        AVPlayer *player = [AVPlayer playerWithURL:remoteURL];
+        
+2. 根据AVPlayer, 创建AVPlayerViewController控制器
+
+		_playerVC = [[AVPlayerViewController alloc] init];
+ 		_playerVC.player = player;
+       
+        
+3. 设置播放视图frame, 添加到需要展示的视图上
+
+		// 设置播放视图的frame
+    	self.playerVC.view.frame = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height * 9 / 16);
+
+    	// 添加播放视图到要显示的视图
+    	[self.view addSubview:self.playerVC.view];
+    	
+	或者
+	
+	*[self presentViewController:self.playerVC animated:YES completion:nil];*
+	
+4. 播放
+
+		// 开始播放
+    	[self.playerVC.player play];
+
+---
+
+## 四. 使用MPMoviePlayerViewController播放视频
+### 1. 实现步骤
+0. 导入框架
+	
+		#import <MediaPlayer/MediaPlayer.h>
+	
+1. 根据URL, 创建控制器 MPMoviePlayerViewController
+
+		 NSURL *remoteURL = [NSURL URLWithString:@"http://v1.mukewang.com/57de8272-38a2-4cae-b734-ac55ab528aa8/L.mp4"];
+        _playerVC = [[MPMoviePlayerViewController alloc] initWithContentURL:remoteURL];
+        
+2. 直接模态弹出该控制器(或者: 设置播放视图frame, 添加到需要展示的视图上)
+
+		[self presentViewController:self.playerVC animated:YES completion:^{
+        	[self.playerVC.moviePlayer play];
+    	}];
+	
+3. 播放
+
+		[self.playerVC.moviePlayer play];
+
+
+### **iOS9.0之后, 需要使用AVPlayerViewController**
+0. 导入框架
+	
+		#import <AVFoundation/AVFoundation.h>
+		#import <AVKit/AVKit.h>
+	
+1. 根据URL创建AVPlayer
+
+		NSURL *remoteURL = [NSURL URLWithString:@"http://v1.mukewang.com/57de8272-38a2-4cae-b734-ac55ab528aa8/L.mp4"];
+        AVPlayer *player = [AVPlayer playerWithURL:remoteURL];
+        
+2. 根据AVPlayer, 创建AVPlayerViewController控制器
+
+		_playerVC = [[AVPlayerViewController alloc] init];
+ 		_playerVC.player = player;
+       
+        
+3. 设置播放视图frame, 添加到需要展示的视图上
+
+		// 设置播放视图的frame
+    	self.playerVC.view.frame = CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height * 9 / 16);
+
+    	// 添加播放视图到要显示的视图
+    	[self.view addSubview:self.playerVC.view];
+    	
+	或者
+	
+	*[self presentViewController:self.playerVC animated:YES completion:nil];*
+	
+4. 播放
+
+		// 开始播放
+    	[self.playerVC.player play];
+
+
+
