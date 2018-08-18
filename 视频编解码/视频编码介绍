@@ -226,3 +226,25 @@ YUV颜色存储格式
 •通常，用来远程传输的是I420数据，而本地摄像头采集的是NV12数据。（iOS）
 •所有在真正编码的过程中, 需要将NV12数据转成I420数据进行编码
       
+
+
+
+IJKFFOptions *options = [IJKFFOptions optionsByDefault];
+    // Set param
+    [options setFormatOptionIntValue:1024 * 16 forKey:@"probsize"];
+    [options setFormatOptionIntValue:50000 forKey:@"analyzeduration"];
+    [options setPlayerOptionIntValue:0 forKey:@"videotoolbox"];
+    [options setCodecOptionIntValue:IJK_AVDISCARD_DEFAULT forKey:@"skip_loop_filter"];
+    [options setCodecOptionIntValue:IJK_AVDISCARD_DEFAULT forKey:@"skip_frame"];
+    if (_isLive) {
+        // Param for living
+        [options setPlayerOptionIntValue:3000 forKey:@"max_cached_duration"];   // 最大缓存大小是3秒，可以依据自己的需求修改
+        [options setPlayerOptionIntValue:1 forKey:@"infbuf"];  // 无限读
+        [options setPlayerOptionIntValue:0 forKey:@"packet-buffering"];  //  关闭播放器缓冲
+    } else {
+        // Param for playback
+        [options setPlayerOptionIntValue:0 forKey:@"max_cached_duration"];
+        [options setPlayerOptionIntValue:0 forKey:@"infbuf"];
+        [options setPlayerOptionIntValue:1 forKey:@"packet-buffering"];
+    }
+
