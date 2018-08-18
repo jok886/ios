@@ -199,3 +199,30 @@ RTMP
 ◦而实际传输的时候为了更好地实现多路复用、分包和信息的公平性，发送端会把Message划分为带有Message ID的Chunk，每个Chunk可能是一个单独的Message，也可能是Message的一部分，在接受端会根据chunk中包含的data的长度，message id和message的长度把chunk还原成完整的Message，从而实现信息的收发。
 
       
+YUV颜色空间
+
+为什么学习YUV颜色空间
+•使用系统提供的接口获取到的音视频数据都保存在CMSampleBufferRef中, 使用GPUImamge获取到的音频数据为CMSampleBufferRef
+•CMSampleBufferRef◦这个结构在iOS中表示一帧音频/视频数据
+◦它里面包含了这一帧数据的内容和格式, 我们可以把它的内容取出来，提取出/转换成 我们想要的数据
+◦代表视频的CMSampleBufferRef中保存的数据是NV12格式的视频帧(我们在视频输出设置中将输出格式设为：kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange)
+◦代表音频的CMSampleBufferRef中保存的数据是PCM格式的音频帧
+
+
+yuv是什么？
+•视频是由一帧一帧的数据连接而成，而一帧视频数据其实就是一张图片。
+•yuv是一种图片储存格式，跟RGB格式类似。◦RGB格式的图片很好理解，计算机中的大多数图片，都是以RGB格式存储的。
+◦yuv中，y表示亮度，单独只有y数据就可以形成一张图片，只不过这张图片是灰色的。u和v表示色差(u和v也被称为：Cb－蓝色差，Cr－红色差)
+
+•为什么要yuv？◦有一定历史原因，最早的电视信号，为了兼容黑白电视，采用的就是yuv格式。
+◦一张yuv的图像，去掉uv，只保留y，这张图片就是黑白的。
+◦而且yuv可以通过抛弃色差来进行带宽优化。
+◦比如yuv420格式图像相比RGB来说，要节省一半的字节大小，抛弃相邻的色差对于人眼来说，差别不大。
+
+
+
+YUV颜色存储格式
+•常用的I420(YUV420P),NV12(YUV420SP),YV12（YUV420P）,NV21(YUV420SP)等都是属于YUV420，NV12是一种两平面存储方式，Y为一个平面，交错的UV为另一个平面
+•通常，用来远程传输的是I420数据，而本地摄像头采集的是NV12数据。（iOS）
+•所有在真正编码的过程中, 需要将NV12数据转成I420数据进行编码
+      
