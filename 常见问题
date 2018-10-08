@@ -26,9 +26,6 @@ iOS11 与 iPhone X适配
 
 ---------------------
 
-本文来自 请不要叫我呆头鹅 的CSDN 博客 ，全文地址请点击：https://blog.csdn.net/lg767201403/article/details/82683445?utm_source=copy 
-
-
 1.ios10tabbar上面出现一个灰线 
 if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 10.0) {
         self.tabBarController.tabBar.subviews[0].subviews[0].hidden = YES;
