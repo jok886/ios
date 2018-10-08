@@ -1,3 +1,34 @@
+
+
+https://www.cnblogs.com/edensyd/p/8418021.html
+
+
+iOS11 与 iPhone X适配
+
+
+启动图尺寸       机型                  命名
+
+640 × 960       iPhone4s          Default@2x
+
+640 × 1136      iPhone5s          Default-568h@2x
+
+750 × 1334      iPhone              Default-667h@2x
+
+1242 × 2208    iPhonePlus       Default-736h@3x
+
+1125 × 2436    iPhoneX, XS      Default-812h@3x
+
+828 x 1792      iPhoneXR          Default-828h@2x
+
+1242 x 2688    iPhoneXS Max    Default-1242h@3x
+
+本文提到的这四款手机都有一个共同的特点，就是“齐刘海”+底部触摸条
+
+---------------------
+
+本文来自 请不要叫我呆头鹅 的CSDN 博客 ，全文地址请点击：https://blog.csdn.net/lg767201403/article/details/82683445?utm_source=copy 
+
+
 1.ios10tabbar上面出现一个灰线 
 if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 10.0) {
         self.tabBarController.tabBar.subviews[0].subviews[0].hidden = YES;
