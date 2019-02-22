@@ -28,6 +28,30 @@
 }
 
 
+
+
+
+if (psize == 0x1000 && maxVersion("12.1.2")) {
+            
+            // v3ntex is so bad we have to treat it specially for it not to freak out
+            dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
+            dispatch_group_t group = dispatch_group_create();
+            dispatch_semaphore_t sm = dispatch_semaphore_create(0);
+            
+            dispatch_group_async(group, queue, ^{
+                taskforpidzero = v3ntex();
+                dispatch_semaphore_signal(sm);
+            });
+            
+            dispatch_semaphore_wait(sm, DISPATCH_TIME_FOREVER);
+        }
+		
+  
+  
+  
+  
+  
+
 //
 //  CADisplayLink+Tool.h
 //  Douyin
