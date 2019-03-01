@@ -1,0 +1,20 @@
+实用LLDB命令
+
+命令名 用法 说明
+
+ 
+expr	expr 表达式	可以在调试时动态执行指定表达式，并将结果打印出来，很有用的命令。
+po	po 表达式	与expr类似，打印对象，会调用对象description方法。是print-object的简写
+print	print (type) 表达式	也是打印命令，需要指定类型。
+bt	bt [all]	打印调用堆栈，是thread backtrace的简写，加all可打印所有thread的堆栈。
+br l	br l	是breakpoint list的简写
+process continue l	process continue	简写：c
+thread step-in l	thread step-in l	简写：s
+thread step-inst l	thread step-inst l	简写：si
+thread step-over l	thread step-over l	简写：n
+thread step-over-inst l	thread step-over-inst l	简写：ni
+thread step-out l	thread step-out l	简写：f
+thread list	thread list	简写：th l
+ 
+
+ 
