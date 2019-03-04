@@ -1,19 +1,19 @@
-һ����20��¥�ݣ�ÿ�ο�����1����2�������ϵ�20��һ���ж������Ϸ�
+一共有20级楼梯，每次可以上1级或2级，登上第20级一共有多少种上法
 
-�ϵ�1���� 1���Ϸ�
+上第1级： 1种上法
 
-�ϵ�2���� 2���Ϸ�
+上第2级： 2种上法
 
-�ϵ�3���� 3���Ϸ�  3 = 2 + 1
+上第3级： 3种上法  3 = 2 + 1
 
-�ϵ�4���� 5���Ϸ�  5 = 3 + 2
+上第4级： 5种上法  5 = 3 + 2
 
-�ϵ�5���� 8���Ϸ�  8 = 5 + 3
-���ϵ�20��̨����������Ϊ�����еڶ�ʮ�����ֵ,������Ϊ10946��
+上第5级： 8种上法  8 = 5 + 3
+登上第20级台阶种类数即为该数列第二十项的数值,经计算为10946种
 
 
 
-2. ����
+2. 代码
 
 #include<stdio.h>
 
@@ -48,16 +48,16 @@ int main(void)
 
 
 
-��ת��������
+翻转单向链表
 struct Node * reversedNodeTree(struct Node *node) {
     if (node == NULL) {
         return NULL;
     }
 
-    // Ӧ��nextָ����ڴ˴���������ÿ��ѭ��ʱ�����·����ڴ����ʱ����
+    // 应将next指针放在此处，避免在每次循环时都重新分配内存给临时变量
     struct Node *tmp = node->next, *next;
 
-    // ͷ�����Ҫ��next����ΪNULL���������ڵ�����ò�ͬ���Ϳ��Խ�����'����������ڵ�Ϳ�����ѭ���й�һ����
+    // 头结点需要将next设置为NULL，与其他节点的设置不同，就可以将其拎'出来，其余节点就可以在循环中归一处理
     node->next = NULL;
 
     while (tmp != NULL ) {
@@ -70,16 +70,16 @@ struct Node * reversedNodeTree(struct Node *node) {
     return node;
 }
 
-��N���ַ����������򣬲��ֱ�ͳ�Ƴ������ַ������ظ����ִ��������ַ���
+对N个字符串进行排序，并分别统计出各个字符串中重复出现次数最多的字符。
 
-//д����������ͨ������������ʣ���ӭ����
-//����N�Ƕ����ڳ�����ģ������Ҫ�����������Ҳ�������޸�
+//写好啦，测试通过，如果有疑问，欢迎交流
+//其中N是定义在程序里的，如果需要输入进来，我也可以再修改
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
 #define M 100
 #define N 3
-void bubblesort_str(char **list,int len) //ð������
+void bubblesort_str(char **list,int len) //冒泡排序
 {
     int i,j;
     char temp[M];
@@ -107,7 +107,7 @@ void sta_cout_str(char *tar){
         }
         cur_idx++;
     }
-    printf("���������ַ��ǣ�%c��%d��", 'a'+max_char_idx, sta_lib[max_char_idx]);
+    printf("出现最多的字符是：%c共%d次", 'a'+max_char_idx, sta_lib[max_char_idx]);
 }
 int main(){
     char **names;
@@ -130,63 +130,89 @@ int main(){
     free(names);
 }
 
-10�ڸ������ҳ�����10000������top K���⣩
+10亿个数中找出最大的10000个数（top K问题）
 
-  �Ż��ķ��������԰�����10�ڸ����ݷ����ţ�����ֱ����1000���ļ��С����������Ϳ��Էֱ���ÿ���ļ���10^6���������ҳ�����10000�������ϲ���һ�������ҳ����յĽ����
+  优化的方法：可以把所有10亿个数据分组存放，比如分别放在1000个文件中。这样处理就可以分别在每个文件的10^6个数据中找出最大的10000个数，
+  合并到一起在再找出最终的结果。
   
   
   
 
-��1�ڸ�������������ҳ���������10000����
-        �������뵽�ķ����ǽ�����ȫ������Ȼ���������ļ����н��в��ң����������㷨��ʱ�临�Ӷ�һ��ΪO��nlogn������������򡣵�����32λ�Ļ����ϣ�ÿ��float����ռ4���ֽڣ�1�ڸ���������Ҫռ��400MB�Ĵ洢�ռ䣬����һЩ�����ڴ�С��400M�ļ�������ԣ�����Ȼ�ǲ���һ�ν�ȫ�����ݶ����ڴ��������ġ���ʵ��ʹ�ڴ��ܹ�����Ҫ���һ����ڴ涼��8GB�����÷���Ҳ������Ч����Ϊ��Ŀ��Ŀ����Ѱ�ҳ�����10000�������ɣ�������ȴ�ǽ����е�Ԫ�ض������ˣ����˺ܶ�����ù���
+有1亿个浮点数，如果找出期中最大的10000个？
+        最容易想到的方法是将数据全部排序，然后在排序后的集合中进行查找，最快的排序算法的时间复杂度一般为O（nlogn），如快速排序。
+	但是在32位的机器上，每个float类型占4个字节，1亿个浮点数就要占用400MB的存储空间，对于一些可用内存小于400M的计算机而言，
+	很显然是不能一次将全部数据读入内存进行排序的。其实即使内存能够满足要求（我机器内存都是8GB），该方法也并不高效，
+	因为题目的目的是寻找出最大的10000个数即可，而排序却是将所有的元素都排序了，做了很多的无用功。
 
-        �ڶ��ַ���Ϊ�ֲ���̭�����÷��������򷽷����ƣ���һ����������ǰ10000������Ȼ��ʣ����������֡����������ڵ���С������ȣ�������к�����Ԫ�ض��������ڵ�10000������С����ô���������10000�����������10000���������ĳһ����Ԫ�ر���������С���ִ���ɾ����������СԪ�أ�������Ԫ�ز�������������������1�ڸ������õ��Ľ�������б��������Ϊ���ս���ˡ���ʱ��ʱ�临�Ӷ�ΪO��n+m^2��������mΪ�����Ĵ�С����10000��
+        第二种方法为局部淘汰法，该方法与排序方法类似，用一个容器保存前10000个数，然后将剩余的所有数字——与容器内的最小数字相比，
+	如果所有后续的元素都比容器内的10000个数还小，那么容器内这个10000个数就是最大10000个数。如果某一后续元素比容器内最小数字大，
+	则删掉容器内最小元素，并将该元素插入容器，最后遍历完这1亿个数，得到的结果容器中保存的数即为最终结果了。此时的时间复杂度为O（n+m^2），
+	其中m为容器的大小，即10000。
 
-        �����ַ����Ƿ��η�����1�ڸ����ݷֳ�100�ݣ�ÿ��100������ݣ��ҵ�ÿ������������10000����
-		�����ʣ�µ�100*10000�����������ҳ�����10000����
-		���100������ѡ���㹻���룬��ô���Թ��˵�1����������99%�����ݡ�
-		100������������������10000�����ݵķ������£��ÿ�������ķ����������ݷ�Ϊ2�ѣ��������ǶѸ���N����10000����
-		�����Դ�ѿ�������һ�ηֳ�2�ѣ��������ǶѸ���N����10000���������Դ�ѿ�������һ�ηֳ�2�ѣ������Ѹ���NС��10000����
-		����С���Ƕ������������һ�Σ��ҵ�10000-n������֣��ݹ����Ϲ��̣��Ϳ����ҵ���1w�������
-		�ο�������ҳ���1w�����֣��Ϳ������Ƶķ����ҵ�ǰ10000�������ˡ����ַ�����Ҫÿ�ε��ڴ�ռ�Ϊ10^6*4=4MB��һ����Ҫ101�������ıȽϡ�
+        第三种方法是分治法，将1亿个数据分成100份，每份100万个数据，找到每份数据中最大的10000个，
+		最后在剩下的100*10000个数据里面找出最大的10000个。
+		如果100万数据选择足够理想，那么可以过滤掉1亿数据里面99%的数据。
+		100万个数据里面查找最大的10000个数据的方法如下：用快速排序的方法，将数据分为2堆，如果大的那堆个数N大于10000个，
+		继续对大堆快速排序一次分成2堆，如果大的那堆个数N大于10000个，继续对大堆快速排序一次分成2堆，如果大堆个数N小于10000个，
+		就在小的那堆里面快速排序一次，找第10000-n大的数字；递归以上过程，就可以找到第1w大的数。
+		参考上面的找出第1w大数字，就可以类似的方法找到前10000大数字了。此种方法需要每次的内存空间为10^6*4=4MB，一共需要101次这样的比较。
 
-        �����ַ�����Hash���������1�ڸ��������кܶ��ظ���������ͨ��Hash��������1�ڸ�����ȥ�ظ�����������ظ��ʺܸߵĻ�������ٺܴ���ڴ��������Ӷ���С����ռ䣬Ȼ��ͨ�����η�����С�ѷ���������10000������
+        第四种方法是Hash法。如果这1亿个书里面有很多重复的数，先通过Hash法，把这1亿个数字去重复，这样如果重复率很高的话，会减少很大的内存用量，
+	从而缩小运算空间，然后通过分治法或最小堆法查找最大的10000个数。
 
-        �����ַ���������С�ѡ����ȶ���ǰ10000������������СΪ10000����С�ѣ����ѵ�ʱ�临�Ӷ�ΪO��mlogm����mΪ����Ĵ�С��Ϊ10000����Ȼ��������������֣����ڶѶ�����С�����ֽ��бȽϡ��������С����С���������ȡ�������֣�����ȶѶ����ִ����滻�Ѷ�Ԫ�ز����µ�����Ϊ��С�ѡ���������ֱ��1�ڸ���ȫ��������Ϊֹ��Ȼ������������ķ�ʽ�����ǰ���е�����10000�����֡����㷨��ʱ�临�Ӷ�ΪO��nmlogm�����ռ临�Ӷ���10000����������
+        第五种方法采用最小堆。首先读入前10000个数来创建大小为10000的最小堆，建堆的时间复杂度为O（mlogm）（m为数组的大小即为10000），
+	然后遍历后续的数字，并于堆顶（最小）数字进行比较。如果比最小的数小，则继续读取后续数字；如果比堆顶数字大，则替换堆顶元素并重新调整堆为最小堆。整个过程直至1亿个数全部遍历完为止。然后按照中序遍历的方式输出当前堆中的所有10000个数字。该算法的时间复杂度为O（nmlogm），
+	空间复杂度是10000（常数）。
 
-ʵ�����У�
-        ʵ���ϣ����ŵĽ������Ӧ���������ʵ���������ķ�������ʱ��Ӧ���У��������㹻����ڴ棬��ôֱ�ӽ������ӵ��ڴ���һ���Դ������ɣ�Ҳ���ܻ����ж���ˣ��������Բ��ö��̴߳����������ݼ���
+实际运行：
+        实际上，最优的解决方案应该是最符合实际设计需求的方案，在时间应用中，可能有足够大的内存，那么直接将数据扔到内存中一次性处理即可，
+	也可能机器有多个核，这样可以采用多线程处理整个数据集。
 
-       ������Բ��ݵ�Ӧ�ó������������ʺ���ӦӦ�ó����Ľ��������
+       下面针对不容的应用场景，分析了适合相应应用场景的解决方案。
 
-��1������+����+�㹻���ڴ�
-        �����Ҫ����10�ڸ���ѯ�Σ�ÿ��ռ8B���г���Ƶ����ߵ�10�������ǵ�ÿ����ѯ��ռ8B����10�ڸ���ѯ��������ڴ��Լ��10^9 * 8B=8GB�ڴ档�������ô���ڴ棬ֱ�����ڴ��жԲ�ѯ�ν�������˳������ҳ�10������Ƶ�����ļ��ɡ����ַ����򵥿��٣�ʹ�á�Ȼ��Ҳ��������HashMap���ÿ���ʳ��ֵ�Ƶ�ʣ�Ȼ�����Ƶ������10���ʡ�
+（1）单机+单核+足够大内存
+        如果需要查找10亿个查询次（每个占8B）中出现频率最高的10个，考虑到每个查询词占8B，则10亿个查询次所需的内存大约是10^9 * 8B=8GB内存。
+	如果有这么大内存，直接在内存中对查询次进行排序，顺序遍历找出10个出现频率最大的即可。这种方法简单快速，使用。然后，
+	也可以先用HashMap求出每个词出现的频率，然后求出频率最大的10个词。
 
-��2������+���+�㹻���ڴ�
-        ��ʱ����ֱ�����ڴ���ʹ��Hash���������ݻ��ֳ�n��partition��ÿ��partition����һ���̴߳������̵߳Ĵ����߼�ͬ��1�����ƣ����һ���߳̽�����鲢��
+（2）单机+多核+足够大内存
+        这时可以直接在内存总使用Hash方法将数据划分成n个partition，每个partition交给一个线程处理，线程的处理逻辑同（1）类似，
+	最后一个线程将结果归并。
 
-        �÷�������һ��ƿ��������Ӱ��Ч�ʣ���������б��ÿ���̵߳Ĵ����ٶȿ��ܲ�ͬ������߳���Ҫ�ȴ������̣߳����յĴ����ٶ�ȡ���������̡߳�����Դ����⣬����ķ����ǣ������ݻ��ֳ�c��n��partition��c>1����ÿ���̴߳����굱ǰpartition������ȡ��һ��partition����������֪���������ݴ�����ϣ������һ���߳̽��й鲢��
+        该方法存在一个瓶颈会明显影响效率，即数据倾斜。每个线程的处理速度可能不同，快的线程需要等待慢的线程，最终的处理速度取决于慢的线程。
+	而针对此问题，解决的方法是，将数据划分成c×n个partition（c>1），每个线程处理完当前partition后主动取下一个partition继续处理，
+	知道所有数据处理完毕，最后由一个线程进行归并。
 
-��3������+����+�����ڴ�
-        ��������£���Ҫ��ԭ�����ļ��и��һ��һ��С�ļ�����ΰ���hash(x)%M����ԭ�ļ��е������и��MС�ļ������С�ļ��Դ����ڴ��С����������Hash�ķ����������ļ����зָ֪��ÿ��С�ļ�С���ڴ��С������ÿ���ļ��ɷŵ��ڴ��д��������ã�1���ķ������δ���ÿ��С�ļ���
+（3）单机+单核+受限内存
+        这种情况下，需要将原数据文件切割成一个一个小文件，如次啊用hash(x)%M，将原文件中的数据切割成M小文件，如果小文件仍大于内存大小，
+	继续采用Hash的方法对数据文件进行分割，知道每个小文件小于内存大小，这样每个文件可放到内存中处理。采用（1）的方法依次处理每个小文件。
 
-��4�����+�����ڴ�
-        ���������Ϊ�˺������ö�̨��������Դ���ɽ����ݷַ�����̨�����ϣ�ÿ̨�������ã�3���еĲ��Խ�����ص����ݡ��ɲ���hash+socket�����������ݷַ���
+（4）多机+受限内存
+        这种情况，为了合理利用多台机器的资源，可将数据分发到多台机器上，每台机器采用（3）中的策略解决本地的数据。
+	可采用hash+socket方法进行数据分发。
 
 
-        ��ʵ��Ӧ�õĽǶȿ��ǣ���1����2����3����4�������������У���Ϊ�ڴ��ģ���ݴ��������£���ҵЧ�ʲ�������Ҫ���ǵ����⣬�㷨����չ�Ժ��ݴ��Բ�����Ҫ���ǵġ��㷨Ӧ�þ������õ���չ�ԣ��Ա���������һ���Ӵ�����ҵ��ķ�չ���������Ӵ��Ǳ�Ȼ�ģ�ʱ���ڲ��޸��㷨��ܵ�ǰ���£��ɴﵽ���Ƶ����Աȣ��㷨Ӧ�þ����ݴ��ԣ�����ǰĳ���ļ�����ʧ�ܺ����Զ����佻������һ���̼߳��������������Ǵ�ͷ��ʼ������
+        从实际应用的角度考虑，（1）（2）（3）（4）方案并不可行，因为在大规模数据处理环境下，作业效率并不是首要考虑的问题，
+	算法的扩展性和容错性才是首要考虑的。算法应该具有良好的扩展性，以便数据量进一步加大（随着业务的发展，数据量加大是必然的）时，
+	在不修改算法框架的前提下，可达到近似的线性比；算法应该具有容错性，即当前某个文件处理失败后，能自动将其交给另外一个线程继续处理，
+	而不是从头开始处理。
 
-        top K������ʺϲ���MapReduce��ܽ�����û�ֻ���дһ��Map����������Reduce ������Ȼ���ύ��Hadoop������Mapchain��Reducechain���ϼ��ɽ�������⡣������ԣ��������ȸ�������ֵ���߰�����hash(MD5)���ֵ���շ�Χ���ֵ���ͬ�Ļ����ϣ���ÿ��������ݻ��ֺ�һ�ζ����ڴ棬������ͬ�Ļ�����������ͬ����ֵ��Χ��ʵ���Ͼ���Map���õ�����󣬸�������ֻ���ó����Գ��ִ�������ǰN�����ݣ�Ȼ����ܣ�ѡ�����е������г��ִ�������ǰN�����ݣ���ʵ���Ͼ���Reduce���̡�����Map����������Hash�㷨����Hashֵ��ͬ�����ݽ���ͬһ��Reduce task�����ڵ�һ��Reduce����������HashMapͳ�Ƴ�ÿ���ʳ��ֵ�Ƶ�ʣ����ڵڶ���Reduce ������ͳ������Reduce task����������е�top K���ɡ�
+        top K问题很适合采用MapReduce框架解决，用户只需编写一个Map函数和两个Reduce 函数，然后提交到Hadoop（采用Mapchain和Reducechain）
+	上即可解决该问题。具体而言，就是首先根据数据值或者把数据hash(MD5)后的值按照范围划分到不同的机器上，最好可以让数据划分后一次读入内存，
+	这样不同的机器负责处理不同的数值范围，实际上就是Map。得到结果后，各个机器只需拿出各自出现次数最多的前N个数据，然后汇总，
+	选出所有的数据中出现次数最多的前N个数据，这实际上就是Reduce过程。对于Map函数，采用Hash算法，将Hash值相同的数据交给同一个Reduce task；
+	对于第一个Reduce函数，采用HashMap统计出每个词出现的频率，对于第二个Reduce 函数，统计所有Reduce task，输出数据中的top K即可。
 
-        ֱ�ӽ����ݾ��ֵ���ͬ�Ļ����Ͻ��д������޷��õ���ȷ�Ľ���ġ���Ϊһ�����ݿ��ܱ����ֵ���ͬ�Ļ����ϣ�����һ���������ȫ�ۼ���һ�������ϣ�ͬʱ�����ܴ��ھ�����ͬ��Ŀ�����ݡ�
+        直接将数据均分到不同的机器上进行处理是无法得到正确的结果的。因为一个数据可能被均分到不同的机器上，而另一个则可能完全聚集到一个机器上，
+	同时还可能存在具有相同数目的数据。
 
 		
-������������㷨��Shuffleʵ��		
+音乐随机播放算法的Shuffle实现		
 #include <cstdlib>    
 #include <iostream>    
 using namespace std;    
    
-//�õ���Χstart~end֮��������   
+//得到范围start~end之间的随机数   
 int rand(int start, int end)    
 {    
     return rand()%(end - start) + start;    
@@ -201,12 +227,12 @@ void swap(int* a, int* b)
 void shuffle(int a[], int len)    
 {    
     int key;    
-    srand((unsigned int)time(NULL));//srandӦ�÷���forѭ��֮��   
+    srand((unsigned int)time(NULL));//srand应该放在for循环之外   
     for(int i = 0; i< len; i++)    
     {    
         key = rand(0, len);    
         printf("key = %d\n", key);  
-        swap(a[i], a[key]);  //����   
+        swap(a[i], a[key]);  //乱序   
     }    
 }    
     
@@ -223,21 +249,22 @@ int main(int argc, char *argv[])
 }  
 
  
-Objective-c��û��ֱ���ṩ����������ɵĺ����򷽷����������ǿ���ֱ������c�ĸ�������㷨
-�����Ǽ��ֳ�����������㷨��ʹ�ã����Բ�������ͷ�ļ�
+Objective-c并没有直接提供随机数据生成的函数或方法，不过我们可以直接利用c的各种随机算法
+以下是几种常见的随机数算法的使用，可以参照以下头文件
 stdlib.h
 
 arc4random
-����Ҫ������ӣ��ڵ���ʱ�Զ������������
-����[0,X)�ļ���
+不需要随机种子，在调用时自动生成随机种子
+返回[0,X)的集合
 int value = arc4random() % x;
-����[1,X]�ļ���
+返回[1,X]的集合
 int value = (arc4random() % x) + 1;
 
 
 
-���������ҳ���С��k����
-���ȣ����ǿ��Ի��ڿ���������㷨����������Ȼ����������޸�������������飬Ѱ����С��k��������ô���k��ߵ�����С��kλ�õ�����k�ұߵ���������kλ�õ��������ҵ�k��λ�ü��ɣ�����ʵ�����£�
+从数组中找出最小的k个数
+首先，我们可以基于快速排序的算法来调整，当然这种排序会修改我们输入的数组，寻找最小的k个数，那么如果k左边的数都小于k位置的数，
+k右边的数都大于k位置的数，则找到k的位置即可，具体实现如下：
 
 public ArrayList<Integer> GetLeastNumbers_Solution(int [] input, int k) {
         ArrayList<Integer> res = new ArrayList<Integer>();
@@ -276,7 +303,7 @@ public ArrayList<Integer> GetLeastNumbers_Solution(int [] input, int k) {
         input[start] = tmp;
         return start;
     }
-?????? Ҳ���ܶ��˻��ʣ������㷨��ʱ�临�Ӷ��Ƕ����أ�����O(n)��Ϊʲô~
+?????? 也许很多人会问，这种算法的时间复杂度是多少呢，答案是O(n)，为什么~
 --------------------- 
 
 
@@ -306,10 +333,10 @@ static public ArrayList<Integer> GetLeastNumbers_Solution1(int[] input, int k) {
     }
     static void adjustHeap(int maxHeap[],int i){
         int index = i;
-        int lchild=2*i+1;       //i�����ӽڵ���� 
-        int rchild=2*i+2;     //i���Һ��ӽڵ���� 
+        int lchild=2*i+1;       //i的左孩子节点序号 
+        int rchild=2*i+2;     //i的右孩子节点序号 
         if(index<=(maxHeap.length-1)/2) {
-            //Ѱ���ӽڵ������Ľڵ�
+            //寻找子节点中最大的节点
             if (lchild<maxHeap.length&&maxHeap[index]<maxHeap[lchild]) {
                 index = lchild;
             }
@@ -317,35 +344,36 @@ static public ArrayList<Integer> GetLeastNumbers_Solution1(int[] input, int k) {
                 index = rchild;
             }
             if (i!=index) {
-                //���ڵ��������ӽڵ㽻��
+                //将节点与最大的子节点交换
                 int tmp = maxHeap[index];
                 maxHeap[index] = maxHeap[i];
                 maxHeap[i] = tmp;
-                //�������������ܲ���������ƣ��ݹ������
+                //交换后，子树可能不满足最大推，递归调整。
                 adjustHeap(maxHeap, index);
             }
         }
-?????? ��ô��������ͬ������һ��ʱ�临�ӶȰɣ�����������ѭ�����Կ���ѭ������Ϊn-k����n�ر����k�ر�Сʱ��n-k����Ϊn��Ȼ����ÿ��ѭ���н�������ʱ�临�Ӷ�ΪO(logk)���������裬�����ܵ�ʱ�临�Ӷ�ΪO(nlogk)��
+?????? 那么在这里我同样解释一下时间复杂度吧，从主函数中循环可以看出循环次数为n-k，当n特别大且k特别小时，n-k近似为n，
+然后在每次循环中进行上述时间复杂度为O(logk)的三个步骤，所以总的时间复杂度为O(nlogk)。
 --------------------- 
 
-		iOS֮������������򡢽�������
-#pragma mark -- �������򷽷�������
+		iOS之数组的排序（升序、降序及乱序）
+#pragma mark -- 数组排序方法（升序）
 
 - (void)arraySortASC{
 
-    //��������
+    //数组排序
 
-    //����һ����������
+    //定义一个数字数组
 
     NSArray *array = @[@(3),@(4),@(2),@(1)];
 
-    //�������������
+    //对数组进行排序
 
     NSArray *result = [array sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
 
         NSLog(@"%@~%@",obj1,obj2); //3~4 2~1 3~1 3~2
 
-        return [obj1 compare:obj2]; //����
+        return [obj1 compare:obj2]; //升序
 
     }];
 
@@ -355,23 +383,23 @@ static public ArrayList<Integer> GetLeastNumbers_Solution1(int[] input, int k) {
 
  
 
-#pragma mark -- �������򷽷�������
+#pragma mark -- 数组排序方法（降序）
 
 - (void)arraySortDESC{
 
-    //��������
+    //数组排序
 
-    //����һ����������
+    //定义一个数字数组
 
     NSArray *array = @[@(3),@(4),@(2),@(1)];
 
-    //�������������
+    //对数组进行排序
 
     NSArray *result = [array sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
 
         NSLog(@"%@~%@",obj1,obj2); //3~4 2~1 3~1 3~2
 
-        return [obj2 compare:obj1]; //����
+        return [obj2 compare:obj1]; //降序
 
     }];
 
@@ -381,33 +409,33 @@ static public ArrayList<Integer> GetLeastNumbers_Solution1(int[] input, int k) {
 
  
 
-#pragma mark -- �������򷽷�������
+#pragma mark -- 数组排序方法（乱序）
 
 - (void)arraySortBreak{
 
-    //��������
+    //数组排序
 
-    //����һ����������
+    //定义一个数字数组
 
     NSArray *array = @[@(3),@(4),@(2),@(1),@(5),@(6),@(0)];
 
-    //�������������
+    //对数组进行排序
 
     NSArray *result = [array sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
 
         NSLog(@"%@~%@",obj1,obj2); 
 
-        //����
+        //乱序
 
         if (arc4random_uniform(2) == 0) {
 
-            return [obj2 compare:obj1]; //����
+            return [obj2 compare:obj1]; //降序
 
         }
 
         else{
 
-            return [obj1 compare:obj2]; //����
+            return [obj1 compare:obj2]; //升序
 
         }
 
@@ -417,13 +445,13 @@ static public ArrayList<Integer> GetLeastNumbers_Solution1(int[] input, int k) {
 
 }
 
-���ݿ���δ洢100����绰�����ȽϺ�,��κ�
-��������Ƿ������Ļ��������ݾͻᰴ����ָ���Ĺ���ַŵ���ͬ���ļ����һ����������ļ����Ϊ���С�ļ���
-�����԰���ЩС�ļ����ڲ�ͬ�Ĵ������ɶ��cpu���д����������ļ��Ĵ�С���Ų�ֶ���С�����õ�Ӳ��ϵͳ�ļ�ǿ��
-��Ȼ�����ǲ��������Ǵ�������ġ�
+数据库如何存储100万个电话号码会比较好,如何好
+但是如果是分区表的话，表数据就会按照你指定的规则分放到不同的文件里，把一个大的数据文件拆分为多个小文件，
+还可以把这些小文件放在不同的磁盘下由多个cpu进行处理。这样文件的大小随着拆分而减小，还得到硬件系统的加强，
+自然对我们操作数据是大大有利的。
 
-���Դ������������ݱ����Է�������Ҫ���Ǳ�Ҫ�ģ���Ϊ���������selectЧ�ʣ������Զ���ʷ���ݾ������ִ浵�ȡ�
-�����������ٵ����ݾͲ�Ҫ���������������Ϊ������������ݿ��������Ҫ�Ŀ������������ܻ�������ʵ�ֶ���Ĺ������ú͸����ԡ�
+所以大数据量的数据表，对分区的需要还是必要的，因为它可以提高select效率，还可以对历史数据经行区分存档等。
+但是数据量少的数据就不要凑这个热闹啦，因为表分区会对数据库产生不必要的开销，除啦性能还会增加实现对象的管理费用和复杂性。
 
 
 
