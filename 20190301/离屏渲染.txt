@@ -1,190 +1,221 @@
-OpenGL ES ��һ�׶๦�ܿ��ű�׼������Ƕ��ϵͳ�� C-based ��ͼ�ο⣬���� 2D �� 3D ���ݵĿ��ӻ���OpenGL ���������ת��һ��ͼ�ε��ù��ܵ��ײ�ͼ��Ӳ����GPU������ GPU ִ��ͼ���������ʵ�ָ��ӵ�ͼ�β��������㣬�Ӷ��ܹ������ܡ���֡������ GPU �ṩ�� 2D �� 3D ����������iOS ϵͳĬ��֧�� OpenGl ES1.0��ES2.0 �Լ� ES3.0 3 ���汾������֮�䲢���Ǽ򵥵İ汾�������������������ȫ��ͬ��GPU ��Ļ��Ⱦ��ʽ����һ�ַ�ʽΪ������Ⱦ����������������Ⱦ������� APP �����ܲ����ϴ��Ӱ�졣 ���� ��Ĥ��С�����
-һ������
+OpenGL ES 是一套多功能开放标准的用于嵌入系统的 C-based 的图形库，用于 2D 和 3D 数据的可视化。OpenGL 
+被设计用来转换一组图形调用功能到底层图形硬件（GPU），由 GPU 执行图形命令，用来实现复杂的图形操作和运算，从而能够高性能、
+高帧率利用 GPU 提供的 2D 和 3D 绘制能力。iOS 系统默认支持 OpenGl ES1.0、ES2.0 以及 ES3.0 3 个版本，三者之间并不是简单的版本升级，
+设计理念甚至完全不同。GPU 屏幕渲染方式中有一种方式为离屏渲染，处理不好离屏渲染往往会对 APP 的性能产生较大的影响。 —— 由膜法小编分享
+一、概述
 
-OpenGL ES��һ�׶๦�ܿ��ű�׼������Ƕ��ϵͳ��C-based��ͼ�ο⣬����2D��3D���ݵĿ��ӻ���OpenGL���������ת��һ��ͼ�ε��ù��ܵ��ײ�ͼ��Ӳ����GPU������GPUִ��ͼ���������ʵ�ָ��ӵ�ͼ�β��������㣬�Ӷ��ܹ������ܡ���֡������GPU�ṩ��2D��3D����������iOSϵͳĬ��֧��OpenGl ES1.0��ES2.0�Լ�ES3.0 3���汾������֮�䲢���Ǽ򵥵İ汾�������������������ȫ��ͬ��GPU��Ļ��Ⱦ��ʽ����һ�ַ�ʽΪ������Ⱦ����������������Ⱦ�������APP�����ܲ����ϴ��Ӱ�졣
-
- 
-
-������ǰ��Ļ��Ⱦ��������Ⱦ
-
-OpenGL�У�GPU��Ļ��Ⱦ�����ַ�ʽ:
-
-��1��On-Screen Rendering (��ǰ��Ļ��Ⱦ) 
-
-ָ����GPU����Ⱦ�������ڵ�ǰ������ʾ����Ļ���������С�
-
-��2��Off-Screen Rendering (������Ⱦ)
-
-ָ������GPU�ڵ�ǰ��Ļ���������⿪��һ��������������Ⱦ������
+OpenGL ES是一套多功能开放标准的用于嵌入系统的C-based的图形库，用于2D和3D数据的可视化。
+OpenGL被设计用来转换一组图形调用功能到底层图形硬件（GPU），
+由GPU执行图形命令，用来实现复杂的图形操作和运算，从而能够高性能、高帧率利用GPU提供的2D和3D绘制能力。
+iOS系统默认支持OpenGl ES1.0、ES2.0以及ES3.0 3个版本，三者之间并不是简单的版本升级，设计理念甚至完全不同。
+GPU屏幕渲染方式中有一种方式为离屏渲染，处理不好离屏渲染往往会对APP的性能产生较大的影响。
 
  
 
-��ǰ��Ļ��Ⱦ����Ҫ���ⴴ���µĻ��棬Ҳ����Ҫ�����µ������ģ������������Ⱦ���ܸ��á������ܵ�ǰ��Ļ��Ⱦ�ľ�����������(ֻ�����������ġ���Ļ�������޵�)����ǰ��Ļ��Ⱦ��Щ����µ���Ⱦ������˵ģ���ʹ�õ�������Ⱦ��
+二、当前屏幕渲染与离屏渲染
+
+OpenGL中，GPU屏幕渲染有两种方式:
+
+（1）On-Screen Rendering (当前屏幕渲染) 
+
+指的是GPU的渲染操作是在当前用于显示的屏幕缓冲区进行。
+
+（2）Off-Screen Rendering (离屏渲染)
+
+指的是在GPU在当前屏幕缓冲区以外开辟一个缓冲区进行渲染操作。
 
  
 
-����ڵ�ǰ��Ļ��Ⱦ��������Ⱦ�Ĵ����Ǻܸߵģ���Ҫ�������������棺
-
-��1�������»�����
-
-Ҫ�����������Ⱦ������Ҫ����һ���µĻ�������
-
-��2���������л�
-
-������Ⱦ���������̣���Ҫ����л������Ļ��������Ǵӵ�ǰ��Ļ��On-Screen���л���������Off-Screen�����ȵ�������Ⱦ�����Ժ󣬽���������������Ⱦ�����ʾ����Ļ������Ҫ�������Ļ����������л�����ǰ��Ļ���������Ļ������л���Ҫ�����ܴ���۵ġ�
+当前屏幕渲染不需要额外创建新的缓存，也不需要开启新的上下文，相对于离屏渲染性能更好。
+但是受当前屏幕渲染的局限因素限制(只有自身上下文、屏幕缓存有限等)，当前屏幕渲染有些情况下的渲染解决不了的，就使用到离屏渲染。
 
  
 
-����ġ�������Ⱦ����CPU��Ⱦ
+相比于当前屏幕渲染，离屏渲染的代价是很高的，主要体现在两个方面：
 
-���������д��drawRect����������ʹ���κ�Core Graphics�ļ��������˻��Ʋ��������漰����CPU��Ⱦ��������Ⱦ������CPU��App��ͬ������ɣ���Ⱦ�õ���bitmap(λͼ)����ٽ���GPU������ʾ��
+（1）创建新缓冲区
 
-Designing for iOS: Graphics & Performance ��ƪ����Ҳ�ᵽ��ʹ�� Core Graphics API �ᴥ��������Ⱦ�� ƻ�� iOS 4.1-8 ʱ�ڵ� UIKit ���ԱAndy MatuschakҲ�������˵�����н��ͣ���Core Graphics �Ļ��� API ��ȷ�ᴥ��������Ⱦ������������ GPU ��������Ⱦ��ʹ�� Core Graphics ���� API ���� CPU ��ִ�У��������� CPU �汾��������Ⱦ����
+要想进行离屏渲染，首先要创建一个新的缓冲区。
 
- 
+（2）上下文切换
 
-����ΪʲôҪ��������Ⱦ
-
-��Ҹ�������Ӧ��ѧ����ʾ���������ʾͼ��ģ���Ҫ��ʾ��ͼ�񾭹�CRT����ǹ�Լ�����ٶ�һ��һ�е�ɨ�裬ɨ������ͳ�����һ֡���棬������ǹ�ֻ�ص���ʼλ��ѭ��ɨ�裬�γ������ǿ�����ͼƬ����Ƶ��
-Ϊ������ʾ������ʾ����Ƶ������ͬ����������ǹ��ɨ��һ�е�ʱ��׼��ɨ���ʱ����һ��ˮƽͬ���ź�(HSync�ź�)����ʾ����ˢ��Ƶ�ʾ���HSync�źŲ�����Ƶ�ʡ�Ȼ��CPU�����frame�����ԣ�������õ����ݽ���GPUȥ��Ⱦ��GPU��Ⱦ��֮��ͻ����֡��������Ȼ����Ƶ�������ᰴ��HSync�ź����ж�ȡ֡�����������ݣ��������ܵ���ģת�����ݸ���ʾ��������ʾ�����ˡ�����Ĵ�����в������ϻ�ѯ�����רҵ��ʿ������ֻ�ο�����������һ���򵥵�������
-������Ⱦ�Ĵ��ۺܸߣ���Ҫ����������Ⱦ����ѡҪ����һ���µĻ���������Ļ��Ⱦ����һ�������Ļ�����һ�����������Ⱦ������������Ҫ�л������Ļ������ȴӵ�ǰ��Ļ�л����������Ƚ�������Ҫ�������Ļ����л���������Ҳ��Ϊʲô���������ܵ�ԭ���ˡ�
-���ڴ�ֱͬ���Ļ��ƣ������һ�� HSync ʱ���ڣ�CPU ���� GPU û����������ύ������һ֡�ͻᱻ�������ȴ���һ�λ�������ʾ������ʱ��ʾ���ᱣ��֮ǰ�����ݲ��䡣����� ���濨�ٵ�ԭ��
+离屏渲染的整个过程，需要多次切换上下文环境：先是从当前屏幕（On-Screen）切换到离屏（Off-Screen），
+等到离屏渲染结束以后，将离屏缓冲区的渲染结果显示到屏幕上有需要将上下文环境从离屏切换到当前屏幕。而上下文环境的切换是要付出很大代价的。
 
  
 
-��Ȼ������Ⱦ��ô������,Ϊʲô�����׻�����?
+特殊的“离屏渲染”：CPU渲染
 
-��ЩЧ������Ϊ����ֱ�ӳ�������Ļ������Ҫ�ڱ�ĵط�������Ĵ���Ԥ�ϳɡ�ͼ�����ԵĻ����û��Ԥ�ϳ�֮ǰ����ֱ������Ļ�л��ƣ����Ծ���Ҫ��Ļ����Ⱦ����Ļ����Ⱦ������ζ���������ƣ���������ζ��ͼ������ڱ���ʾ֮ǰ��һ����Ļ���������б���Ⱦ������CPU����GPU����
+如果我们重写了drawRect方法，并且使用任何Core Graphics的技术进行了绘制操作，就涉及到了CPU渲染。整个渲染过程由CPU在App内同步地完成，渲染得到的bitmap(位图)最后再交由GPU用于显示。
 
- 
-
-�������������������������Ⱦ��
-
-Ϊͼ���������֣�layer.mask��
-��ͼ���layer.masksToBounds / view.clipsToBounds��������Ϊtrue
-��ͼ��layer.allowsGroupOpacity��������ΪYES��layer.opacityС��1.0
-Ϊͼ��������Ӱ��layer.shadow *����
-Ϊͼ������layer.shouldRasterize=true
-����layer.cornerRadius��layer.edgeAntialiasingMask��layer.allowsEdgeAntialiasing��ͼ��
-�ı����κ����࣬����UILabel��CATextLayer��Core Text�ȣ���
-ʹ��CGContext��drawRect :�����л��ƴ󲿷�����»ᵼ��������Ⱦ������������һ���յ�ʵ�֡�
- 
-
-�ġ��Ż�����
-
-�ٷ���������Ⱦ������������Ҳ�������Ż���
-
-iOS 9.0 ֮ǰUIimageView��UIButton����Բ�Ƕ��ᴥ��������Ⱦ��
-
-iOS 9.0 ֮��UIButton����Բ�ǻᴥ��������Ⱦ����UIImageView��pngͼƬ����Բ�ǲ��ᴥ��������Ⱦ�ˣ��������������ӰЧ��֮��Ļ��ǻᴥ��������Ⱦ�ġ�
+Designing for iOS: Graphics & Performance 这篇文章也提到了使用 Core Graphics API 会触发离屏渲染。 
+苹果 iOS 4.1-8 时期的 UIKit 组成员Andy Matuschak也曾对这个说法进行解释：「Core Graphics 的绘制 API 的确会触发离屏渲染，
+但不是那种 GPU 的离屏渲染。使用 Core Graphics 绘制 API 是在 CPU 上执行，触发的是 CPU 版本的离屏渲染。」
 
  
 
-1��Բ���Ż�
+三、为什么要有离屏渲染
 
-��APP�����У�Բ��ͼƬ���Ǿ������ֵġ����һ��������ֻ������Բ��ͼƬ����������û�зǳ����Ӱ�죬���ǵ�Բ��ͼƬ�Ƚ϶��ʱ��ͻ�APP���ܲ������Ե�Ӱ�졣
+大家高中物理应该学过显示器是如何显示图像的：需要显示的图像经过CRT电子枪以极快的速度一行一行的扫描，扫描出来就呈现了一帧画面，
+随后电子枪又会回到初始位置循环扫描，形成了我们看到的图片或视频。
+为了让显示器的显示跟视频控制器同步，当电子枪新扫描一行的时候，准备扫描的时发送一个水平同步信号(HSync信号)，
+显示器的刷新频率就是HSync信号产生的频率。然后CPU计算好frame等属性，将计算好的内容交给GPU去渲染，GPU渲染好之后就会放入帧缓冲区。
+然后视频控制器会按照HSync信号逐行读取帧缓冲区的数据，经过可能的数模转换传递给显示器，就显示出来了。具体的大家自行查找资料或询问相关专业人士，
+这里只参考网上资料做一个简单的描述。
+离屏渲染的代价很高，想要进行离屏渲染，首选要创建一个新的缓冲区，屏幕渲染会有一个上下文环境的一个概念，离屏渲染的整个过程需要切换上下文环境，
+先从当前屏幕切换到离屏，等结束后，又要将上下文环境切换回来。这也是为什么会消耗性能的原因了。
+由于垂直同步的机制，如果在一个 HSync 时间内，CPU 或者 GPU 没有完成内容提交，则那一帧就会被丢弃，等待下一次机会再显示，
+而这时显示屏会保留之前的内容不变。这就是 界面卡顿的原因。
 
-��������Բ��һ��ͨ�����·�ʽ��
+ 
+
+既然离屏渲染这么耗性能,为什么有这套机制呢?
+
+有些效果被认为不能直接呈现于屏幕，而需要在别的地方做额外的处理预合成。图层属性的混合体没有预合成之前不能直接在屏幕中绘制，所以就需要屏幕外渲染。
+屏幕外渲染并不意味着软件绘制，但是它意味着图层必须在被显示之前在一个屏幕外上下文中被渲染（不论CPU还是GPU）。
+
+ 
+
+下面的情况或操作会引发离屏渲染：
+
+为图层设置遮罩（layer.mask）
+将图层的layer.masksToBounds / view.clipsToBounds属性设置为true
+将图层layer.allowsGroupOpacity属性设置为YES和layer.opacity小于1.0
+为图层设置阴影（layer.shadow *）。
+为图层设置layer.shouldRasterize=true
+具有layer.cornerRadius，layer.edgeAntialiasingMask，layer.allowsEdgeAntialiasing的图层
+文本（任何种类，包括UILabel，CATextLayer，Core Text等）。
+使用CGContext在drawRect :方法中绘制大部分情况下会导致离屏渲染，甚至仅仅是一个空的实现。
+ 
+
+四、优化方案
+
+官方对离屏渲染产生性能问题也进行了优化：
+
+iOS 9.0 之前UIimageView跟UIButton设置圆角都会触发离屏渲染。
+
+iOS 9.0 之后UIButton设置圆角会触发离屏渲染，而UIImageView里png图片设置圆角不会触发离屏渲染了，
+如果设置其他阴影效果之类的还是会触发离屏渲染的。
+
+ 
+
+1、圆角优化
+
+在APP开发中，圆角图片还是经常出现的。如果一个界面中只有少量圆角图片或许对性能没有非常大的影响，
+但是当圆角图片比较多的时候就会APP性能产生明显的影响。
+
+我们设置圆角一般通过如下方式：
 
 imageView.layer.cornerRadius = CGFloat(10);
 imageView.layer.masksToBounds = YES;
-������������Ⱦ������GPU�ڵ�ǰ��Ļ���������¿���һ����Ⱦ���������й�����Ҳ����������Ⱦ���������Ǵ��������������ģ����������Բ�ǲ����ﵽһ���������ᴥ����������Ƶ���ϲ��������ĵĵ�Ƶ���л������ܵĴ��ۻ��۵ر������û������ϡ�����֡��
+这样处理的渲染机制是GPU在当前屏幕缓冲区外新开辟一个渲染缓冲区进行工作，也就是离屏渲染，这会给我们带来额外的性能损耗，
+如果这样的圆角操作达到一定数量，会触发缓冲区的频繁合并和上下文的的频繁切换，性能的代价会宏观地表现在用户体验上——掉帧。
 
  
 
-�Ż�����1��ʹ�ñ���������UIBezierPath��Core Graphics��ܻ���һ��Բ��
+优化方案1：使用贝塞尔曲线UIBezierPath和Core Graphics框架画出一个圆角
 
 UIImageView *imageView = [[UIImageView alloc]initWithFrame:CGRectMake(100, 100, 100, 100)]; 
 imageView.image = [UIImage imageNamed:@"myImg"]; 
-//��ʼ��imageView���л�ͼ 
+//开始对imageView进行画图 
 UIGraphicsBeginImageContextWithOptions(imageView.bounds.size, NO, 1.0); 
-//ʹ�ñ��������߻���һ��Բ��ͼ 
+//使用贝塞尔曲线画出一个圆形图 
 [[UIBezierPath bezierPathWithRoundedRect:imageView.bounds cornerRadius:imageView.frame.size.width] addClip];
 [imageView drawRect:imageView.bounds];
 imageView.image = UIGraphicsGetImageFromCurrentImageContext(); 
-//������ͼ 
+//结束画图 
 UIGraphicsEndImageContext();
 [self.view addSubview:imageView];
  
 
-�Ż�����2��ʹ��CAShapeLayer��UIBezierPath����Բ��
+优化方案2：使用CAShapeLayer和UIBezierPath设置圆角
 
 UIImageView *imageView = [[UIImageView alloc]initWithFrame:CGRectMake(100, 100, 100, 100)]; 
 imageView.image = [UIImage imageNamed:@"myImg"]; 
 UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:imageView.bounds byRoundingCorners:UIRectCornerAllCorners cornerRadii:imageView.bounds.size];
 CAShapeLayer *maskLayer = [[CAShapeLayer alloc]init]; 
-//���ô�С 
+//设置大小 
 maskLayer.frame = imageView.bounds; 
-//����ͼ������ 
+//设置图形样子 
 maskLayer.path = maskPath.CGPath;
 imageView.layer.mask = maskLayer; 
 [self.view addSubview:imageView];
-���ڷ���2��Ҫ���͵��ǣ�
+对于方案2需要解释的是：
 
-CAShapeLayer�̳���CALayer,����ʹ��CALayer����������ֵ��
-CAShapeLayer��Ҫ�������������ʹ�ò������壨Ҳ����˵����Ч����
-ʹ��CAShapeLayer(����CoreAnimation)�뱴�������߿���ʵ�ֲ���view��drawRect���̳���CoreGraphics�ߵ���CPU,���ĵ����ܽϴ󣩷����л���һЩ��Ҫ��ͼ��
-CAShapeLayer������Ⱦֱ���ύ���ֻ���GPU���У������view��drawRect����ʹ��CPU��Ⱦ���ԣ���Ч�ʼ��ߣ��ܴ���Ż��ڴ�ʹ�������
+CAShapeLayer继承于CALayer,可以使用CALayer的所有属性值；
+CAShapeLayer需要贝塞尔曲线配合使用才有意义（也就是说才有效果）
+使用CAShapeLayer(属于CoreAnimation)与贝塞尔曲线可以实现不在view的drawRect（继承于CoreGraphics走的是CPU,消耗的性能较大）
+方法中画出一些想要的图形
+CAShapeLayer动画渲染直接提交到手机的GPU当中，相较于view的drawRect方法使用CPU渲染而言，其效率极高，能大大优化内存使用情况。
  
 
-�ܵ���˵������CAShapeLayer���ڴ������٣���Ⱦ�ٶȿ죬����ʹ���Ż�����2��
+总的来说就是用CAShapeLayer的内存消耗少，渲染速度快，建议使用优化方案2。
 
  
 
-2��shadow�Ż�
+2、shadow优化
 
-����shadow�����ͼ���Ǹ��򵥵ļ���ͼ�λ���Բ��ͼ�Σ����ǿ���ͨ������shadowPath���Ż����ܣ��ܴ��������ܡ�ʾ�����£�
+对于shadow，如果图层是个简单的几何图形或者圆角图形，我们可以通过设置shadowPath来优化性能，能大幅提高性能。示例如下：
 
 imageView.layer.shadowColor = [UIColor grayColor].CGColor;
 imageView.layer.shadowOpacity = 1.0;
 imageView.layer.shadowRadius = 2.0;
 UIBezierPath *path = [UIBezierPath bezierPathWithRect:imageView.frame];
 imageView.layer.shadowPath = path.CGPath;
-���ǻ�����ͨ������shouldRasterize����ֵΪYES��ǿ�ƿ���������Ⱦ����ʵ���ǹ�դ����Rasterization������Ȼ������Ⱦ��ô���ã�Ϊʲô���ǻ�Ҫǿ�ƿ����أ���һ��ͼ�����˶��ͼ�㣬ÿ���ƶ�ʱ��ÿһ֡��Ҫ���ºϳ���Щͼ�㣬ʮ���������ܡ������ǿ�����դ���󣬻����״β���һ��λͼ���棬���ٴ�ʹ��ʱ��ͻḴ��������档�������ͼ�㷢���ı��ʱ��ͻ����²���λͼ���档�����������һ�㲻������UITableViewCell�У�cell�ĸ��÷������������ܡ��������ͼ��϶�ľ�̬���ݵ�ͼ�Ρ����Ҳ�����λͼ����Ĵ�С�������Ƶģ�һ����2.5����Ļ�ߴ硣��100ms֮�ڲ�ʹ��������棬����Ҳ�ᱻɾ������������Ҫ����ʹ�ó���������
+我们还可以通过设置shouldRasterize属性值为YES来强制开启离屏渲染。其实就是光栅化（Rasterization）。
+既然离屏渲染这么不好，为什么我们还要强制开启呢？当一个图像混合了多个图层，每次移动时，每一帧都要重新合成这些图层，十分消耗性能。
+当我们开启光栅化后，会在首次产生一个位图缓存，当再次使用时候就会复用这个缓存。但是如果图层发生改变的时候就会重新产生位图缓存。
+所以这个功能一般不能用于UITableViewCell中，cell的复用反而降低了性能。最好用于图层较多的静态内容的图形。而且产生的位图缓存的大小是有限制的，
+一般是2.5个屏幕尺寸。在100ms之内不使用这个缓存，缓存也会被删除。所以我们要根据使用场景而定。
 
  
 
-3��������һЩ�Ż�����
+3、其他的一些优化建议
 
-��������ҪԲ��Ч��ʱ������ʹ��һ���м�͸��ͼƬ����ȥ
-ʹ��ShadowPathָ��layer��ӰЧ��·��
-ʹ���첽����layer��Ⱦ��Facebook��Դ���첽���ƿ��AsyncDisplayKit��
-����layer��opaqueֵΪYES�����ٸ���ͼ��ϳ�
-����ʹ�ò�����͸����alpha��ͨ����ͼƬ��Դ
-��������layer�Ĵ�СֵΪ����ֵ
-ֱ����������ͼƬ�г�Բ�ǽ�����ʾ������Ч����ߵ�һ�ַ���
-�ܶ�������û��ϴ�ͼƬ������ʾ�������÷���˴���Բ��
-ʹ�ô����ֶ�����Բ��Image���õ�Ҫ��ʾ��View�ϣ�����UIBezierPath��CoreGraphics��ܣ�������Բ��ͼƬ
+当我们需要圆角效果时，可以使用一张中间透明图片蒙上去
+使用ShadowPath指定layer阴影效果路径
+使用异步进行layer渲染（Facebook开源的异步绘制框架AsyncDisplayKit）
+设置layer的opaque值为YES，减少复杂图层合成
+尽量使用不包含透明（alpha）通道的图片资源
+尽量设置layer的大小值为整形值
+直接让美工把图片切成圆角进行显示，这是效率最高的一种方案
+很多情况下用户上传图片进行显示，可以让服务端处理圆角
+使用代码手动生成圆角Image设置到要显示的View上，利用UIBezierPath（CoreGraphics框架）画出来圆角图片
  
 
-�塢Core Animation���߼��������Ⱦ
+五、Core Animation工具检测离屏渲染
 
-����������Ⱦ�ļ�⣬ƻ��Ϊ�����ṩ��һ�����Թ���Core Animation��������Xcode->Open Develeper Tools->Instruments���ҵ�������ͼ��
+对于离屏渲染的检测，苹果为我们提供了一个测试工具Core Animation。可以在Xcode->Open Develeper Tools->Instruments中找到，如下图：
 
 201703080040
 
-Core Animation�����������Core Animation���ܣ��ṩ�ɼ���FPSֵ�������ṩ����ѡ����������Ⱦ���ܡ�����ͼ��
+Core Animation工具用来监测Core Animation性能，提供可见的FPS值，并且提供几个选项来测量渲染性能。如下图：
 
 201703080041
 
-����������˵��ÿ��ѡ��Ĺ��ܣ�
-Color Blended Layers�����ѡ�������ѡ�����ܿ����ĸ�layer��͸���ģ�GPU��������ϼ��㡣��ʾ��ɫ�ľ���͸���ģ���ɫ���ǲ�͸���ġ�
+下面我们来说明每个选项的功能：
+Color Blended Layers：这个选项如果勾选，你能看到哪个layer是透明的，GPU正在做混合计算。显示红色的就是透明的，绿色就是不透明的。
 
-Color Hits Green and Misses Red�������ѡ���ѡ��ҵ����Ǵ�����������shouldRasterizeΪYES����ô��ɫ����û�и���������Ⱦ�Ļ��棬��ɫ���ʾ�����˻��档���ǵ�Ȼϣ���ܹ����á�
+Color Hits Green and Misses Red：如果勾选这个选项，且当我们代码中有设置shouldRasterize为YES，那么红色代表没有复用离屏渲染的缓存，
+绿色则表示复用了缓存。我们当然希望能够复用。
 
-Color Copied Images�����չٷ���˵������ͼƬ����ɫ��ʽGPU��֧�ֵ�ʱ��Core Animation��
-����һ��������CPU����ת���������������������TIFF��ʽ��ͼƬ������ҪCPU����ת��������������ʾ����ɫ������һ������ᴥ��Core Animation��copy�����������ֽڲ������ʱ������ͼ��
+Color Copied Images：按照官方的说法，当图片的颜色格式GPU不支持的时候，Core Animation会
+拷贝一份数据让CPU进行转化。例如从网络上下载了TIFF格式的图片，则需要CPU进行转化，这个区域会显示成蓝色。
+还有一种情况会触发Core Animation的copy方法，就是字节不对齐的时候。如下图：
 
 201703080043
 
-Color Immediately��Ĭ�������Core Animation������ÿ����10�ε�Ƶ�ʸ���ͼ�������ɫ�������ѡ���ѡ�����Ƴ�10ms���ӳ١���ĳЩ�����Ҫ�����������п���Ӱ������֡���Ĳ��ԡ�
+Color Immediately：默认情况下Core Animation工具以每毫秒10次的频率更新图层调试颜色，如果勾选这个选项则移除10ms的延迟。
+对某些情况需要这样，但是有可能影响正常帧数的测试。
 
-Color Misaligned Images����ѡ������ͼƬ��Ҫ��������Ϊ��ɫ�����û�����ض�������Ϊ��ɫ�����ض��������Ѿ��������������ܡ�
+Color Misaligned Images：勾选此项，如果图片需要缩放则标记为黄色，如果没有像素对齐则标记为紫色。像素对齐我们已经在上面有所介绍。
 
-Color Offscreen-Rendered Yellow���������������Ⱦ�ģ������ʾ��ɫ����ʾ��������Ⱦ����Ȼ��Ҫ���Color Hits Green and Misses Red�������Ƿ����˻��档
+Color Offscreen-Rendered Yellow：用来检测离屏渲染的，如果显示黄色，表示有离屏渲染。当然还要结合Color Hits Green and Misses Red来看，
+是否复用了缓存。
 
-Color OpenGL Fast Path Blue�����ѡ�����Щʹ��OpenGL��ͼ������ã�����GLKView���� CAEAGLLayer���������ʾ��ɫ���ʾʹ����CPU��Ⱦ������������Ļ�⣬��ʾ��ɫ��ʾ������
+Color OpenGL Fast Path Blue：这个选项对那些使用OpenGL的图层才有用，像是GLKView或者 CAEAGLLayer，如果不显示蓝色则表示使用了CPU渲染，
+绘制在了屏幕外，显示蓝色表示正常。
 
-Flash Updated Regions������ͼ���ػ��ʱ�����ʾ��ɫ�����Ƶ���������Ӱ�����ܡ����������ӻ�������ǿ���ܡ�
+Flash Updated Regions：当对图层重绘的时候回显示黄色，如果频繁发生则会影响性能。可以用增加缓存来增强性能。
 
-�����ʹ�ý�ͼ�Ͳ��������ˣ�����Լ��������ԡ�
+具体的使用截图就不发出来了，大家自己可以试试。
