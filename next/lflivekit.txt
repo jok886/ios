@@ -1,4 +1,4 @@
-
+源码分析：https://www.jianshu.com/p/4dd2009b0902
 
 后端现在 RTMP/HTTP-FLV 清一色
 
