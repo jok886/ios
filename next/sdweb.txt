@@ -280,7 +280,30 @@ dispatch_semaphore_create，dispatch_semaphore_signal，dispatch_semaphore_wait�
    
 
 
+表格整理：
+序号	问题	答案	代码
+1	清空缓存 clearDisk和 cleanDisk区别？	
+cleanDisk:清楚过期缓存，计算当前缓存的大小，和设置的最大缓存数量比较，
+如果超出那么会继续删除（按照文件了创建的先后顺序)过期时间：7天 ; 
+clearDisk: 粗暴的直接删除，然后从新创建	\
 
+2	如何取消当前所有所有操作NSOperation？	
+取消所有操作对象	
+[[SDWebImageManager sharedManager] cancelAll];
+
+3	最大并发数？	max =6	_downloadQueue.maxConcurrentOperationCount = 6;
+
+4	内存文件的保存名称如何处理？	拿到图片的URL路径，对该路径进行MD5加密	\
+5	该框架内部对内存警告的处理方式？	内部通过监听通知Notification进行清理缓存	\
+
+6	如何判断图片的类型？	在判断图片类型时候只匹配第一个字节	\
+
+7	该框架对缓存处理的方式？	以前： 内存缓存用可变字典dic; 本第三方用NSCache	\
+
+8	队列中的任务的处理方式？	FIFO：先进先出First In First Out	\
+
+9	如何下载图片？	发送网络请求 NSURLConnection	\
+10	请求超时时限？	15s	_downloadTimeout = 15.0;
 
 
 
