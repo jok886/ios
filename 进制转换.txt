@@ -1,0 +1,205 @@
+/**二进制转十进制*/
++ (NSString *)toDecimalSystemWithBinarySystem:(NSString *)binary
+{
+    int ll = 0 ;
+    int  temp = 0 ;
+    for (int i = 0; i < binary.length; i ++)
+    {
+        temp = [[binary substringWithRange:NSMakeRange(i, 1)] intValue];
+        temp = temp * powf(2, binary.length - i - 1);
+        ll += temp;
+    }
+    
+    NSString * result = [NSString stringWithFormat:@"%d",ll];
+    
+    return result;
+}
+
+/**十进制转二进制*/
++ (NSString *)toBinarySystemWithDecimalSystem:(NSInteger)decimal
+{
+    NSInteger num = decimal;//[decimal intValue];
+    NSInteger remainder = 0;      //余数
+    NSInteger divisor = 0;        //除数
+    
+    NSString * prepare = @"";
+    
+    while (true)
+    {
+        remainder = num%2;
+        divisor = num/2;
+        num = divisor;
+        prepare = [prepare stringByAppendingFormat:@"%ld",remainder];
+        
+        if (divisor == 0)
+        {
+            break;
+        }
+    }
+    
+    NSString * result = @"";
+    for (NSInteger i = prepare.length - 1; i >= 0; i --)
+    {
+        result = [result stringByAppendingFormat:@"%@",
+                  [prepare substringWithRange:NSMakeRange(i , 1)]];
+    }
+    
+    return result;
+}
+
+//将十进制转化为十六进制
++ (NSString *)ToHex:(int)tmpid
+{
+    NSString *nLetterValue;
+    NSString *str =@"";
+    long long int ttmpig;
+    for (int i = 0; i<9; i++) {
+        ttmpig=tmpid%16;
+        tmpid=tmpid/16;
+        switch (ttmpig)
+        {
+            case 10:
+                nLetterValue =@"a";break;
+            case 11:
+                nLetterValue =@"b";break;
+            case 12:
+                nLetterValue =@"c";break;
+            case 13:
+                nLetterValue =@"d";break;
+            case 14:
+                nLetterValue =@"e";break;
+            case 15:
+                nLetterValue =@"f";break;
+            default:nLetterValue=[[NSString alloc]initWithFormat:@"%lli",ttmpig];
+                
+        }
+        str = [nLetterValue stringByAppendingString:str];
+        if (tmpid == 0) {
+            break;
+        }
+        
+    }
+    return str;
+}
+
+// 十六转二
++ (NSString *)getBinaryByhex:(NSString *)hex
+{
+    NSMutableDictionary  *hexDic = [[NSMutableDictionary alloc] init];
+    
+    hexDic = [[NSMutableDictionary alloc] initWithCapacity:16];
+    
+    [hexDic setObject:@"0000" forKey:@"0"];
+    
+    [hexDic setObject:@"0001" forKey:@"1"];
+    
+    [hexDic setObject:@"0010" forKey:@"2"];
+    
+    [hexDic setObject:@"0011" forKey:@"3"];
+    
+    [hexDic setObject:@"0100" forKey:@"4"];
+    
+    [hexDic setObject:@"0101" forKey:@"5"];
+    
+    [hexDic setObject:@"0110" forKey:@"6"];
+    
+    [hexDic setObject:@"0111" forKey:@"7"];
+    
+    [hexDic setObject:@"1000" forKey:@"8"];
+    
+    [hexDic setObject:@"1001" forKey:@"9"];
+    
+    [hexDic setObject:@"1010" forKey:@"A"];
+    
+    [hexDic setObject:@"1011" forKey:@"B"];
+    
+    [hexDic setObject:@"1100" forKey:@"C"];
+    
+    [hexDic setObject:@"1101" forKey:@"D"];
+    
+    [hexDic setObject:@"1110" forKey:@"E"];
+    
+    [hexDic setObject:@"1111" forKey:@"F"];
+    
+    [hexDic setObject:@"1010" forKey:@"a"];
+    
+    [hexDic setObject:@"1011" forKey:@"b"];
+    
+    [hexDic setObject:@"1100" forKey:@"c"];
+    
+    [hexDic setObject:@"1101" forKey:@"d"];
+    
+    [hexDic setObject:@"1110" forKey:@"e"];
+    
+    [hexDic setObject:@"1111" forKey:@"f"];
+    
+    NSMutableString *binaryString=[[NSMutableString alloc] init];
+    
+    for (int i=0; i<[hex length]; i++) {
+        
+        NSRange rage;
+        
+        rage.length = 1;
+        
+        rage.location = i;
+        
+        NSString *key = [hex substringWithRange:rage];
+        
+        //NSLog(@"%@",[NSString stringWithFormat:@"%@",[hexDic objectForKey:key]]);
+        
+        binaryString = [NSString stringWithFormat:@"%@%@",binaryString,[NSString stringWithFormat:@"%@",[hexDic objectForKey:key]]];
+        
+    }
+    
+    //    NSLog(@"转化后的二进制为:%@",binaryString);
+    
+    return binaryString;
+    
+}
+
+
+
+
+NSData*data = characteristic.value;
+
+//data转byte数组
+
+Byte*testByte = (Byte*)[data bytes];
+
+for(inti=0;i<[datalength]; i++){
+
+if((testByte[1] ==2)&&(testByte[0] ==2)) {
+
+  //做简单的演示判断
+
+  }
+
+}
+
+
+
+这里我手动发送一个指令出去
+// 176     十六进制 B1  (这个是发送的指令)
+// 0         第二位没确定意义
+// 255    0xff  就是  255
+// 1         代表确定方式设定
+// 0        设置值  (当超过255 的时候这一位就起作用了)
+// 1        设置值   (1 代表电驱动)
+
+Byte byteData[6] = {176,0,255,1,0,1};
+// 这个byte的意思就是发送指令给蓝牙 驱动方式为电驱动
+
+// 176     十六进制 B1  (这个是发送的指令)
+// 0         第二位没确定意义
+// 255    0xff  就是  255
+// 5         代表轮径  (就是图中的0x05)
+// 255    设置值  (当超过255 的时候这一位就起作用了)
+// 100     设置值   (1 代表电驱动)
+当轮径为355 的时候,一个字节不够用,所以前面一位备用这个时候正好使用,255  后面一位则为剩下的值 100  合起来拼接之后就是  355 (硬件那边会处理)
+//Byte byteData[6] = {176,0,255,5,255,100};  // 说的就是这里的  255  和100  最后两位
+
+NSData * data = [NSData dataWithBytes:byteData length:6];
+
+[peripheral writeValue:data forCharacteristic:characteristic type:CBCharacteristicWriteWithoutResponse];
+
+
