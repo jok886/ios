@@ -1,0 +1,24 @@
+//获得屏幕的宽高
+#define kScreenWidth ([UIScreen mainScreen].bounds.size.width)
+#define kScreenHeight ([UIScreen mainScreen].bounds.size.height)
+//iPhoneX / iPhoneXS
+#define  isIphoneX_XS     (kScreenWidth == 375.f && kScreenHeight == 812.f ? YES : NO)
+//iPhoneXR / iPhoneXSMax
+#define  isIphoneXR_XSMax    (kScreenWidth == 414.f && kScreenHeight == 896.f ? YES : NO)
+//异性全面屏
+#define   isFullScreen    (isIphoneX_XS || isIphoneXR_XSMax)
+
+// Status bar height.
+#define  StatusBarHeight     (isFullScreen ? 44.f : 20.f)
+
+// Navigation bar height.
+#define  NavigationBarHeight  44.f
+
+// Tabbar height.
+#define  TabbarHeight         (isFullScreen ? (49.f+34.f) : 49.f)
+
+// Tabbar safe bottom margin.
+#define  TabbarSafeBottomMargin         (isFullScreen ? 34.f : 0.f)
+
+// Status bar & navigation bar height.
+#define  StatusBarAndNavigationBarHeight  (isFullScreen ? 88.f : 64.f)
