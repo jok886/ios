@@ -201,6 +201,13 @@ typedef NS_OPTIONS(NSUInteger, CBCharacteristicProperties) {
         }
     }
 }
+蓝牙4.0最大支持20字节单
+蓝牙4.1最大支持23字节单包数据传输，
+蓝牙4.2最大支持31字节单包数据传输
+蓝牙5.0最大支持255字节单包数据传输
+
+
+
 
 
 
