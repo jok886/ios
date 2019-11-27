@@ -22,3 +22,15 @@
 
 // Status bar & navigation bar height.
 #define  StatusBarAndNavigationBarHeight  (isFullScreen ? 88.f : 64.f)
+
+
+
+// 状态栏、导航栏、标签栏高度
+#define kStatusBarHeight        ([UIApplication sharedApplication].statusBarFrame.size.height)
+#define kNavigationBarHeight    ( self.navigationController.navigationBar.frame.size.height)
+#define kTabBarHeight           ( self.tabBarController.tabBar.frame.size.height)
+
+
+
+
+
