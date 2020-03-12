@@ -1,113 +1,153 @@
-OS��app���ܲ��Լ�Ҫ���裺
+OS端app性能测试简要步骤：
 
-һ�� ׼������
+一、 准备步骤
 
-1. ����xcode
+1. 下载xcode
 
-����ͨ������ https://developer.apple.com/xcode/downloads/ �������µ�xcode�İ汾
+可以通过访问 https://developer.apple.com/xcode/downloads/ 下载最新的xcode的版本
 
-2.��xcode���Ҽ�xcodeѡ��instruments���������Cpu/�ڴ��ѡ��activity monitor��������Ժĵ���Ҳ����Ӧ��ѡ��Energy diagnostic
+2.打开xcode，右键xcode选择instruments，如果测试Cpu/内存就选择activity monitor，如果测试耗电量也有相应的选择Energy diagnostic
 
-����Cpu/�ڴ����
+二、Cpu/内存测试
 
-ѡ��activity monitor�򿪣����غ�app�����¼�ƣ��ٿ�app��ֹͣ¼�ƣ���cpu/�ڴ�ֵ��¼����
+选择activity monitor打开，加载好app，点击录制，操控app，停止录制，将cpu/内存值记录下来
 
-�����ĵ����
+三、耗电测试
 
-1.ѡ��Energy diagnostic��
+1.选择Energy diagnostic打开
 
-2.��һ�����ƻ��9ϵͳ�Ĳ��Ի���iOS ����ѡ�� ��������ѡ�� ��logging ��start recording
+2.找一个最好苹果9系统的测试机，iOS 设置选项 －开发者选项 －logging －start recording
 
-3.�Ͽ�iOS�豸���Ի��͵��ԡ���Դ������
+3.断开iOS设备测试机和电脑、电源的连接
 
-4.�ڲ��Ի��ϲٿ�app
+4.在测试机上操控app
 
-5.iOS ��������ѡ�� ��������ѡ�� ��logging ��stop recording
+5.iOS 测试设置选项 －开发者选项 －logging －stop recording
 
-6.USB����iOS device��MAC PC
+6.USB连接iOS device和MAC PC
 
-7.��instruments ��energy diagnostics ��file��import logged data from device���Ϳ��Կ����������ݣ�
-
-
-�ĸ�����Ҫ�ĺĵ�ԭ��,�ֱ���CPU(���Ѽ�ʹ��),Network(�������),Location(��λ����),Background(��̨���й���)
-
-ÿ��ˢ��. ��ͬ���ֱܷ����Դ�������.���������ԴС������ʾ���ɫ,û��������Դ��ʱ��С������ʾ��ɫ.
+7.打开instruments －energy diagnostics －file－import logged data from device，就可以看到电量数据；
 
 
-���Է�����
+四个最主要的耗电原因,分别是CPU(唤醒及使用),Network(网络访问),Location(定位功能),Background(后台运行功能)
 
-һ���ִ�м��Σ���¼ÿ�����ݺ�ƽ������
+每秒刷新. 不同功能分别的资源消耗情况.如果消耗资源小方块显示深灰色,没有消耗资源的时候小方块显示白色.
 
 
-app�ڴ��Ż�
+测试方法：
 
- ������Щ���ɷ�Ϊ������ͬ�Ǹ��ļ���---�������м����߼��� 
+一般多执行几次，记录每次数据和平均数据
 
-   ����
-   ��Щ������Ҫ��������ʵ�����㿪����App�С� 
 
-   1. ��ARCȥ�����ڴ棨Use ARC to Manage Memory��
+app内存优化
 
-   2.�ʵ��ĵط�ʹ��reuseIdentifier��Use a reuseIdentifier Where Appropriate��
+ 以下这些技巧分为三个不同那个的级别---基础，中级，高级。 
 
-   3.������������ͼΪ��͸����Set View as Opaque When Possible��
+   基础
+   这些技巧你要总是想着实现在你开发的App中。 
 
-   4.����ӷ�׵�XIBs�ļ���Avoid Fat XiBs��
+   1. 用ARC去管理内存（Use ARC to Manage Memory）
 
-   5.��Ҫ���������̣�Don't Block the Main Thread��
+   2.适当的地方使用reuseIdentifier（Use a reuseIdentifier Where Appropriate）
 
-   6.����ͼ����ͼ�е�ͼ��ߴ磨Size Images to Image Views��
+   3.尽可能设置视图为不透明（Set View as Opaque When Possible）
 
-   7.ѡ����ȷ���ϣ�Choose the Correct Collection��
+   4.避免臃肿的XIBs文件（Avoid Fat XiBs）
 
-   8.����Gzipѹ����Enable GZIP Compression��
+   5.不要阻塞主进程（Don't Block the Main Thread）
 
-   
+   6.调整图像视图中的图像尺寸（Size Images to Image Views）
 
-   �м�
+   7.选择正确集合（Choose the Correct Collection）
 
-   ��Щ�����ǵ������������ӵ������ʱ��ʹ�á�
-
-    9. ���ú��ӳټ�����ͼ��Reuse and Lazy Load Views��
-
-   10.���棬���棬���棨Cache,Cache,Cache��
-
-   11.���ǻ�ͼ��Consider Drawing��
-
-   12.�����ڴ澯�棨Handle Memory Warnings��
-
-   13.���ô�������Reuse Expensive Objects��
-
-   14.ʹ�þ������Use Sprite Sheets ��
-
-   15.�����ظ��������ݣ�Avoid Re-Processing Data��
-
-   16.ѡ����ȷ�����ݸ�ʽ��Choose the Right Data Format��
-
-   17.�ʵ������ñ���ͼƬ��Set  Background Images Appropriately��
-
-   18.�����������ռ�ã�Reduce Your Web Footprint��  
-
-   19.������Ӱ·����Set the Shadow Path ��
-
-   20.��ı�����ͼOptimize Your Table Views��
-
-   21.ѡ����ȷ�����ݴ洢��ʽ��Choose Correct Data Storage Option��
+   8.启用Gzip压缩（Enable GZIP Compression）
 
    
 
-   �߼�
+   中级
 
-   ��Щ������Ӧ��ֻ����ܻ�����Ϊ�����ܽ��������⣬��������������Ǻ����ʵ�ʱ��ʹ�á�
+   这些技巧是当你遇到更复杂的情况的时候使用。
 
-   22.��������ʱ�䣨Speed up Launch Time ��
+    9. 重用和延迟加载视图（Reuse and Lazy Load Views）
 
-   23.ʹ���Զ��ͷųأ�Use AutoRelease Pool��
+   10.缓存，缓存，缓存（Cache,Cache,Cache）
 
-   24.����ͼ��Cache Images-Or not ��
+   11.考虑绘图（Consider Drawing）
 
-   25.�����ܱ������ڸ�ʽ������Avoid Date Formatters Where Possible��  
+   12.处理内存警告（Handle Memory Warnings）
+
+   13.重用大开销对象（Reuse Expensive Objects）
+
+   14.使用精灵表（Use Sprite Sheets ）
+
+   15.避免重复处理数据（Avoid Re-Processing Data）
+
+   16.选择正确的数据格式（Choose the Right Data Format）
+
+   17.适当的设置背景图片（Set  Background Images Appropriately）
+
+   18.减少你的网络占用（Reduce Your Web Footprint）  
+
+   19.设置阴影路径（Set the Shadow Path ）
+
+   20.你的表格视图Optimize Your Table Views）
+
+   21.选择正确的数据存储方式（Choose Correct Data Storage Option）
+
+   
+
+   高级
+
+   这些技巧你应该只在你很积极认为它们能解决这个问题，而且你觉得用它们很舒适的时候使用。
+
+   22.加速启动时间（Speed up Launch Time ）
+
+   23.使用自动释放池（Use AutoRelease Pool）
+
+   24.缓存图像（Cache Images-Or not ）
+
+   25.尽可能避免日期格式化器（Avoid Date Formatters Where Possible）  
 
 
-.xcarchive���.dsYM�ļ���.app�ļ����ж�Ӧ��UUID��  
-�����Լ��ҵ�.xcarchive�ļ��ʹ����ڴ��ַ(���˴������������ɫ��Ϊ�����ڴ��ַ)��Ȼ��ͨ��һ��СӦ������������Ӧ�ĺ�����Ӧ�����ص�ַ,����ɲο�����dSYM �ļ���������
+
+进入 main() -> UIApplicationMain -> 初始化回调 -> 显示UI。
+
+iOS 的 App 启动时长大概可以这样计算：
+
+t(App 总启动时间) = t1(main 调用之前的加载时间) + t2(main 调用之后的加载时间)。
+
+t1 = 系统 dylib(动态链接库)和自身 App 可执行文件的加载。
+
+t2 = main 方法执行之后到 AppDelegate 类中的 application:didFinishLaunchingWithOptions:方法执行结束前这段时间，主要是构建第一个界面，并完成渲染展示。
+
+在 t1 阶段加快 App 启动的建议：
+
+尽量使用静态库，减少动态库的使用，动态链接比较耗时。
+如果要用动态库，尽量将多个 dylib 动态库合并成一个。
+尽量避免对系统库使用 optional linking，如果 App 用到的系统库在你所有支持的系统版本上都有，就设置为 required，因为 optional 会有些额外的检查。
+减少 Objective-C Class、Selector、Category 的数量。可以合并或者删减一些 OC 类。
+删减一些无用的静态变量，删减没有被调用到或者已经废弃的方法。
+将不必须在 +load 中做的事情尽量挪到+initialize中，+initialize 是在第一次初始化这个类之前被调用，+load 在加载类的时候就被调用。尽量将+load里的代码延后调用。
+尽量不要用 C++ 虚函数，创建虚函数表有开销。
+不要使用 __atribute__((constructor))将方法显式标记为初始化器，而是让初始化方法调用时才执行。比如使用 dispatch_once()，pthread_once()或 std::once()。
+在初始化方法中不调用 dlopen()，dlopen()有性能和死锁的可能性。
+在初始化方法中不创建线程。
+在 t2 阶段加快 App 启动的建议：
+
+尽量不要使用 xib/storyboard，而是用纯代码作为首页 UI。
+如果要用 xib/storyboard，不要在 xib/storyboard 中存放太多的视图。
+对application:didFinishLaunchingWithOptions:里的任务尽量延迟加载或懒加载。
+不要在 NSUserDefaults 中存放太多的数据，NSUserDefaults 是一个 plist 文件，plist 文件被反序列化一次。
+避免在启动时打印过多的 log。
+少用 NSLog，因为每一次 NSLog 的调用都会创建一个新的 NSCalendar 实例。
+每一段 SQLite 语句都是一个段被编译的程序，调用 sqlite3_prepare 将编译 SQLite 查询到字节码，使用 sqlite_bind_int 绑定参数到 SQLite 语句。
+为了防止使用 GCD 创建过多的线程，解决方法是创建串行队列, 或者使用带有最大并发数限制的 NSOperationQueue。
+线程安全：UIKit只能在主线程执行，除了 UIGraphics、UIBezierPath 之外，UIImage、CG、CA、Foundation 都不能从两个线程同时访问。
+不要在主线程执行磁盘、网络、Lock 或者 dispatch_sync、发送消息给其他线程等操作。
+
+
+
+
+
+.xcarchive里的.dsYM文件和.app文件是有对应的UUID的  
+或者自己找到.xcarchive文件和错误内存地址(友盟错误详情里标绿色的为错误内存地址)。然后通过一个小应用来分析出对应的函数。应用下载地址,具体可参考文章dSYM 文件分析工具
