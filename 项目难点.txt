@@ -1,0 +1,265 @@
+1.
+首先说好的是iOS9以后，我们在app内部要跳转到其他软件时，需要在 Info.plist 中添加白名单。
+
+方法为：在Info.plist中添加 key ：LSApplicationQueriesSchemes? 类型为：Array。
+
+将高德、百度、谷歌的值填进去分别是：**iosamap**｜**baidumap**|**comgooglemaps**
+
+图片：
+
+作者：WheatDen
+链接：https://www.jianshu.com/p/f3e16bf3966a
+来源：简书
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
+ 1.  为了减少ipa包的大小，大的项目往往会有很多的图片资源
+1、图片出现锯齿（显示区域与图片像素不匹配）
+解决方案：
+先将图片画出来，进行裁剪使用
+
+- (UIImage *)scaleToSize:(UIImage )img size:(CGSize)size {
+UIGraphicsBeginImageContextWithOptions(size, NO, 0.0);
+[img drawInRect:CGRectMake(0, 0, size.width, size.height)];
+UIImage scaledImage = UIGraphicsGetImageFromCurrentImageContext();
+UIGraphicsEndImageContext();
+return scaledImage;
+}
+
+
+
+2、彻底移除cell 的分割线（有的cell要分割线，有的cell不要分隔线，又有的cell分割线拒里前端15pix。搞得我也真是醉了，如果用自定义分割线的话也不好处理。）
+解决方法：
+在自定义cell中重写UITableviewCell的addSubView:
+方法
+- (void)addSubview:(UIView *)view
+{
+if (![view isKindOfClass:[NSClassFromString(@"_UITableViewCellSeparatorView") class]] && view)
+[super addSubview:view];
+}
+
+
+
+
+4、你在viewcontroller中使用scrollview，并在scrollview中的添加了viewA，但viewA的位置总是差些像素。通过Dlog发现又都是正常的。
+解决方法：
+是viewcontroller 的automaticallyAdjustsScrollViewInsets这个属性在作怪。automaticallyAdjustsScrollViewInsets的作用是：让scroll view的内容自动调整，且他的默认是YES；不想让它自动调整就将它设置为NO,就好了。（即：self.automaticallyAdjustsScrollViewInsets = NO;）
+
+
+6、view被导航条给覆盖了，并没有从导航条的下面开始布局
+解决方法：
+
+（1）、设置edgesForExtendedLayout
+
+   self.edgesForExtendedLayout = UIRectEdgeNone; //view不需要拓展到整个屏幕
+（
+2）、设置导航条的透明度
+
+   self.navigationController.navigationBar.translucent = NO;
+
+
+1. presentViewController控制器不占全屏
+解决办法
+
+
+
+UINavigationViewController * loginNav=[[WENavigationVC alloc] initWithRootViewController:loginVC];
+    
+loginNav.modalPresentationStyle =UIModalPresentationOverFullScreen;
+   
+ [self.navigationController presentViewController:loginNav animated:NO completion:^{
+        
+    }];
+
+注意一定是UIModalPresentationOverFullScreen，如果不小心看错用了UIModalPresentationFullScreen 会导致按home键返回桌面后Controller自动dismiss
+
+
+
+
+2.修改UITextField占位符字体颜色
+原来的方法
+
+[self setValue:color forKeyPath:@"placeholderLabel.textColor"];
+[self setValue:font forKeyPath:@"placeholderLabel.font"];
+
+现在合并为一个
+
+
+
+self.attributedPlaceholder=[[NSAttributedString alloc] initWithString:placeHolder attributes:@{NSForegroundColorAttributeName:color,NSFontAttributeName:font}];
+
+
+
+
+
+
+7.iOS13新增暗黑模式，没有适配暗黑模式前，请先禁用：在info.plist文件中UIUserInterfaceStyle设置为light。
+
+方法1
+使用系统颜色systemBackgroundColor，浅色模式下显示白色，深色模式下显示黑色；存在问题，只能显示白色或黑色。
+
+self.view.backgroundColor = UIColor.systemBackgroundColor;
+1
+或使用系统颜色labelColor，浅色模式下显示黑色，深色模式下显示白色；
+存在问题，只能显示黑色或白色。
+
+label.textColor = UIColor.labelColor;
+1
+常用的系统动态模式颜色：文本颜色labelColor、辅助内容的文本标签颜色secondaryLabelColor、三级tertiaryLabelColor、超链接标签颜色linkColor、分隔符（细边框或者分割线）separatorColor或opaqueseparatorColor、界面背景色systembackgroundColor等。
+
+
+// 设置自定义颜色
+UIColor *textColor = UIColor.greenColor;
+if (@available(iOS 13.0, *)) {
+	textColor = [UIColor colorWithDynamicProvider:^UIColor *(UITraitCollection *traitCollection) {
+		if (traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+			return UIColor.orangeColor;
+		}
+		return UIColor.greenColor;
+	}];
+}
+// 显示自定义颜色
+label.textColor = textColor;
+
+
+// 使用示例，如 layer 对应的颜色适配需要使用监听才有效
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection
+{
+    if (@available(iOS 13.0, *)) {
+ 		if ([self.traitCollection hasDifferentColorAppearanceComparedToTraitCollection:previousTraitCollection]) {
+ 			// iOS13 暗黑模式
+ 			label.layer.borderColor = UIColor.redColor.CGColor;
+ 		} else {
+ 			// iOS13 普通模式
+ 			label.layer.borderColor = UIColor.yellowColor.CGColor;
+ 		}
+ 	} else {
+
+	}
+}
+
+
+方法2
+通过设置Assets.xcassets实现
+
+既是总结，也是强调，在暗黑模式的适配过程中的注意事项：
+1、layer 颜色的适配，只能使用回调方法- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection监听处理；
+2、可以在Info.plist添加属性User Interface Style并设值为Light或Dark，使 app 保持白色模式，或黑色模式；
+3、可以使用设置属性overrideUserInterfaceStyle值为UIUserInterfaceStyleLight或UIUserInterfaceStyleDark，使某个UI 保持为白色模式，或黑色模式；
+
+另外，补充下开发中可以通过调用UITraitCollection.currentTraitCollection.userInterfaceStyle获取当前模式，以便可以根据不同的模式执行不同的操作。
+如：
+
+if (UITraitCollection.currentTraitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+ 	NSLog(@"DarkMode");
+} else {
+ 	NSLog(@"LightMode");
+}
+
+
+
+UIColor *dyColor = [UIColor colorWithDynamicProvider:^UIColor * _Nonnull(UITraitCollection * _Nonnull trainCollection) {
+
+        if ([trainCollection userInterfaceStyle] == UIUserInterfaceStyleLight) {
+
+            return [UIColor redColor];
+
+        }
+
+        else {
+
+            return [UIColor greenColor];
+
+        }
+
+    }];
+
+    
+
+[self.bgView setBackgroundColor:dyColor]
+
+
+有时候我们需要知道当前处于什么模式，并根据不同的模式执行不同的操作
+iOS13中CGColor依然只能表示单一的颜色
+通过调用UITraitCollection.currentTraitCollection.userInterfaceStyle
+获取当前模式
+
+实例
+
+if (UITraitCollection.currentTraitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+
+        [self.titleLabel setText:@"DarkMode"];
+
+    }
+
+    else {
+
+        [self.titleLabel setText:@"LightMode"];
+
+    }
+
+// 添加一个NSForegroundColorAttributeName属性
+
+NSDictionary *dic = @{NSFontAttributeName:[UIFont systemFontOfSize:16],NSForegroundColorAttributeName:[UIColor labelColor]};
+
+NSAttributedString *str = [[NSAttributedString alloc] initWithString:@"富文本文案" attributes:dic];
+
+
+ios9以后引入了https，所以进行网络请求时可以使用下面方法：
+第一步：在Info.plist中添加NSAppTransportSecurity类型Dictionary。?第二步：在NSAppTransportSecurity下添加NSAllowsArbitraryLoads类型Boolean,值设为YES
+
+问题描述：在加载多张高清大图时，会出现崩溃的现象。
+解决方案：客户端在显示缩略图时，将宽度大于320的图片，裁剪为宽度为320，高度等比例缩小的图片。
+
+
+1、让控制器的视图从导航栏下开始算起
+
+self.edgesForExtendedLayout = UIRectEdgeNone;
+
+// 解决带有轮播图的手势冲突
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+    if (touch.view.frame.origin.y<100){
+        
+        return NO;
+    }
+    return YES;
+}
+
+//在iOS开发过程中, 我们可能会碰到一些系统方法弃用, weak、循环引用、不能执行之类的警告。 有代码洁癖的孩子们很想消除他们, 今天就让我们来一次Fuck 警告！！
+ 
+//首先学会基本的语句
+ 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+//这里写出现警告的代码
+#pragma clang diagnostic pop   //这样就消除了方法弃用的警告！
+
+18.有效解决刷新单个cell或者section闪一下的问题：
+
+[UIView setAnimationsEnabled:NO];
+[_listTable beginUpdates];
+[_listTable reloadSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationNone];
+[_listTable endUpdates];
+[UIView setAnimationsEnabled:YES];
+
+
+19.保持imageView 图片不变形：
+
+_topImageView.contentMode = UIViewContentModeScaleAspectFit;
+
+解决办法：修改build system
+
+在Xcode菜单栏-File-Workspace Settings...，将Build System改为Legacy Build System（默认是New Build System(Detault)），然后clean（快捷键Command+Shift+k）一下编译。
+
+
+
+
+4.开发辅助工具
+第一：Resizer：将Retina使用的图档（档名为@2x或-hd的图档）快速且完美地产生普通屏幕的图档尺寸。
+第一：青花瓷（抓包软件）
+第三：蓝灯（FQ软件）
+第四：Xcode的开源插件VVDocumenter，规范注释生成器，非常方便！
+第五：AppleDoc自动生成项目文档
+
+
+
