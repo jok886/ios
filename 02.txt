@@ -43,6 +43,14 @@ Objective-C 对象通常会把其所需要的数据保存为各种实例变量�
 
 @property中有哪些属性关键字？/ @property 后面可以有哪些修饰符？
 
+iOS @property 默认属性
+数据类型
+atomic assign readwrite
+对象类型
+atomic strong readwrite
+
+
+
 属性可以拥有的特质分为四类:
 1.原子性--- nonatomic 特质
 2.读/写权限---readwrite(读写)、readonly (只读)
