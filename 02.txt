@@ -234,6 +234,15 @@ Category（类别）、 Extension（扩展）和继承的区别,分类，
 当调用子类的+ initialize方法时候, 先调用父类的,如果父类有分类, 那么分类的+ initialize会覆盖掉父类的, 和普通方法差不多
 父类的+ initialize不一定会调用, 因为有可能父类的分类重写了它
 
+7、categroy为什么不能添加属性？怎么实现添加？与Extension的区别？category覆盖原类方法？多个category调用顺序
+
+Runtime初始化时categroy的内存布局已经确定，没有ivar，所以默认不能添加属性。
+使用runtime的关联对象，并重写setter和getter方法。
+Extenstion编译期创建，可以添加成员变量ivar，一般用作隐藏类的信息。必须要有类的源码才可以添加，如NSString就不能创建Extension。
+category方法会在runtime初始化的时候copy到原来前面，调用分类方法的时候直接返回，不再调用原类。如何保持原类也调用(https://www.jianshu.com/p/40e28c9f9da5)。
+多个category的调用顺序按照：Build Phases ->Complie Source 中的编译顺序。
+
+
 
 
 我们说的OC是动态运行时语言是什么意思？
