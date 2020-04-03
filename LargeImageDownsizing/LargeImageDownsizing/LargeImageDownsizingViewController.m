@@ -170,6 +170,10 @@
 }
 
 -(void)downsize:(id)arg {
+	//iOS 大图显示解决办法
+	//苹果官方demo提供的分片比例裁剪方式;
+	//利用CGImageCreateWithImageInRect截取原图对应位置的内容,再通过CGContextDrawImage渲染到指定位置;
+	//如何展示一个像素远远大于屏幕分辨率的图片?
     // create an autorelease pool to catch calls to -autorelease.
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     // create an image from the image filename constant. Note this
