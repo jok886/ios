@@ -1,5 +1,80 @@
+1.æ£€æµ‹æ¶‚æ”¹ï¼š
 
-//¼ì²é´óĞ´½ğ¶îÇøÓòÍ¿¸Ä£¬¿É²Á±Ê
+è¯»å–æ¯ä¸ªåƒç´ 
+å¯ä»¥ä½¿ç”¨OpenCVå®šä¹‰çš„å®æ¥æå–è±¡ç´ å€¼
+å‡è®¾ç°åº¦å›¾åƒimageï¼Œå­˜å–å…¶iè¡Œjåˆ—çš„è±¡ç´ å¯ä»¥è¿™æ ·ï¼šCV_IMAGE_ELEM(image, uchar,y, x)
+å¦‚æœæ˜¯å½©è‰²å›¾åƒå°±æ˜¯
+CV_IMAGE_ELEM(image, uchar,y, 3*x)
+CV_IMAGE_ELEM(image, uchar,y, 3*x+1)
+CV_IMAGE_ELEM(image, uchar,y, 3*x+2)
+
+ä¸´ç•Œç‚¹220  255
+
+cvCvtColor(pImgOut, combFiber, CV_BGR2GRAY); // è½¬ä¸ºç°åº¦å›¾ 
+	cvSmooth(combFiber, combFiber, CV_MEDIAN, 3, 3); ////ä¸­å€¼æ»¤æ³¢ 
+	cvDilate(combFiber, combFiber, NULL, 2);//è…èš€
+//åˆå§‹åŒ–è½®å»“æ‰«æå™¨
+
+//å¼€å§‹éå†è½®å»“æ ‘
+
+//å¦‚æœå¯»æ‰¾å‡ºçš„è½®å»“çš„é¢ç§¯å¤§äºlowï¼Œå¹¶ä¸”å°äºhighï¼Œåˆ™ç•™ä¸‹ï¼Œåä¹‹ï¼Œåˆ™åˆ é™¤ã€‚
+
+//ç»“æŸè½®å»“æœç´¢ï¼Œå¹¶è¿”å›è½®å»“æ ‘çš„æ ¹èŠ‚ç‚¹
+//ç»˜åˆ¶ç»è¿‡åˆ é™¤æ“ä½œåå›¾åƒä¸­å‰©ä¸‹çš„è½®å»“
+
+if (iCount > 20 && WhiteNum>inum)
+
+æ¶‚æ”¹
+
+
+2.ç¥¨å·
+//è®¾ç½®ROIåŒºåŸŸ
+IplImage *bRGryImg = cvCreateImage(cvSize(bRoiImg->width, bRoiImg->height), IPL_DEPTH_8U, 1);
+	cvCvtColor(bRoiImg, bRGryImg, CV_BGR2GRAY);//è½¬ä¸ºç°åº¦å›¾ 
+	cvSmooth(bRGryImg, bRGryImg, CV_MEDIAN, 5, 5);//ä¸­å€¼æ»¤æ³¢ 
+
+	cvSaveImage("D:\\ABC2.jpg", bRGryImg);
+
+//è¿›è¡Œé˜ˆå€¼æ“ä½œå¾—åˆ°äºŒå€¼å›¾åƒ
+cvThreshold(bRGryImg, bRBinImg, 127, 255, CV_THRESH_OTSU);
+
+CString tessDataPath = g_szModulPath2;
+	tessDataPath+= "tessdata";
+
+	api.Init(tessDataPath,"eng");
+	api.SetVariable("tessedit_char_whitelist", "0123456789");
+
+	api.SetPageSegMode(static_cast<tesseract::PageSegMode>(7));//(tesseract::PSM_SINGLE_BLOCK);
+	api.SetImage((unsigned char*)bRBinImg->imageData, bRBinImg->width, bRBinImg->height, bRBinImg->nChannels, bRBinImg->widthStep);
+	api.SetRectangle(0, 0, bRBinImg->width, bRBinImg->height);
+	char *cResult = api.GetUTF8Text();
+	char szBuffer[40] = { 0 };
+	int iLen = strlen(cResult);
+	int j = 0;
+	for (int i = 0; i < iLen; i++)
+	{
+		if (cResult[i] >= '0' && cResult[i] <= '9')
+		{
+			szBuffer[j++] = cResult[i];
+		}
+	}
+	//	cout << "szBuffer=" << szBuffer;
+	cvReleaseImage(&bRBinImg);
+	cvReleaseImage(&bRGryImg);
+	strResult = szBuffer;
+	return strResult;
+
+
+
+
+
+
+
+
+
+
+
+//æ£€æŸ¥å¤§å†™é‡‘é¢åŒºåŸŸæ¶‚æ”¹ï¼Œå¯æ“¦ç¬”
 int  CheckTUGAI(const char *srcPath,int itype)  
 {  
 	IplImage* inputImage = cvLoadImage(srcPath);
@@ -7,7 +82,7 @@ int  CheckTUGAI(const char *srcPath,int itype)
 	CvRect rect;
 	if (1 == itype)
 	{
-		//ÌáÈ¡µ×²¿Æ±ºÅÇøÓò
+		//æå–åº•éƒ¨ç¥¨å·åŒºåŸŸ
 		rect.x=1090,rect.y=85,rect.width=220,rect.height=42;
 		//rect.x=1234,rect.y=130,rect.width=11,rect.height=10;
 	}
@@ -17,12 +92,12 @@ int  CheckTUGAI(const char *srcPath,int itype)
 	}
 
 	
-	//ÉèÖÃROIÇøÓò
+	//è®¾ç½®ROIåŒºåŸŸ
 	cvSetImageROI(inputImage,rect);
-	//ÌáÈ¡ROI
+	//æå–ROI
 	IplImage *dst = cvCloneImage(inputImage);
 	cvSaveImage("C:\\BILLNUM.jpg",dst);
-	//È¡ÏûÉèÖÃ
+	//å–æ¶ˆè®¾ç½®
 	cvResetImageROI(inputImage);
 
 
@@ -42,23 +117,23 @@ int  CheckTUGAI(const char *srcPath,int itype)
 		CvScalar s_hsv;
 		for (int j = 0; j < width; j++)  
 		{  
-			s_hsv = cvGet2D(hsv, i, j);//»ñÈ¡ÏñËØµãÎª£¨j, i£©µãµÄHSVµÄÖµ   
-// 			//°×É« Òì³£ÑÕÉ«  Í¿¸ÄÒº
+			s_hsv = cvGet2D(hsv, i, j);//è·å–åƒç´ ç‚¹ä¸ºï¼ˆj, iï¼‰ç‚¹çš„HSVçš„å€¼   
+// 			//ç™½è‰² å¼‚å¸¸é¢œè‰²  æ¶‚æ”¹æ¶²
 // 			if (s_hsv.val[0]>=15 && s_hsv.val[0]<=35 && s_hsv.val[1]>10 && s_hsv.val[1]<= 25 && s_hsv.val[2] >=240)
 // 			{
 // 				white++;
 // 				continue;
 // 			}
 // 
-// 			//Ç³ºÖÉ«
+// 			//æµ…è¤è‰²
 // 			if (s_hsv.val[0]>=32 && s_hsv.val[0]<=38 && s_hsv.val[1]>=26 && s_hsv.val[1]<= 44 && s_hsv.val[2] >=130 && s_hsv.val[2] <200)
 // 			{
-// 				gray++; //Õı³£Ó¦¸ÃÊÇ74¸öÏñËØ×óÓÒ
+// 				gray++; //æ­£å¸¸åº”è¯¥æ˜¯74ä¸ªåƒç´ å·¦å³
 // 				continue;
 // 			}
 			//CXFSLogger::WriteAF(LOGLEVEL_INFO,"h=[%.0f],s=[%.0f],v=[%.0f]",s_hsv.val[0],s_hsv.val[1],s_hsv.val[2]);
 			//printf("h=[%.0f],s=[%.0f],v=[%.0f]\n",s_hsv.val[0],s_hsv.val[1],s_hsv.val[2]);
-			//ºÚÉ« Æ±ºÅÓĞ¼°²¿·ÖÊÇºÚÉ«µÄ£¬´ó²¿·Ö¶¼ÊÇ×ØºÖÉ«
+			//é»‘è‰² ç¥¨å·æœ‰åŠéƒ¨åˆ†æ˜¯é»‘è‰²çš„ï¼Œå¤§éƒ¨åˆ†éƒ½æ˜¯æ£•è¤è‰²
 
 			if (  (s_hsv.val[0]>0 && s_hsv.val[0] <=180) && (s_hsv.val[1]>=0 && s_hsv.val[1]<255) && s_hsv.val[2] <=43)  //2=43
 			{
@@ -83,14 +158,14 @@ int  CheckTUGAI(const char *srcPath,int itype)
 				continue;
 			}
 
-			//ºÚÉ« Æ±ºÅÓĞ¼°²¿·ÖÊÇºÚÉ«µÄ£¬´ó²¿·Ö¶¼ÊÇ×ØºÖÉ«
+			//é»‘è‰² ç¥¨å·æœ‰åŠéƒ¨åˆ†æ˜¯é»‘è‰²çš„ï¼Œå¤§éƒ¨åˆ†éƒ½æ˜¯æ£•è¤è‰²
 			if (  (s_hsv.val[0]>15 && s_hsv.val[0] <=52 ) && s_hsv.val[1]>10   && s_hsv.val[1]<43 && s_hsv.val[2] <60 && s_hsv.val[2] >30 )
 			{
 				//CXFSLogger::WriteAF(LOGLEVEL_INFO,"h=[%.0f],s=[%.0f],v=[%.0f]",s_hsv.val[0],s_hsv.val[1],s_hsv.val[2]);
 				other++;
 				continue;
 			}
-			//ºÚÉ« Æ±ºÅÓĞ¼°²¿·ÖÊÇºÚÉ«µÄ£¬´ó²¿·Ö¶¼ÊÇ×ØºÖÉ«
+			//é»‘è‰² ç¥¨å·æœ‰åŠéƒ¨åˆ†æ˜¯é»‘è‰²çš„ï¼Œå¤§éƒ¨åˆ†éƒ½æ˜¯æ£•è¤è‰²
 			if (  (s_hsv.val[0]>50 && s_hsv.val[0] <=60) && s_hsv.val[1]<27 && s_hsv.val[2]<45 )
 			{
 				other++;
@@ -107,16 +182,16 @@ int  CheckTUGAI(const char *srcPath,int itype)
 
 	if (black > 200)
 	{
-		//·ÀÖ¹²¿·ÖÆ±ºÅÊÇºÚÉ«£¬µ¼ÖÂ¼ì²âÆ±ºÅÒì³££¬ OTHERÈ¡ÖµÒ»°ãÒªÇó´óÓÚ150¼´¿É BLACK =25
+		//é˜²æ­¢éƒ¨åˆ†ç¥¨å·æ˜¯é»‘è‰²ï¼Œå¯¼è‡´æ£€æµ‹ç¥¨å·å¼‚å¸¸ï¼Œ OTHERå–å€¼ä¸€èˆ¬è¦æ±‚å¤§äº150å³å¯ BLACK =25
 		black = 0;
 	}
 
-	CXFSLogger::WriteAF(LOGLEVEL_INFO,"¼ì²éÆ±ºÅÊÇ·ñ±»Í¿¸Ä,white=[%d],black=[%d],otherÍ¿¸Ä=[%d]",white,black,other);
+	CXFSLogger::WriteAF(LOGLEVEL_INFO,"æ£€æŸ¥ç¥¨å·æ˜¯å¦è¢«æ¶‚æ”¹,white=[%d],black=[%d],otheræ¶‚æ”¹=[%d]",white,black,other);
 
 	if (/*white>40 ||*/ other>iOther || black >iBlack)  /*60*/
 	{
-		//Í¿¸Ä
-		CXFSLogger::WriteAF(LOGLEVEL_INFO,"¼ì²éÆ±ºÅÊÇ·ñ±»Í¿¸Ä,white=[%d],black=[%d],otherÍ¿¸Ä=[%d]",white,black,other);
+		//æ¶‚æ”¹
+		CXFSLogger::WriteAF(LOGLEVEL_INFO,"æ£€æŸ¥ç¥¨å·æ˜¯å¦è¢«æ¶‚æ”¹,white=[%d],black=[%d],otheræ¶‚æ”¹=[%d]",white,black,other);
 		flage2 = 1;
 	}
 
@@ -127,15 +202,15 @@ int  CheckTUGAI(const char *srcPath,int itype)
 
 
 /*
-ÍÚ²¹¼ì²â:
-ÏÈ×öºÚÃ±²Ù×÷£¬µÃµ½»Ò¶ÈÍ¼£¬È»ºó½øĞĞ±ßÔµ¼ì²â-¡·¶şÖµÍ¼£¬Í¨¹ı¶şÖµÍ¼¼ÆËãÖ±Ïß£¨»ô·ò±ä»»£©£¬È»ºó¸ø¾İĞ±ÂÊ¼ÆËã
+æŒ–è¡¥æ£€æµ‹:
+å…ˆåšé»‘å¸½æ“ä½œï¼Œå¾—åˆ°ç°åº¦å›¾ï¼Œç„¶åè¿›è¡Œè¾¹ç¼˜æ£€æµ‹-ã€‹äºŒå€¼å›¾ï¼Œé€šè¿‡äºŒå€¼å›¾è®¡ç®—ç›´çº¿ï¼ˆéœå¤«å˜æ¢ï¼‰ï¼Œç„¶åç»™æ®æ–œç‡è®¡ç®—
 */
 
 
 
 
 
-//·µ»Ø¸ºÊı±íÊ¾Ö±Ïß¡·2Ìõ£¬ÓĞ±»ÍÚ²¹¹ı,0±íÊ¾Æ±Õı³£
+//è¿”å›è´Ÿæ•°è¡¨ç¤ºç›´çº¿ã€‹2æ¡ï¼Œæœ‰è¢«æŒ–è¡¥è¿‡,0è¡¨ç¤ºç¥¨æ­£å¸¸
 int CheckLineCnt(const char *srcPath,int threshold,int interVal)
 {
 	IplImage *dst = cvLoadImage(srcPath,0);  
@@ -143,11 +218,11 @@ int CheckLineCnt(const char *srcPath,int threshold,int interVal)
 	CvMemStorage *storage = cvCreateMemStorage();  
 	CvSeq *lines = 0;  
 	
-	//threshold±íÊ¾Ò»ÌõÖ±ÏßÉÏµÄÏñËØµã´óÓÚ110Ê±£¬²Å×÷ÎªÖ±Ïß¼ì²â³öÀ´£¬ÖµÔ½´ó£¬µÃµ½µÄÖ±ÏßÔ½ÉÙ    
-	//interValÔÚÒ»ÌõÖ±ÏßÉÏËéÏß¶ÌÁ¬½ÓµÄ×î´ó¸ôÖµ£»µ±Ò»ÌõÖ±ÏßÉÏµÄ¸ôÖµĞ¡ÓÚ30Ê±£¬»áÈÏÎªÊÇÍ¬Ò»ÌõÖ±Ïß
+	//thresholdè¡¨ç¤ºä¸€æ¡ç›´çº¿ä¸Šçš„åƒç´ ç‚¹å¤§äº110æ—¶ï¼Œæ‰ä½œä¸ºç›´çº¿æ£€æµ‹å‡ºæ¥ï¼Œå€¼è¶Šå¤§ï¼Œå¾—åˆ°çš„ç›´çº¿è¶Šå°‘    
+	//interValåœ¨ä¸€æ¡ç›´çº¿ä¸Šç¢çº¿çŸ­è¿æ¥çš„æœ€å¤§éš”å€¼ï¼›å½“ä¸€æ¡ç›´çº¿ä¸Šçš„éš”å€¼å°äº30æ—¶ï¼Œä¼šè®¤ä¸ºæ˜¯åŒä¸€æ¡ç›´çº¿
 
 	lines = cvHoughLines2(dst,storage,/*CV_HOUGH_STANDARD*/CV_HOUGH_PROBABILISTIC,1,CV_PI/180,threshold,interVal,0);  
-	int shx=0,hex=0,xie=0; //ÊúÏß ºáÏß
+	int shx=0,hex=0,xie=0; //ç«–çº¿ æ¨ªçº¿
 	CvPoint pt1,pt2; 
 	for (int i=0;i<lines->total;i++)  
 	{  
@@ -157,7 +232,7 @@ int CheckLineCnt(const char *srcPath,int threshold,int interVal)
 
 		if ( abs(pt1.x - pt2.x) >30)
 		{
-			//ºáÏß¼ì²â
+			//æ¨ªçº¿æ£€æµ‹
 			hex++;
 		}
 		if ( abs(pt1.x - pt2.x) <5 && abs(pt1.y -pt2.y) >33)
@@ -169,7 +244,7 @@ int CheckLineCnt(const char *srcPath,int threshold,int interVal)
 	cvReleaseImage(&dst);  
 	cvReleaseMemStorage(&storage); 
 
-	CXFSLogger::WriteAF(LOGLEVEL_INFO,"ÍÚ²¹ÏßÌõ¼ì²âhex=[%d]",hex);
+	CXFSLogger::WriteAF(LOGLEVEL_INFO,"æŒ–è¡¥çº¿æ¡æ£€æµ‹hex=[%d]",hex);
 	if (hex > 2)
 	{
 		return -1;
@@ -178,7 +253,7 @@ int CheckLineCnt(const char *srcPath,int threshold,int interVal)
 }
 
 
-//°´ÕÕ»Ò¶ÈÍ³¼ÆºÚ°×µã
+//æŒ‰ç…§ç°åº¦ç»Ÿè®¡é»‘ç™½ç‚¹
 int GetBackCountByGray(const char* gryPathImage,int fValue)
 {
 	IplImage *pImage = cvLoadImage(gryPathImage,CV_LOAD_IMAGE_GRAYSCALE);
@@ -188,9 +263,9 @@ int GetBackCountByGray(const char* gryPathImage,int fValue)
 	}
 	int height,width;
 	int black = 0;
-	//»ñÈ¡Í¼ÏñµÄ¿í¶È
+	//è·å–å›¾åƒçš„å®½åº¦
 	width=(int)pImage->width;
-	//»ñÈ¡Í¼ÏñµÄ³¤¶È
+	//è·å–å›¾åƒçš„é•¿åº¦
 	height=(int)pImage->height;
 
 	for (int i=0;i<height;i++)
@@ -200,26 +275,26 @@ int GetBackCountByGray(const char* gryPathImage,int fValue)
 			uchar * ptr = (uchar *)pImage->imageData + pImage->widthStep * i;
 			if (ptr[j] <=fValue)
 			{   
-				//ÈôÎªºÚµã£¬°Ñ´Ëµã×÷Îª×Ö·û´óÖÂµÄ×î¸ßµã
+				//è‹¥ä¸ºé»‘ç‚¹ï¼ŒæŠŠæ­¤ç‚¹ä½œä¸ºå­—ç¬¦å¤§è‡´çš„æœ€é«˜ç‚¹
 				black++;
 			}
-			//Èç¹û¸Ãµã²»ÊÇºÚµã£¬¼ÌĞøÑ­»·
+			//å¦‚æœè¯¥ç‚¹ä¸æ˜¯é»‘ç‚¹ï¼Œç»§ç»­å¾ªç¯
 		}
 	}
 	cvReleaseImage(&pImage);
 	return black;
 }
 
-//Í³¼Æ¶şÖµÍ¼ºÚ°×µã
+//ç»Ÿè®¡äºŒå€¼å›¾é»‘ç™½ç‚¹
 int GetBackCount(const char* binPathImage)
 {
 	IplImage *pImage = cvLoadImage(binPathImage);
 	int height,width;
 	int black = 0;
 	int whrite = 0;
-	//»ñÈ¡Í¼ÏñµÄ¿í¶È
+	//è·å–å›¾åƒçš„å®½åº¦
 	width=(int)pImage->width;
-	//»ñÈ¡Í¼ÏñµÄ³¤¶È
+	//è·å–å›¾åƒçš„é•¿åº¦
 	height=(int)pImage->height;
 
 	for (int i=0;i<height;i++)
@@ -229,10 +304,10 @@ int GetBackCount(const char* binPathImage)
 			uchar * ptr = (uchar *)pImage->imageData + pImage->widthStep * i;
 			if (ptr[j] <128)
 			{   
-				//ÈôÎªºÚµã£¬°Ñ´Ëµã×÷Îª×Ö·û´óÖÂµÄ×î¸ßµã
+				//è‹¥ä¸ºé»‘ç‚¹ï¼ŒæŠŠæ­¤ç‚¹ä½œä¸ºå­—ç¬¦å¤§è‡´çš„æœ€é«˜ç‚¹
 				black++;
 			}
-			//Èç¹û¸Ãµã²»ÊÇºÚµã£¬¼ÌĞøÑ­»·
+			//å¦‚æœè¯¥ç‚¹ä¸æ˜¯é»‘ç‚¹ï¼Œç»§ç»­å¾ªç¯
 			else
 			{
 				whrite++;
@@ -243,28 +318,28 @@ int GetBackCount(const char* binPathImage)
 	return black;
 }
 
-//¾«×¼ÌáÈ¡Æ±ºÅ
+//ç²¾å‡†æå–ç¥¨å·
 void BillBPO:: RoiBillNumber2(const char* binSrcPath,const char* outPath,int top,int hight)
 {
-	IplImage *pSrcIamge = cvLoadImage(binSrcPath);//ÔØÈëÒ»ÕÅÍ¼Æ¬;
+	IplImage *pSrcIamge = cvLoadImage(binSrcPath);//è½½å…¥ä¸€å¼ å›¾ç‰‡;
 	if (NULL == pSrcIamge)
 	{
-		CXFSLogger::WriteAF(LOGLEVEL_INFO,"RoiBillNumber ¼ÓÔØ[%s]Ê§°Ü",binSrcPath);
+		CXFSLogger::WriteAF(LOGLEVEL_INFO,"RoiBillNumber åŠ è½½[%s]å¤±è´¥",binSrcPath);
 	}
 	CvRect rect;
-	//È¡ÕıÃæÍ¼Äê·İÇøÓò
+	//å–æ­£é¢å›¾å¹´ä»½åŒºåŸŸ
 	rect.x=12,rect.y=0,rect.width=pSrcIamge->width,rect.height=hight + top;
 
 	if (hight > pSrcIamge->height)
 	{
 		rect.height=pSrcIamge->height;
 	}
-	//ÉèÖÃROIÇøÓò
+	//è®¾ç½®ROIåŒºåŸŸ
 	cvSetImageROI(pSrcIamge,rect);
-	//ÌáÈ¡ROI
+	//æå–ROI
 	IplImage *dst = cvCloneImage(pSrcIamge);
 	cvSaveImage(outPath,dst);
-	//È¡ÏûÉèÖÃ
+	//å–æ¶ˆè®¾ç½®
 	cvResetImageROI(pSrcIamge);
 	cvReleaseImage(&dst);
 	cvReleaseImage(&pSrcIamge);
