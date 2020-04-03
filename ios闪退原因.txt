@@ -1,56 +1,56 @@
-1.�ֵ�
-��1����key��valueΪnil �������
+1.字典
+（1）：key或value为nil 会崩溃：
 eg:
-NSDictionary *dic = @{@"key": nil}; // ����
-  [mutDic setObject:nil forKey:@"key"]; // ������
-��2�������ֵ�ͨ��keyȡ����ֵ��������գ�����ʵ���ַ���������
+NSDictionary *dic = @{@"key": nil}; // 崩溃
+  [mutDic setObject:nil forKey:@"key"]; // 不崩溃
+（2）：当字典通过key取出的值已数组接收，但其实是字符串崩溃：
 
 eg:
  NSDictionary *dic = @{@"key": @"a"};
- NSArray *arr = dic[@"key"];  // arr��ʵ���ַ����������������ᱨ��
- NSLog(@"%@", arr[0]);        // ����
+ NSArray *arr = dic[@"key"];  // arr其实是字符串，但编译器不会报错
+ NSLog(@"%@", arr[0]);        // 崩溃
 
-2.���飺index>�����count��ɱ���
-��1������Խ�����
+2.数组：index>数组的count造成崩溃
+（1）数组越界崩溃
  eg:
  NSArray *array= @[@1, @2, @3];
- NSNumber *num = array[3]; // ����
+ NSNumber *num = array[3]; // 崩溃
 
-2.�ַ���
-�ַ��������ڣ��ж��ַ����Ƿ�Ϊ�գ�
+2.字符串
+字符串不存在，判断字符串是否为空，
 
-6.��try - catch
-����һЩc��ʹ�ã���ʱ�׳����쳣��������Ҫ��ĳ���߼�д��try���棻һЩ���ڸ���ҵ�񣬴�����ĳ���쳣������Ҳ��Ҫ�Ѵ���д��try�
+6.用try - catch
+对于一些c类使用，有时抛出的异常崩溃，需要把某段逻辑写到try里面；一些由于个别业务，触发的某种异常处理，也需要把代码写到try里。
 @try {
 } @catch (NSException *exception) {
 } @finally {
 }
 
 
-7.����Ȩ��
-****����̨���Ҹ棺
+7.还有权限
+****控制台报忠告：
 
-This app has crashed because it attempted to access privacy-sensitive data without a usage description. The app��s Info.plist must contain an NSPhotoLibraryUsageDescription key with a string value explaining to the user how the app uses this data.****	
-������˼���ǣ�Appȱ��һ����ȡ˽�����ݵ�Ȩ����������Ҫ������info.plist�ļ��б��뺬��һ�����ֽ���NSPhotoLibraryUsageDescription��ֵ������ΪʲôӦ����Ҫʹ��������ݣ�û������ȡ�����Դ�ļ�ֵ����NSPhotoLibraryUsageDescription
-
-
-��������Ȩ�ޣ�iOS10֮�����µ�Ȩ������Ҳ����Ҫ������д���������ģ�������Ҳ���������һ��:
+This app has crashed because it attempted to access privacy-sensitive data without a usage description. The app’s Info.plist must contain an NSPhotoLibraryUsageDescription key with a string value explaining to the user how the app uses this data.****	
+大致意思就是：App缺少一个获取私有数据的权限描述，需要我们在info.plist文件中必须含有一个名字叫做NSPhotoLibraryUsageDescription的值来解释为什么应用需要使用这个数据，没错，获取相册资源的键值就是NSPhotoLibraryUsageDescription
 
 
-Privacy - Microphone Usage Description //��˷�Ȩ��
+除了相册的权限，iOS10之后如下的权限请求也是需要我们填写请求描述的，在这里也给大家提醒一下:
+
+
+Privacy - Microphone Usage Description //麦克风权限
 Privacy - Contacts Usage Description   
-//ͨѶ¼Ȩ��
-Privacy - Camera Usage Description     //����ͷȨ��
+//通讯录权限
+Privacy - Camera Usage Description     //摄像头权限
 Privacy - NSSiriUsageDescription       
-//Siri��Ȩ��
+//Siri的权限
 Privacy - Bluetooth Peripheral Usage Description 
-//����
-Privacy - Reminders Usage Description  //��������
+//蓝牙
+Privacy - Reminders Usage Description  //提醒事项
 Privacy - Motion Usage Description     
-//�˶��뽡��
-Privacy - Media Libaray Usage Description //ý����Դ��
+//运动与健康
+Privacy - Media Libaray Usage Description //媒体资源库
 Privacy - Calendars Usage Description  
-//����
+//日历
 1
 2
 3
@@ -61,43 +61,43 @@ Privacy - Calendars Usage Description
 8
 9
 
-�ڴ������й¶����Ϊ���漸������
+内存溢出或泄露，分为下面几个方面
 
-��ʱ��û���ͷŻ�֪ͨû���Ƴ�������ѭ�����ã���ɽ����޷��ͷţ��ڴ�����
+定时器没有释放或通知没有移除，或者循环引用，造成界面无法释放，内存增加
 
-��forѭ�������˺ܶ�ֲ���������������������ʱ����ڴ漱�����ӣ������� ����ͨ������@autoreleasepool�����
+在for循环创建了很多局部变量，当遍历次数过多时造成内存急剧增加，崩溃， 可以通过添加@autoreleasepool解决；
 
 
 eg:
 for (int i = 0; i < 5000000; i++) {
-     NSObject *obj = [[NSObject alloc] init];  // �ڴ汩�����ֲ�����û���ͷ�
+     NSObject *obj = [[NSObject alloc] init];  // 内存暴增，局部变量没有释放
  }
  
-�������
+解决方案
  for (int i = 0; i < 5000000; i++) {
      @autoreleasepool {
          NSObject *obj = [[NSObject alloc] init]; 
- // �ڴ���٣� ����ʱ����
+ // 内存减少， 运行时间差不多
      }
  }
 
 
-10����ͼƬ��ռ���ڴ��������UIGraphicsGetImageFromCurrentImageContext()��Щ�������ƴ�ͼƬ,
-���߼��ش���������������ͼƬ
+10绘制图片，占用内存过大，例如UIGraphicsGetImageFromCurrentImageContext()这些方法绘制大图片,
+或者加载大量高清晰体积大的图片
 
 
-����,
-1��ֱ��ʹ��UIImageView.Image��ֵ;
+其中,
+1是直接使用UIImageView.Image赋值;
 
-2�ǲο�ƻ��������demo,����CGImageCreateWithImageInRect��ȡԭͼ��Ӧλ�õ�����,��ͨ��CGContextDrawImage��Ⱦ��ָ��λ��;
+2是参考苹果给出的demo,利用CGImageCreateWithImageInRect截取原图对应位置的内容,再通过CGContextDrawImage渲染到指定位置;
 
-3������CATiledLayer�㼶��API,�Զ����л���;
-
-
+3是利用CATiledLayer层级的API,自动进行绘制;
 
 
-���¼��ش�ͼ�ڴ汩�ǵ�ԭ���ǶԴ�ͼ�Ľ�ѹ�����ء�
-��SDWebImage�д�ͼ���ý�ѹ�������Է�ֹ�ڴ汩�ǣ�
+
+
+导致加载大图内存暴涨的原因是对大图的解压缩加载。
+在SDWebImage中大图禁用解压缩，可以防止内存暴涨：
 
 
 [[SDImageCache sharedImageCache] setShouldDecompressImages:NO];
@@ -105,10 +105,10 @@ for (int i = 0; i < 5000000; i++) {
 [[SDWebImageDownloader sharedDownloader] setShouldDecompressImages:NO];
 
 
-��������Ϊ������ʾ�ĵط��ŵ����ڴ汬�ǣ�ֻ�н�ͼƬ���вü��ͺ��ˣ�
+反正是因为最终显示的地方才导致内存爆涨，只有将图片进行裁剪就好了，
 
 
-@interface UIView (WebCache),�����ҵ�������࣬�����button��imageviewһ����һ��
+@interface UIView (WebCache),最终找到了这个类，最好是button和imageview一起处理一下
 - 
 
 (void)sd_setImage:(UIImage *)image imageData:(NSData *)imageData basedOnClassOrViaCustomSetImageBlock:(SDSetImageBlock)setImageBlock transition:(SDWebImageTransition *)transition cacheType:(SDImageCacheType)cacheType imageURL:(NSURL *)imageURL {
@@ -130,7 +130,7 @@ UIImageView *imageView = (UIImageView *)view;
         
 finalSetImageBlock = ^(UIImage *setImage, NSData *setImageData) {
        
-     //�ж�һ�£����ͼƬ�ֱ��ʺܴ�����вü�
+     //判断一下，如果图片分辨率很大，则进行裁剪
           
  UIImage *resultImage = [self compressResolvingImage:setImage];
         
@@ -155,7 +155,7 @@ else if ([view isKindOfClass:[UIButton class]]) {
 
 
 
-/**�����ֱ��ʴ������*/
+/**处理分辨率大的问题*/
 - (UIImage*)compressResolvingImage:(UIImage*)orginImage
 {
     if(orginImage == nil)return nil;
@@ -190,27 +190,83 @@ else if ([view isKindOfClass:[UIButton class]]) {
 
 
 
+/*
+ * 加载超大图片
+ * path 图片文件路径
+ * maxResolution 最终输出的图片分辨率上限
+ */
++ (UIImage *)loadImageWithPath:(NSString *)path maxResolution:(long)resolution{
+    
+    UIImage *image = [UIImage imageWithContentsOfFile:path];
+    CGSize originSize = image.size;
+    long orginResolution = originSize.width * originSize.height;
+    //如果原图分辨率未超过规定值，则直接返回
+    if(orginResolution <= resolution){
+        return image;
+    }
+    
+    //边长缩放比例
+    CGFloat scale = sqrt((double)resolution / (double)orginResolution);
+    CGSize outSize = CGSizeMake((long)(originSize.width * scale), (long)(originSize.height * scale));
+    
+    //屏幕物理分辨率
+    CGFloat screenScaleFactor = [UIScreen mainScreen].scale;
+    CGSize screenSize = [UIScreen mainScreen].nativeBounds.size;
+    long screenResolution = (long)(screenSize.width * screenScaleFactor * screenSize.height * screenScaleFactor);
+    
+    //每次加载一个屏幕分辨率的图片块
+    CGSize tilesSize = CGSizeMake((long)(screenResolution/originSize.height), originSize.height);
+    long tilesResolution = (long)(tilesSize.width * tilesSize.height);
+    int titlesCount = (int)ceil((double)orginResolution/(double)tilesResolution);
+    long endTilesWidth = (long)(((long)orginResolution % (long)tilesResolution) / tilesSize.height);
+    
+    CGSize outTilesSize = CGSizeMake((long)(tilesSize.width*scale), (long)(tilesSize.height*scale));
+    long outEndTilesWidth = (long)endTilesWidth * scale;
+    
+    //开始绘制图片
+    UIGraphicsBeginImageContext(outSize);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextTranslateCTM(context, 0, outSize.height);
+    CGContextScaleCTM(context, 1.0, -1.0);
+    
+    for(int i=0;i<titlesCount;i++){
+        
+        CGRect inRect = CGRectMake(tilesSize.width * i, 0, tilesSize.width, tilesSize.height);
+        CGRect outRect = CGRectMake(outTilesSize.width * i,0,outTilesSize.width,outTilesSize.height);
+        if(endTilesWidth > 0 && i == titlesCount-1){
+            inRect = CGRectMake(tilesSize.width * i, 0, endTilesWidth, tilesSize.height);
+            outRect = CGRectMake(outTilesSize.width * i,0,outEndTilesWidth,outTilesSize.height);
+        }
+        
+        CGImageRef outImageItem = CGImageCreateWithImageInRect(image.CGImage, inRect);
+        CGContextDrawImage(context, outRect, outImageItem);
+    }
+    
+    UIImage *outImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return outImage;
+}
+11 调用一些公司用C或C++语言写的静态库，由于不能对他们进行垃圾回收，造成内存泄露或溢出，
+用Instruments 来检查一下，如果你的项目是要支持长时间运行的，一定要仔细观察一下；
 
-11 ����һЩ��˾��C��C++����д�ľ�̬�⣬���ڲ��ܶ����ǽ����������գ�����ڴ�й¶�������
-��Instruments �����һ�£���������Ŀ��Ҫ֧�ֳ�ʱ�����еģ�һ��Ҫ��ϸ�۲�һ�£�
+12 调用底层C语言框架，没对变量进行释放，造成内存泄露；
 
-12 ���õײ�C���Կ�ܣ�û�Ա��������ͷţ�����ڴ�й¶��
-
-13.��ȡ�ַ��������顢NSDataԽ��
+13.截取字符串、数组、NSData越界
 
  NSString *str = @"abcdefg";
- [str substringWithRange:NSMakeRange(0, 8)]; // ����
+ [str substringWithRange:NSMakeRange(0, 8)]; // 崩溃
 
-14.�����ťͬʱ�����ɱ�������AppDelegate������[UIButton appearance].exclusiveTouch = YES�� ���ⰴťͬʱ���
+14.多个按钮同时点击造成崩溃，在AppDelegate中设置[UIButton appearance].exclusiveTouch = YES， 避免按钮同时点击
 
-15.��Դ����
-������Ƶ���ڼ���ͼƬ���㣬�������
-
-
+15.资源抢夺
+比如视频中在假如图片拍摄，造成闪退
 
 
 
-StackOverflow����������һЩ�򵥵Ĳ��ԣ������豸������Ϊֹ�⵽�Ľ����
+
+
+StackOverflow上有人做了一些简单的测试，有限设备下迄今为止测到的结果：
 
 iPad1: 127MB/256MB/49%
 
@@ -230,15 +286,15 @@ iPad Air 2: 1383MB/2048MB/68% (iOS 10.2.1)
 
 iPad Pro 9.7": 1395MB/1971MB/71% (iOS 10.0.2 (14A456))
 
-iPad Pro 10.5��: 3057/4000/76% (iOS 11 beta4)
+iPad Pro 10.5”: 3057/4000/76% (iOS 11 beta4)
 
-iPad Pro 12.9�� (2015): 3058/3999/76% (iOS 11.2.1)
+iPad Pro 12.9” (2015): 3058/3999/76% (iOS 11.2.1)
 
-iPad Pro 12.9�� (2017): 3057/3974/77% (iOS 11 beta4)
+iPad Pro 12.9” (2017): 3057/3974/77% (iOS 11 beta4)
 
-iPad Pro 11.0�� (2018): 2858/3769/76% (iOS 12.1)
+iPad Pro 11.0” (2018): 2858/3769/76% (iOS 12.1)
 
-iPad Pro 12.9�� (2018): 4598/5650/81% (iOS 12.1)
+iPad Pro 12.9” (2018): 4598/5650/81% (iOS 12.1)
 
 iPod touch 4th gen: 130MB/256MB/51% (iOS 6.1.1)
 
@@ -251,7 +307,7 @@ iPhone4s: 286MB/512MB/56%
 iPhone5: 645MB/1024MB/62%
 
 iPhone5s: 646MB/1024MB/63%
-��������������������������������
+————————————————
 iPhone6: 645MB/1024MB/62% (iOS 8.x)
 iPhone6+: 645MB/1024MB/62% (iOS 8.x)
 iPhone6s: 1396MB/2048MB/68% (iOS 9.2)
@@ -265,45 +321,45 @@ iPhone7+: 2040MB/3072MB/66% (iOS 10.2.1)
 iPhone X: 1392/2785/50% (iOS 11.2.1)
 
 iPhone XS Max: 2039/3735/55% (iOS 12.1)
-��������������������������������
+————————————————
 
 
 
-�����������ԭ��
+常见程序崩溃原因：
 
-����1.���ĳ��ģ�����ĳ�����ܰ�ť������ҳ����ת�����߻�ȡ���ݡ�---------------------->û���ݻ���������ݴ���������
+　　1.点击某个模块或者某个功能按钮，进行页面跳转，或者获取数据。---------------------->没数据会崩溃，数据错误会崩溃。
 
-����2.���ĳ��ģ�����ĳ�����ܰ�ť������ҳ����ת�����߻�ȡ���ݡ�---------------------->ҵ���߼����������ᵼ�±�����
+　　2.点击某个模块或者某个功能按钮，进行页面跳转，或者获取数据。---------------------->业务逻辑处理不当会导致崩溃。
 
-����3.���ĳ��ģ�����ĳ�����ܰ�ť��ֱ�ӵ��±������༭����ʱ�ޱ���������ʱ������---------------------->�����߼����󣬻��ߴ������˷��ŵĴ��롣
+　　3.点击某个模块或者某个功能按钮，直接导致崩溃：编辑代码时无报错，编译时出错。---------------------->代码逻辑错误，或者存在闪退符号的代码。
 
-      4.ĳ�����޷�����ÿ���������÷���û��ʵ�֡�
+      4.某对象无法解析每个方法，该方法没有实现。
 
-      5.Bundle�м��ز����ڵ���Դ��
+      5.Bundle中加载不存在的资源。
 
-һ��д��������ӡ������־
+一：写个方法打印崩溃日志
 
- ��������쳣��Ҫ��ó�����ԭ��,����ʱ����ͨ����ӡ������Ϣ���鿴�����ߺ�Ҫ���û��ı�����־�ļ��ϴ������������Դ�������
+ 程序出现异常，要获得出错的原因,测试时可以通过打印崩溃信息来查看，上线后，要把用户的崩溃日志文件上传到服务器，以待处理。
 
-    1. �ڳ�������ʱ����һ���쳣������������������������ʱ�Ļص�������
+    1. 在程序启动时加上一个异常捕获监听，用来处理程序崩溃时的回调动作。
 
        NSSetUncaughtExceptionHandler (&UncaughtExceptionHandler);
 
-    2. ʵ���Լ��Ĵ�������
+    2. 实现自己的处理函数
 
        void UncaughtExceptionHandler(NSException *exception) {
 
-    NSArray *arr = [exception callStackSymbols];//�õ���ǰ����ջ��Ϣ
-    NSString *reason = [exception reason];//�ǳ���Ҫ�����Ǳ�����ԭ��
-    NSString *name = [exception name];//�쳣����
-      //��ӡ������Ϣ��
+    NSArray *arr = [exception callStackSymbols];//得到当前调用栈信息
+    NSString *reason = [exception reason];//非常重要，就是崩溃的原因
+    NSString *name = [exception name];//异常类型
+      //打印错误信息：
     NSLog(@"exception type : %@ \n crash reason : %@ \n call stack info : %@", name, reason, arr);
 }
-���������м������ˡ�
+二，程序中集成友盟。
 
-���˿��԰������˽�Ӧ�����ơ����������������������Ϊ�������û����ԡ�������������еĴ�����������԰������ҵ�����ĸ�Դ��
+友盟可以帮我们了解应用趋势、渠道分析、留存分析、行为分析、用户属性、错误分析。其中的错误分析，可以帮我们找到问题的根源。
 
-Ӧ������
+应用趋势
 
 
 
