@@ -204,7 +204,8 @@ Objective-C 中创建线程的方法是什么？如果在主线程中执行代�
 答：线程创建有三种方法：使用NSThread创建、使用GCD的dispatch、使用子类化的NSOperation,
 然后将其加入NSOperationQueue;在主线程执行代码，方法是performSelectorOnMainThread，如果想延时执行代码可以用performSelector:onThread:withObject:waitUntilDone:
 
-Category（类别）、 Extension（扩展）和继承的区别,分类，类别，
+类别，分类
+Category（类别）、 Extension（扩展）和继承的区别,分类，
 
 区别：
 1. 分类有名字，类扩展没有分类名字，是一种特殊的分类。
