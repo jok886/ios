@@ -138,3 +138,37 @@ BLE_SEND_MAX_LEN = 20 是蓝牙单次可处理最大字节长度
 }
 
 
+
+//更新特征值后（调用readValueForCharacteristic:方法或者外围设备在订阅后更新特征值都会调用此代理方法）
+-(void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error{
+    if (error) {
+        NSLog(@"更新特征值时发生错误，错误信息：%@",error.localizedDescription);
+        [self writeToLog:[NSString stringWithFormat:@"更新特征值时发生错误，错误信息：%@",error.localizedDescription]];
+        return;
+    }
+    if (characteristic.value) {
+        NSString *value=[[NSString alloc]initWithData:characteristic.value encoding:NSUTF8StringEncoding];
+        NSLog(@"读取到特征值：%@",value);
+        [self writeToLog:[NSString stringWithFormat:@"读取到特征值：%@",value]];
+            if ([value isEqualToString:@"EOM"]) {
+                //处理数据
+                [self.delegate didReceiveData:self.data complate:YES];
+                
+                //处理完毕,清空
+                [self.data setLength:0];
+            }
+        else
+        {
+            [self.data appendData:characteristic.value];
+            if(self.delegate)
+            {
+                [self.delegate didReceiveData:self.data complate:NO];
+            }
+        }
+    }else{
+        NSLog(@"未发现特征值.");
+        [self writeToLog:@"未发现特征值."];
+    }
+}
+
+
