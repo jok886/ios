@@ -161,3 +161,24 @@ Container crash（数组越界，插nil等）
 NSString crash （字符串操作的crash）
 Bad Access crash （野指针）
 UI not on Main Thread Crash (非主线程刷UI (机制待改善))
+
+
+
+//返回参数
+- (BOOL)setInputFeeRateString:(NSString *)inputFeeRateString errorDesc:(NSString **)errorDesc {
+    BOOL inputFeeRateIsValid = [LXHFeeRate isValidWithFeeRateString:inputFeeRateString];
+    if (inputFeeRateIsValid) {
+        NSDecimalNumber *inputFeeRate = [NSDecimalNumber decimalNumberWithString:inputFeeRateString];
+        _inputFeeRateSat = inputFeeRate;
+        *errorDesc = nil;
+        return YES;
+    } else {
+        *errorDesc = NSLocalizedString(@"请输入有效形式的费率(正整数)", nil);
+        return NO;
+    }
+}
+
+ NSString *errorDesc;
+if ([_viewModel setInputFeeRateString:text errorDesc:&errorDesc]) {
+
+}
