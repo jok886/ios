@@ -1,0 +1,1081 @@
+
+https://www.jianshu.com/u/4b858223fffa
+
+
+LeetCode程序员题库：
+https://leetcode.cn
+
+如何招聘一个靠谱的iOS程序员，面试题大全：
+https://github.com/zhoushejun/iOSInterviewQuestions
+
+2019 iOS 面试题大全(补充完整版)：
+https://www.jianshu.com/p/d884f3040fda
+
+Flutter面试题总结：
+https://blog.csdn.net/NotesChapter/article/details/114535124?utm_medium=distribute.wap_relevant.none-task-blog-2~default~baidujs_baidulandingword~default-0-114535124-blog-115608081.wap_blog_relevant_default&spm=1001.2101.3001.4242.1&utm_relevant_index=1
+
+__block,__weak,__strong,__unsafe_unretained的区别
+__block：该修饰符可以将“外部变量”在栈中的内存地址拷贝到堆中，进而在block内部也可以修改外部变量的值。
+__weak：代表弱引用，作用等同于定义为weak的property，当原对象被释放的时候，弱引用指针会被自动设置为nil。
+__strong：代表强引用，等同于定义为strong的property，常用于在block中多次访问外部变量时，block外部用__weak修饰，内部用__strong修饰，防止循环引用。
+__unsafe_unretained：该修饰符可以被视为iOSSDK4.3以前版本的__weak的替代品，当修饰的对象被释放后，指针不会置为空，会变成一个野指针，如果后续再访问这个对象就会crash。
+
+__block和__weak修饰符的区别： 
+1.__block不管是ARC还是MRC模式下都可以使用，既可以修饰对象，也可以修饰基本数据类型。 
+2.__weak只能在ARC模式下使用，也只能修饰对象（NSString），不能修饰基本数据类型（int）。 
+3.__block修饰的对象可以在block中被重新赋值，__weak不可以。
+4.__block对象在ARC下可能会导致循环引用，非ARC下会避免循环引用，__weak只在ARC下使用，可以避免循环引用。
+
+delegate和block的区别：
+1.delegate运行成本低，block运行成本高。delegate只是保存了一个对象指针，直接回调，没有额外消耗；block需要将使用的数据从栈区拷贝到堆区，使用完block或置为nil后才会回收内存。
+2.delegate更加安全，可以避免循环引用，而block使用不当会造成循环引用。
+
+swift，可选值，泛型，闭包，函数式编程，swift中的循环引用，OOP的理解，多线程，tableView优化，NSThread，NSOperation，GCD，同步，异步，串行，并行，performSelector的几个函数，延迟调用函数，栅栏函数，信号量，group监听，dispatch_apply，线程锁，runtime，runloop，NSTimer的循环引用，KVC，KVO，设计模式，内存管理，性能优化，APP启动优化，SDK开发，常用第三方库原理，轮播图，autoLayout，masonry，自定义UI组件，事件传递/响应者链，混合应用开发（Hybrid），Flutter、AppCan、PhoneGap
+
+cookie和session的区别：
+它们都是用来跟踪用户的整个会话，
+1.cookie是在客户端本地记录用户状态，而session是在服务器端记录用户状态。
+2.本地存放的cookie不是很安全，考虑到安全性应当使用session。
+3.可以将重要信息存放在session，不重要的信息存放到cookie。
+
+静态库和动态库的区别：
+1.静态库是在编译的过程中加载到可执行程序中，而动态库是在可执行程序运行的时候加载到内存中，在编译过程中只是简单的引用。
+2.静态库链接的时候直接把库加载到程序中，而动态库链接的时候只保留接口，动态库与程序代码相对独立，可以提高代码的复用性，低耦合。
+
+iOS的图像显示原理：
+CPU输出位图，GPU进行图层渲染，纹理合成，把结果放到帧缓冲区（frame buffer），再由视频控制器根据垂直同步信号（vsync）在指定时间之前去提取帧缓冲区的内容，显示到屏幕上。
+
+UIView和CALayer区别：
+UIView的绘图部分是由CALayer类来管理的，UIView为CALayer提供内容，负责处理触摸事件，参与响应链等，CALayer负责显示内容
+
+解决Swift中的循环引用：
+修饰变量时，使用weak或者unowned修饰，区别在于如果修饰的对象可能为nil，就用weak，否则就用unowned；
+在闭包内使用时，使用[weak self] 或者[unowned self] in ...
+
+GCD和NSOperation的区别：
+1.GCD是封装了C语言的API，而NSOperation是对GCD的更高级的封装
+2.NSOperation可以设置两个NSOperation之间的依赖，可以通过KVO更容易的判断Operation是否是正在执行或取消或结束，而GCD无法设置依赖，无法通过KVO判断
+3.NSOperation可以设置自身的优先级，而GCD只能设置队列的优先级，无法在block体内设置优先级
+4.NSOperation本身是个抽象类，实际开发中用到的是它的两个子类，GCD没有像NSOperation那样的继承特性。
+
+串行：一个任务执行完毕后，再执行下一个任务
+并行：多个任务同时执行
+同步：顾名思义即为一步一步执行线程内的东西
+异步：不阻塞当前线程操作，多线程执行
+
+信号量：
+信号量的初始值，可以用来控制线程并发访问的最大数量。
+信号量其实是一种特殊的互斥锁，使用它可以保证线程同步，当信号量为0时就会阻塞线程，达到线程同步，信号量的值可以理解为剩余车位的数量，三个关键函数：
+dispatch_semaphore_create（创建一个信号量，具有整形的数值，即为信号的总量）
+dispatch_semaphore_signal（相当于走了一辆车，每调用一次，剩余车位+1）
+dispatch_semaphore_wait（相当于来了一辆车，每调用一次，剩余车位-1，当剩余车位为0时再来车，就只能等待）
+
+iOS 使用信号量处理多网络请求：
+https://www.jianshu.com/p/d31117c9dda0
+
+如何使多个网络请求执行完毕，再执行下一个任务？
+使用dispatch_group函数结合信号量使用，在任务执行前，创建信号量，创建dispatch_group_aync并行队列，在每一个任务完毕后都调一次dispatch_semaphore_signal，然后在dispatch_group_notify函数中执行N次dispatch_semaphore_wait，最后回调主线程，进行下一步任务。
+
+视图控制器的生命周期：
+init-loadView-viewDidLoad-viewWillAppear-viewWillLayoutSubviews-viewDidLayoutSubviews-viewDidAppear-viewWillDisappear-viewDidDisappear-dealloc
+
+OC 中 load 和 initialize 的区别：
+https://zhuanlan.zhihu.com/p/270024733
+
++load：
+是在应用程序载入的时候，在main函数执行前会调用；
+每个类的load方法只执行一次，父类的load方法调用优先于子类；
+分类中的load方法执行顺序与compile sources中出现的顺序一致。
++initialize：
+是在类收到第一条消息的时候调用；
+每个类只执行initialize一次，父类的initialize方法调用优先于子类。
+子类未实现initialize方法，会调用父类的；
+多个分类实现了initialize方法，会调用Compile Sources列表中最后一个分类的initialize方法。
+
+swift-值类型和引用类型的区别：
+值类型：值类型存放在栈区(int,double,struct,enum)， 存储的都是值，且值类型在赋值时为深拷贝；
+引用类型：引用类型存放在堆区(class，闭包)，存储的都是指针，且赋值时为浅拷贝。
+
+浅拷贝和深拷贝的区别：
+浅拷贝：是对指向对象的指针进行拷贝；
+深拷贝：是拷贝对象到新开辟的内存中，并且把新对象的指针指向这块内存。
+
+id和instancetype的区别：
+1.ARC下，instancetype在编译期就能检查实例的类型，而id在运行时才检查；
+  MRC下，instancetype和id都不做检查
+2.instancetype只能作为初始化时当做返回值用，id既可以当做参数，也可以当做返回值
+
+什么是离屏渲染：
+离屏渲染指的是GPU在当前屏幕缓冲区外新开辟了一个缓冲区进行渲染，离屏渲染会增加GPU的工作量，会导致CPU+GPU的处理时间每秒超过16.7ms，导致画面掉帧卡顿，所以应该尽量避免。
+
+正常情况下，App是通过CPU和GPU的合作，不停的将内容渲染完成放入帧缓存区，而屏幕显示不断从帧缓冲区中获取内容，显示实时的内容。但在某些情况下，比如阴影，圆角，遮罩，光栅化等效果下，GPU是没办法一次性扫描出图像并直接存放到frame buffer中，因为GPU采用的是画家算法，只能一层层的输出，因此当一层无法生成最终图片的时候，就需要额外开辟一块空间来存放临时图层直到最后合成后再存放到frame buffer中。这也就是GPU离屏渲染的原因。
+
+iOS之AFNetworking的基本原理：
+https://blog.csdn.net/u011146511/article/details/65449517
+
+---NSURLSession (AFURLSessionManager是网络请求核心类，AFHTTPSessionManager继承自前者，添加了不同类型http请求方法，方便调用)
+---Security (AFSecurityPolicy)
+---Rechability (AFNetworkRechabilityManager)
+---Serialization (AFURLRequestSerialization，AFURLResponseSerialization)
+---UIKit (iOS UIKit的扩展库)
+
+NSURLSession网络请求的过程：
+首先创建NSURLSessionConfiguration对象，用创建好的config对象配置初始化NSURLSession，创建NSURLSessionTask对象并用resume执行，用delegate或者block回调返回数据。
+AFHTTPSessionManager封装了上述请求：初始化AFHTTPSessionManager对象，设置requestSerializer和responseSerializer，获取网络请求的NSURLSessionDataTask对象，并且为每一个任务追加下载进度和上传进度回调，最后启动task，即[task resume]。
+
+Rechability开始监听网络连接状态：
+- (void)startMonitoring {
+    /**核心代码，调用SystemConfiguration.framework框架中的方法，
+      增加主线程Runloop的commonModes下self.networkReachability对象的网络状态变化监听 */
+    SCNetworkReachabilityScheduleWithRunLoop(self.networkReachability, CFRunLoopGetMain(), kCFRunLoopCommonModes);
+}
+
+//结束监听的方法
+- (void)stopMonitoring {
+    /**核心代码，调用SystemConfiguration.framework框架中的方法， 取消在主线程Runloop的commonModes下面self.networkReachability的网络状态监听*/
+     SCNetworkReachabilityUnscheduleFromRunLoop(self.networkReachability, CFRunLoopGetMain(), kCFRunLoopCommonModes);
+}
+
+AFSecurityPolicy：
+是HTTPS的支持类，主要作用是在iOS系统验证服务端返回的证书之前，在类中做一步提前验证；如果在AFSecurityPolicy中的验证不通过，则直接取消请求，验证通过之后在走系统的认证；如果在AFSecurityPolicy中没有设置具体的安全验证策略，系统会加载默认的安全策略。
+//三种校验服务器端证书的方式
+typedef NS_ENUM(NSUInteger, AFSSLPinningMode) {
+    AFSSLPinningModeNone,  //代表客户端无条件地信任服务器端返回的证书（包括公信机构和自签的证书），默认安全策略使用的是这种模式
+    AFSSLPinningModePublicKey,  //代表客户端将会使用本地保存的证书对服务器端返回的证书链中证书的PublicKey（公钥）部分进行验证，如果有一对公钥匹配成功，则验证通过；
+    AFSSLPinningModeCertificate,  //代表客户端将会使用本地保存的证书去匹配服务器端返回的证书链，如果有一对匹配成功则验证通过；
+};
+
+UIKit:
+在UIKit扩展中封装了图片下载和缓存功能，增加了一些系统控件的Category方法。
+
+Serialization：
+AFURLRequestSerialization的作用就是用来生成并返回NSURLRequest类型的参数，在AFURLRequestSerialization内部会根据不同的请求信息生成出对应的NSURLRequest实例；
+AFURLResponseSerialization的作用就是用来对服务端返回的数据进行验证和序列化，把返回的NSData数据解析成对应格式的数据，包括JSON、XML和图片类型的数据；
+
+
+SDWebImage 原理及使用：
+https://www.cnblogs.com/jys509/p/5199997.html
+
+入口函数sd_setImageWithURL:placeHolderImage先将placeHolderImage显示，然后SDWebImageManager开始根据URL处理图片，交给SDImageCache处理，先从内存缓存中查找图片，如果找到了回调给SDWebImageManager，进而回调给UIImageView+WebCache显示图片；如果内存缓存中没找到，就会根据图片的URLKey在硬盘缓存目录中查找，如果找到了会将图片添加到内存缓存中，并且回调给前端展示图片，如果还是没有找到，说明内存缓存和硬盘缓存都没有，这时候会交给SDWebImageDownloader downloadImageWithURL:下载图片，图片下载完成后交给SDWebImageDecoder进行解码处理，解码操作在异步线程里，不会卡主线程，解码完成后回调给SDWebImageManager，在内存缓存和硬盘缓存中同时保存，同时回调给前端展示图片。
+
+如果相同URL的图片内容发生了变化，需要在调用[sd_setImageWithURL:url placeHolderImage:nil options:SDWebImageRefreshCached];增加一个options选项
+
+iOS崩溃crash大解析：
+https://www.jianshu.com/p/1b804426d212
+
+对于debug模式，可以真机调试，添加全局断点或者添加symbolic breakpoint，填上[NSObject doesNotRecognizeSelector]
+对于线上APP崩溃，可以搜集Xcode打包时生成的.dsym符号表文件，在Xcode-Window-Organizer，显示包内容可以看到，我一般是集成腾讯的buglySDK，把符号表文件上传到bugly后台，可以定位到问题代码的具体行号。
+再有就是利用Xcode自带的Instruments工具，选择Leaks选项，检测内存泄漏。
+
+iOS耗电量检测与优化：
+https://www.jianshu.com/p/4555704f9696
+
+手机打开开发者模式，选择logging-energy-startRecording选项，真机跑3到5分钟左右，然后打开Xcode的instruments，找到energy log选项并打开，选择import logged data from device，进而分析电量损耗日志。
+
+iOS App 启动性能优化：
+https://mp.weixin.qq.com/s?__biz=MzA3NTYzODYzMg==&mid=2653579242&idx=1&sn=8f2313711f96a62e7a80d63851653639&chksm=84b3b5edb3c43cfb08e30f2affb1895e8bac8c5c433a50e74e18cda794dcc5bd53287ba69025&mpshare=1&scene=1&srcid=081075Vt9sYPaGgAWwb7xd1x&key=4b95006583a3cb388791057645bf19a825b73affa9d3c1303dbc0040c75548ef548be21acce6a577731a08112119a29dfa75505399bba67497ad729187c6a98469674924c7b447788c7370f6c2003fb4&ascene=0&uin=NDA2NTgwNjc1&devicetype=iMac16%2C2+OSX+OSX+10.12.6+build(16G29)&version=12020110&nettype=WIFI&fontScale=100&pass_ticket=IDZVtt6EyfPD9ZLcACRVJZYH8WaaMPtT%2BF3nfv7yZUQBCMKM4H1rDCbevGd7bXoG
+
+优化 App 的启动时间实践 iOS：
+https://www.jianshu.com/p/0858878e331f
+
+APP的启动过程（冷启动）：
+1.加载应用的可执行文件
+2.加载动态链接库加载器（dynamic loader）
+3.dyld递归加载应用所有的动态链接库
+4.dyld调用main函数
+5.调用UIApplicationMain()
+6.调用applicationWillFinishLaunchingWithOptions
+7.调用applicationDidFinishLaunchingWithOptions
+8.进入根视图控制器
+9.进入首页视图控制器
+
+优化思路：
+1.移除不需要用到的动态库
+2.移除不需要用到的类
+3.合并功能相似的类和扩展
+4.尽量避免在+load方法里执行的操作，可以推迟到+initialize方法中。
+5.避免在applicationDidFinishLaunchingWithOptions处理复杂的运算，对于一些复杂的业务逻辑做延迟执行处理，或者开异步线程处理，不要卡主线程。
+6.延迟加载一些第三方库
+7.采用性能更好的api
+
+如何进行线程保活？
+https://blog.csdn.net/u011608357/article/details/128163979
+创建全局子线程，在子线程的实现里给当前runloop addPort:forMode（给runloop添加事件源），再手动运行runloop，在需要调用的地方执行performSelector:onThread:self.thread方法
+
+如何进行APP瘦身？
+1.删除无用/重复图片资源
+2.删除无用代码
+3.开启bitcode
+bitcode 是被编译程序的一种中间形式的代码。包含bitcode配置的程序将会在AppStore上被编译和链接。bitcode可以针对不同机型生成对应指令集的二进制，从而减小包体积。
+4.dead code stripping设置为YES
+5.不生成debug symbols文件，Generate debug symbols选项，release设置为NO
+
+NSTimer 循环引用解决方案1：
+https://www.jianshu.com/p/33d8931e60ee
+
+NSTimer 循环引用解决方案2：
+https://www.jianshu.com/p/aaf7b13864d9
+
+Category 的实现原理：（类别可以动态添加方法，和通过runtime添加属性，但是不能添加实例变量）
+https://www.jianshu.com/p/6ddc19bfa6dc
+
+category是结合runtime来实现的，
+类别在编译的时候，会变成结构体category_t，里面存储着分类的类方法、对象方法、属性、协议，
+在运行时，runtime将分类中的数据进行合并：对象方法都统一合并到类中，类方法都统一合并到元类中，将合并后的分类数据（方法、属性、协议），插入到原来类数据的前面，按compile sources里的顺序执行。
+
+分类为什么不能添加成员变量？
+因为分类的结构体实现里面，没有成员变量列表，所以不能声明成员变量
+
+分类和扩展的区别
+1.分类原则上只能增加方法，但是也可以通过runtime增加属性。
+2.扩展可以增加方法和属性，但只能在自身类中使用。
+3.扩展是在编译阶段添加到类中，分类是在运行时添加到类中。
+
+2019 iOS面试题-----网络相关之HTTPS、对称加密、非对称加密：
+https://www.jianshu.com/p/21adaf1957d5
+
+Https原理及流程：
+https://www.jianshu.com/p/14cd2c9d2cd2
+
+https = http + SSL/TLS
+Https是安全套接字层超文本传输协议，也就是安全的http，https为了兼顾安全与效率，同时使用非对称加密和对称加密，涉及到3个密钥：
+服务端的公钥和私钥：用来进行非对称加密
+客户端的随机密钥：   用来进行对称加密
+Https连接建立使用【非对称加密】，后续传输数据采用【对称加密】；其中【对称加密】加密的是实际的数据，【非对称加密】加密的是【对称加密】所需要的客户端的密钥
+
+Https 连接过程大致分为以下几步：
+1.客户端访问https链接，会把【安全协议版本号+支持的加密算法列表+随机数C】发送给服务端
+2.服务端比对加密算法列表，不支持的话https会断开连接，如果支持的话，会从算法列表中选择【一种对称算法+一种公钥算法+MAC算法+服务端证书+随机数S】发送给客户端
+3.客户端验证服务端公钥，合法的话，用公钥生成一个前主密钥，并用【前主密钥+随机数C+随机数S】组装成会话密钥
+4.客户端将前主密钥进行非对称加密，发送给服务端
+5.服务端通过私钥解密得到前主密钥
+6.服务端用【前主密钥+随机数C+随机数S】组装成会话密钥，这个时候两端都知道了会话密钥
+7.在数据传输的时候，两端通过各自的密钥对发送来的密文进行对称解密，就可以得到数据了
+
+iOS IJKPlayer打包Framework，集成IJKPlayer视频直播框架：
+https://www.jianshu.com/p/5ebe545fca3c
+https://www.cnblogs.com/XYQ-208910/p/5856815.html
+
+iOS-事件传递，响应者链条及常见面试题：
+https://www.jianshu.com/p/0892b08367cf
+
+比如点击了一个按钮：
+事件传递：UIApplication->UIWindow->UIView->UIButton
+响应者链：UIButton->UIView->UIWindow->UIApplication，如果事件传递到UIAppliction还是没处理，那就会忽略掉
+
+-(UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event 事件传递给控件的时候，就会调用该方法，去寻找最合适的view并返回看可以响应的view
+-(BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event 该方法判断触摸点是否在控件身上，是则返回YES，否则返回NO，point参数必须是方法调用者的坐标系
+
+iOS底层原理总结 - RunLoop：
+https://www.jianshu.com/p/de752066d0ad
+
+Runloop就是一个运行循环，程序一启动，会在UIApplicationMain函数中开启一个与主线程相关的runloop，保持应用程序持续运行。
+Runloop的作用：
+1.保持程序持续运行
+2.处理App中的各种事件（比如触摸事件，定时器，selector事件等）
+3.会在程序运行过程中，没有事件传入的时候睡眠，有事件传入的时候被唤醒，节省CPU资源，提高程序性能
+
+Runloop其实就是个do while的死循环，通过判断result的值实现。NSRunloop是基于CFRunLoopRef的封装。
+
+RunLoop和线程间的关系：
+1.每条线程都有唯一的一个与之对应的RunLoop对象
+2.RunLoop保存在一个全局字典里，线程作为key,RunLoop作为value
+3.主线程的RunLoop已经自动创建好了，子线程的RunLoop需要主动获取
+4.RunLoop在第一次获取时创建，在线程结束时销毁
+
+RunLoop的四个事件源：
+Source1：基于port的线程间通信
+Source0：触摸事件，PerformSelectors
+Timers：定时器，NSTimer
+Observer：观察者，用于监听RunLoop的状态
+如果runLoop的mode中没有任意一个事件源，runloop会立即退出。
+
+RunLoop的五种运行mode：
+1.NSDefaultRunLoopMode：APP默认的mode，主线程就是在这个mode下运行
+2.UITrackingRunLoopMode：界面追踪mode
+3.UIInitializationRunLoopMode：APP刚启动时第进入的第一个Mode，启动完成后会切换到NSDefaultRunLoopMode
+4.GSEventReceiveRunLoopMode：接收系统事件的内部mode，通常用不到
+5.NSRunLoopCommonModes：是一种占位mode，用于标记是NSDefaultRunLoopMode还是UITrackingRunLoopMode
+
+滑动时，定时器停止了，是因为如果我们在主线程使用定时器，此时RunLoop的Mode为NSDefaultRunLoopMode，此时滑动ScrollView时，RunLoop的Mode会切换到UITrackingRunLoopMode，因此在定时器就不在管用了，调用的方法也就不再执行了，当我们停止滑动时，RunLoop的Mode切换回NSDefaultRunLoopMode，所以NSTimer就又管用了。可以通过创建[NSTimer timerWithTimeInterval:],然后把timer加入到mainRunLoop中，mode设为NSRunLoopCommonModes -- [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
+
+iOS Runtime详解：
+https://www.jianshu.com/p/6ebda3cd8052
+
+OC的函数，属于动态调用调用过程，程序在编译的时候并不能决定调用哪一个函数，只有在真正运行的时候才会根据函数的名称找到对应的方法来调用。
+
+消息传递过程：
+方法调用的本质即发送消息，一个对象调用某个方法，编译器会将代码转化为objc_msgSend(obj,@selector(sendMessage)),在objc_msgSend函数中，首先通过obj的isa指针找到obj对应的class，然后在class中通过遍历方法列表查找对应的方法实现，如果在本类中找不到，就会去父类的方法列表中查找对应的方法实现。这里面有个objc_cache类，在查找过程中，系统会将所有的系统方法和使用过的方法的内存地址缓存起来，每次查找都会从缓存中读取，提高查找效率。（isa指针指向本类class，class指向metaClass元类，metaClass指向根元类，根元类指向自己，形成一个闭环），如果还是找不到，就会进入消息转发。
+
+消息转发过程：
+1.首先会进入resolveInstanceMethod或者resolveClassMethod，这里需要提供一个函数实现
+2.如果上一步返回NO，则进入forwardingTargetForSelector，将消息发送给其他的备用接受者
+3.如果上一步还不能处理，就会启用完整的消息转发机制，进入methodSignatureForSelector,提供方法签名,以及实现forwardInvocation，将消息发送给目标对象
+4.如果以上都没有处理，就会抛出doesNotRecognizeSelector异常
+
+使用runtime机制可以用于：
+发送消息，交换方法，动态添加方法，给分类添加属性，字典转模型。
+
+IMP，Method，SEL的区别和联系：
+SEL是方法选择器，是一个指向objc_selector结构体的指针，表示方法的名字
+IMP是指向方法实现的首地址的指针
+Method是一个指向objc_method结构体的指针，包含SEL,IMP,char*方法类型
+一个类持有一系列方法，在load类时，runtime会将所有方法选择器SEL映射到一个集合中，当需要发送消息时，会根据SEL查找方法，找到之后，用方法结构体里的IMP指针调用方法。
+相关函数：
+SEL selA = @selector(setTitle:);
+SEL selB = sel_registerName("setTitle");
+SEL selc = NSSelectorFromString(@"setTitle:");
+IMP class_getMethodImplementation(Class cls, SEL name);
+IMP class_replaceMethod(Class cls, SEL name, IMP imp, const char *types); 
+BOOL class_respondsToSelector(Class cls, SEL sel);
+BOOL class_addMethod(Class cls, SEL name, IMP imp, const char *types);
+Method class_getInstanceMethod(Class cls, SEL name);
+Method class_getClassMethod(Class cls, SEL name);
+Method *class_copyMethodList(Class cls, unsigned int *outCount);
+method_exchangeImplementations(Method m1, Method m2)
+
+GCD定时器和NSTimer的区别：
+NSTimer依赖于RunLoop运行，在子线程中使用NSTimer需要手动启动RunLoop。而GCD并不依赖于RunLoop，在子线程中可以正常使用。
+NSTimer依赖于RunLoop运行，在某种特定的环境下可能会需要RunLoop模式切换。
+NSTimer存在延时的可能性，GCD监听系统内核对象并处理，定时更加精确。
+NSTimer的容易出现循环引用，GCD相对而言会好很多。
+
+GCD定时器用法：
+self.gcdTimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
+dispatch_source_set_timer(self.gcdTimer, dispatch_time(when, interval * NSEC_PER_SEC), interval * NSEC_PER_SEC, 0);
+dispatch_source_set_event_handler(self.gcdTimer, ^{});//注意此处的循环引用问题，以及事件处理后调用dispatch_source_cancel
+dispatch_resume(self.gcdTimer);
+
+定时器内存泄漏问题分析：
+NSTimer强引用target，runloop强引用timer，造成内存泄漏
+
+三种方式解决NSTimer循环引用：
+1.可以通过创建自定义类继承自NSProxy，将target转发给弱引用的target。
+2.可以把timer的创建和销毁方法封装到自定义类中，让自定义类和timer建立强引用关系，而不是让timer强引用vc，然后在vc页面销毁的时候，让自定义的类销毁timer，从而避免循环引用。
+3.iOS10之后，苹果有个block方式的创建timer的API
+
+GCD定时器注意事项：
+GCDTimer一定要设置为属性或实例变量，否则会被立即释放；
+被暂停的timer不能被设置为nil，否则会引起崩溃；
+dispatch_suspend()和dispatch_resume()应该是成对出现的；
+在暂停状态下，调用cancel也没用，会造成内存泄漏，甚至崩溃，应该在resume状态下调用dispatch_source_cancel()释放当前的资源；
+
+Objective-C 类型编码：
+https://blog.csdn.net/ssirreplaceable/article/details/53376915
+
+loadView的作用：
+https://www.jianshu.com/p/f702c9cf747e
+
+调用时机：
+1.第一次访问UIViewController的view时，且view为nil时，就会调用loadView方法创建view
+2.view创建完毕后会调用viewDidLoad方法进行界面元素的初始化
+3.当内存警告时，系统可能会释放UIViewController的view，将view赋值为nil，并且调用viewDidUnload方法
+4.当再次访问UIViewController的view时，view已经在3中被赋值为nil，所以又会调用loadView方法重新创建view
+5.view被重新创建完毕后，还是会调用viewDidLoad方法进行界面元素的初始化
+
+iOS开发中自旋和互斥锁的理解以及所有锁的性能比较：
+https://blog.csdn.net/deft_mkjing/article/details/79513500
+
+为什么要有锁的概念？
+为了保证同一时间只有一个线程访问共享资源，保证线程安全。
+
+自旋锁和互斥锁的区别：
+相同点：
+都能保证同一时间只有一个线程访问共享资源，保证线程安全。
+
+不同点：
+互斥锁：如果共享资源已经有其他线程加锁了，线程会进入休眠状态等待锁。一旦被访问的资源被解锁，则等待资源的线程会被唤醒。
+自旋锁：如果共享资源已经有其他线程加锁了，线程会以死循环的方式等待锁，一旦被访问的资源被解锁，则等待资源的线程会立即执行。
+自旋锁效率高于互斥锁
+
+死锁：
+发生死锁的条件是，在串行队列（包括主队列）里添加了同步执行的任务。死锁一定是互斥锁，两个线程同一时间抢夺了共享资源。
+
+常见的锁：互斥锁，自旋锁，条件锁，递归锁
+1.@synchronized 关键字加锁(通过对对象去哈希值来实现的互斥锁)
+2.NSLock 互斥锁
+3.NSCondition  
+4.NSConditionLock 条件锁 （通过条件变量来控制是否加锁）
+5.NSRecursiveLock 递归锁（可以允许同一线程多次加锁，而不会造成死锁）
+6.pthread_mutex 互斥锁（C语言） 
+7.dispatch_semaphore 信号量实现加锁（GCD） 
+8.OSSpinLock  自旋锁 
+9.pthread_rwlock
+10.POSIX Conditions
+11.os_unfair_lock  iOS10之后替代OSSPinLock的互斥锁，解决了优先级反转的问题
+
+iOS开发中的11种锁以及性能对比：
+https://www.jianshu.com/p/8b8a01dd6356
+https://www.jianshu.com/p/c580213d1557
+https://www.jianshu.com/p/b1edc6b0937a
+
+深刻理解block的循环引用：
+https://www.jianshu.com/p/5b769782bd49
+
+OC中的三种block：
+NSConcreteGlobalBlock（全局block，不会引起循环引用，声明的block默认在全局区）
+NSConcreteStackBlock（存储在栈上的block，由操作系统自动管理内存，不会引起循环引用）
+NSConcreteMallocBlock（存储在堆上的block，如果捕获了外部变量，可能会引起循环引用）
+使用__weak,配合__strong打破循环引用
+
+block底层就是一个struct __main_block_impl_0类型的结构体，这个结构体中包含一个isa指针，本质上是一个OC对象，block是封装了函数及其执行上下文的OC对象。
+block用copy修饰的目的：因为block内存空间会在函数调用结束就会销毁，用copy修饰可以将其从栈区拷贝到堆区，从而可以延长block使用时的生命周期。
+__forwarding指针有什么用：不论在任何内存位置,我们都可以通过_forwarding指针顺利的访问同一个__block变量。
+
+iOS系统音量与耳机插入拔出监听：
+https://www.jianshu.com/p/bee0efbe9033
+
+iOS—处理苹果内购(IAP)掉单的坑：
+https://www.jianshu.com/p/d8bf952a023a/
+
+iOS 苹果内购 In-App Purchase 踩过的坑：
+https://blog.csdn.net/haha_hello/article/details/62045758
+
+
+查找字符串中包含的所有子串的位置
+-(NSMutableArray *)checkAllIndexWithString:(NSString *)string match:(NSString *)match{
+    NSMutableArray *array = NSMutableArray.new;
+    if ([string containsString:match]) {
+        NSRange range = [string rangeOfString:match];//先查找第一次的位置
+        [array addObject:@(range.location)];
+        
+        NSUInteger index = 0;//准备累加
+        NSString *backString = [string substringFromIndex:range.location+range.length];//取出后面的字符串
+        while ([backString containsString:match]) {
+            NSRange backRange = [backString rangeOfString:match];
+            if (index == 0) {
+                index = range.location + range.length + backRange.location;
+            } else {
+                index += match.length + backRange.location;
+            }
+            backString = [string substringFromIndex:index+match.length];
+            [array addObject:@(index)];
+        }
+        return array;
+    }
+    return array;
+}
+
+------------------------------------------------------------------------------
+Swift和Objective-C的区别？
+1、Swift是静态语言，是一门类型安全的语言，在编译期有类型推断，而OC是动态语言。
+2、Swift面向协议编程，它里面的协议不仅可以被类实现，也可以被结构体和枚举实现，OC主要是面向对象编程。
+3、Swift可以进行函数式编程，在swift里函数是一等公民，可以当做参数或返回值进行传递。
+4、Swift里的语法和关键字比较丰富，可选值，泛型，元组，final，guard，in-out
+5、Swift比OC的代码更加简洁，运算性能更高。
+
+Swift中的消息派发有三种：
+1.直接派发，将函数方法的地址硬编码到调用的地方
+2.函数表派发，每个类中都有各函数表存储各个函数的指针
+3.消息机制派发，类似OC，动态拿到方法和属性，需要继承NSObject，在属性和方法前加上@objc就可以使用runtime
+
+Swift相关知识点整理：
+1.convenience init（便利构造函数）特点：
+必须调用self.init()初始化对象，不能调用super.init()；
+只负责本类属性的判断和初始化；
+不能被重写；
+可以返回nil；
+
+2.swift中Class和Struct的区别
+类是引用类型，结构体是值类型；
+结构体不能被继承，类可以；
+类中的每个成员变量都必须被初始化，否则编译器会报错，而结构体不需要，它会自动帮我们生成init函数，给变量赋一个默认值；
+值类型赋值时是深拷贝，而引用类型赋值时是浅拷贝；
+值类型是线程安全的，引用类型不安全。
+
+3.swift需要对参数值进行修改，需要用到inout关键字，调用时加&
+4.使用final关键字可以防止修饰的类/函数/变量被继承或重写
+5.is关键字：用于判断实例是否是某个子类类型
+6.标记为dynamic的变量/函数，会隐式的加上@objc关键字，表示使用oc的runtime机制（在swift中,采用KVO模式对属性值进行监听的时候,也需要用到dynamic关键字）
+7.@objc和@objcMembers：
+  @objc:在swift中，继承自NSObject的类，想要使用OC的动态特性，需要在类的方法/属性前加上@objc；
+  @objc使用场景：
+	1.协议是可选实现的
+	2.利用#selector调用方法
+	3.使用kvc时（valueForKey/setValueForKey）
+	4.NSPredicate筛选（kvc机制）
+	5.oc与swift混编，oc需要调swift方法时
+  @objcMemebers：被@objcMembers修饰的类，会默认为类、子类、类扩展、子类扩展的所有属性方法都加上@objc，可以用@nonobjc关闭某一个@objc特性
+8.willSet/didSet属性观察者：表示当值存储到属性前/后，被调用
+9.currying写法：将一个多参数方法分解为每次只有一个参数的方法，swift4.0弃用
+10.逃逸闭包，非逃逸闭包，自动闭包：
+	逃逸闭包：一个接受闭包作为参数的函数，闭包在函数作用域外被调用，也就是逃离了函数的作用域，称为@escaping，例如网络请求；
+	非逃逸闭包：一个接受闭包作为参数的函数，闭包在函数作用域内被调用，称为@noescaping，系统默认闭包参数，是非逃逸闭包。
+	自动闭包：一种自动创建的闭包，用于包装传递给函数作为参数的表达式。这种闭包不接受任何参数，当它被调
+	用的时候，会返回被包装在其中的表达式的值。这种便利语法让你能够省略闭包的花括号，用一个普通的表达式
+	来代替显式的闭包。
+11.typealias：给已有类型起别名，方便阅读
+12.swift和oc混编：
+swift调用oc，需要创建"xxx-Bridging-Header.h"，配置路径，导入oc头文件到该文件里；
+oc调用swift，需要在暴露出来的swift方法和属性加上@objc标识，文件的类要继承自NSObject，然后导入"工程名-Swift.h";
+13.NSString/NSArray/NSDictionary和String/Array/Dictionary的区别：一个是引用类型，一个是值类型
+14.map，flatmap区别：两者都是元素映射，flatmap会改变数组结构（例如将多维数组转化为一维数组），过滤nil值，可选类型自动解包
+15.下划线关键字用途：省略参数标签，忽略枚举关联值，代替一些无用的字段，忽略迭代值
+16.mutating关键字：用于修饰方法，允许修改结构体/枚举内部定义的属性值
+17.required init：表明其所有子类都必须实现该初始化器(通过继承或者重写来实现)
+
+iOS的内存分区：堆区，栈区，全局/静态区，常量区，代码区
+
+MJExtension使用方法汇总：
+mj_keyValues:模型转字典
+mj_objectWithKeyValues:字典转模型
+mj_keyValuesArrayWithObjectArray：模型数组转化为字典数组
+mj_objectArrayWithKeyValuesArray：字典数组转化为模型数组
+mj_replacedKeyFromPropertyName：属性名和字典名映射
+mj_ignoredPropertyNames：忽略模型中的某些属性，不进行字典和模型的转换
+
+ffmpeg讲解：
+https://blog.csdn.net/yinshipin007/article/details/128378127
+
+socket讲解：
+socket是一组应用于TCP/IP协议的套接字接口。
+TCP：面向连接的传输层协议，相对于UDP安全可靠有序，适用于端到端的连接。
+UDP：无连接的传输层协议，传输效率高，安全可靠性差，常用于视频聊天/语音通话。
+TCP连接与断开有三次握手和四次挥手过程，UDP不需要建立连接。
+利用【协议+IP地址+端口号】来标识网络中的进程，进程间的通信利用这个标识与其它进程进行交互。
+
+TCP服务端和客户端的通信流程：
+服务端：socket()->bind()->listen()->accept()-recv()->send()->close()
+客户端：socket()->connect()->send()->recv()->close()
+
+【服务端流程】：
+创建socket网络连接
+将socket与某端口绑定
+监听被绑定端口
+接收连接请求
+从socket中读取发送来的信息
+向socket写入信息
+关闭socket
+
+【客户端流程】：
+创建socket网络连接
+连接指定域名的端口
+向socket写入信息
+从socket中读取发送来的信息
+关闭socket
+
+UDP服务端和客户端的通信流程：
+服务端：socket()->bind()->recvfrom()-sendto()->close()
+客户端：socket()->sendto()->recvfrom()->close()
+
+【服务端流程】：
+1.使用函数socket()，生成套接字文件描述符；
+2.通过struct sockaddr_in 结构设置服务器地址和监听端口；
+3.使用bind() 函数绑定监听端口，将套接字文件描述符和地址类型变量（struct sockaddr_in ）进行绑定；
+4.接收客户端的数据，使用recvfrom() 函数接收客户端的网络数据；
+5.向客户端发送数据，使用sendto() 函数向服务器主机发送数据；
+6.关闭套接字，使用close() 函数释放资源；
+
+【客户端流程】：
+1.使用socket()，生成套接字文件描述符；
+2.通过struct sockaddr_in 结构设置服务器地址和监听端口；
+3.向服务器发送数据，sendto()；
+4.接收服务器的数据，recvfrom()；
+5.关闭套接字，close()；
+
+OSI七层模型从上到下是：
+应用层，表示层，会话层，传输层，网络层，数据链路层，物理层。
+TCP协议是一个面向连接的传输层协议，相对于UDP安全可靠，适用于端对端的连接；TCP使用流式传输，每次将数据分成若干个小块，一块一块的进行发送。在传输时会进行数据校验，保证数据完整。
+UDP协议是一个无连接的传输层的协议，传输效率高，但是安全可靠性差；UDP使用数据报文传输，每次发送数据时将数据封装成数据报文进行发送。在传输时不会对数据进行校验，无法保证完整性。
+HTTP协议是一个无状态的应用层协议，用于在浏览器和服务器之间传输文档，是TCP协议的高级封装。
+FTP协议是一个文件传输协议，用于从远程服务器上下载、上传文件。
+XMPP协议是跟即时通讯相关的协议，传输的是XML流。
+
+HTTPS：基于SSL的加密传输协议（安全套接字层超文本传输协议）
+
+https和http的区别：
+1.https协议需要到ca申请证书，且免费证书很少。
+2.http是明文传输，https则是基于SSL的加密传输
+3.http和https通信的端口不一样，前者是80，后者是443.
+4.http连接简单，是无状态的，https是由SSL+HTTP构建的可进行加密传输，身份认证的网络协议，比http协议安全。
+
+SOCKET是对TCP/IP协议的封装，它只是一个调用接口，通过socket，我们才能使用TCP/IP协议。
+
+建立socket连接的三个步骤：
+服务器监听，客户端请求，连接确认。
+
+TCP三次握手：
+1.客户端发送SYN请求到服务器，等待服务器进行确认
+2.服务器收到请求后，向客户端发送SYN+ACK包，此时服务器进入等待连接状态。
+3.客户端向服务器发送确认报文ACK，客户端和服务器正式建立连接。
+
+四次挥手过程：
+（1） TCP客户端发送一个FIN，用来关闭客户端到服务器的连接。
+（2） 服务器收到这个FIN，它发回一个ACK，确认序号为收到的序号加1。和SYN一样，一个FIN将占用一个序号。
+（3） 服务器关闭客户端的连接，发送一个FIN给客户端。
+（4） 客户端发回ACK报文确认，并将确认序号设置为收到序号加1，双方正式关闭连接。
+
+常见算法：快速排序，选择排序，冒泡排序，堆排序，二分法查找，杨辉三角，链表插入/反转等操作。
+快速排序：每次遍历先选定一个元素，将序列中所有比它小的放左边，大的放右边，在对剩余的序列用相同的方法处理，直到待处理的序列长度为1，处理结束。
+选择排序：每次遍历找出最小值，放到第1个位置，然后再遍历剩余的序列，找出最小值，放到第二个位置，以此类推。
+冒泡排序：每次遍历，比较两个相邻的数，小的放左边，大的放右边，再对剩余的序列进行重复的遍历比较，以此类推。
+快速排序效率最高，冒泡排序效率最低。
+时间复杂度：冒泡排序O(n^2)，选择排序O(n^2)，快速排序O(nlogn)
+
+线程和进程的区别：
+进程和线程是不同的操作系统资源管理方式；
+操作系统以进程为单位进行资源分配和调度，每个进程有独立的地址空间，进程与进程之间相互隔离，互不影响，每个进程至少包含一个线程；
+线程只是一个进程中的不同执行路径，线程没有单独的地址空间，一个线程死掉就等于整个进程死掉，线程是任务调度和执行的基本单位；
+
+iOS原生与H5的交互方式：
+1.使用WKWebView与JS进行交互
+native app调用JS，使用evaluateJavaScript:completionHandler来执行JS脚本；
+JS调用native app，需要注册方法名，通过[config.userContentController addScriptMessageHandler:self name:methodName]使用遵循WKScriptMessageHandler代理，并且实现代理方法中的-(void)userContentController:(WKUserContentController *)userContentController
+      didReceiveScriptMessage:(WKScriptMessage *)message
+2.利用webViewJavaScriptBridge第三方库，注册bridge，通过responseCallBack回调。
+
+KVO原理：
+底层是通过runtime来实现的，当一个类的对象第一次被观察时，系统就会在运行时动态创建该类的派生类，并且在派生类中重写被观察属性的setter方法，然后系统会将这个对象的isa指针指向这个新诞生的派生类，所以在原对象上调用setter方法会调用重写的setter方法，从而激活键值观察机制。此外派生类还重写了dealloc方法来释放资源
+如果原类为 Person，那么生成的派生类名为 NSKVONotifying_Person
+[self willChangeValueForKey:key];
+[super setValue:value forKey:key];
+[self didChangeValueForKey:key];
+最终observeValueForKeyPath:change:context:会被调用
+KVO使用场景：
+实现上拉下拉刷新控件，监听contentOffset
+webView混合排版，监听contentSize
+监听模型的属性实时更新UI
+--如果一个对象设定成属性，这个属性是自动支持KVO的，如果这个对象是实例变量，那么需要我们自己实现KVO（手动支持）：
+-(void)setAge:(NSString *)age{
+    [self willChangeValueForKey:@"age"];
+    _age = age;
+    [self didChangeValueForKey:@"age"];
+}
+-(NSString *)age{
+    return _age;
+}
++(BOOL)automaticallyNotifiesObserversForKey:(NSString *)key{
+    if ([key isEqualToString:@"age"]) {
+	return NO;
+    }
+    return [super automaticallyNotifiesObserversForKey:key];
+}
+
+KVC原理：
+KVC是一种键值编码机制，也就是可以直接通过字符串的名字来访问类属性的机制，而不是通过getter、setter方法。
+常用的方法有：
+setValue forKey
+setValue forKeyPath
+valueForKey
+valueForKeyPath
+setValueForUndefinedKey
+valueForUndefinedKey
+赋值原理：
+1、查找是否实现setter方法，如果有，优先调用setter方法完成赋值(注意：set后面的键的第一个字母必须是大写！！)
+2、当没找到setter方法，调用accessInstanceVariablesDirectly询问，是否允许访问实例变量，
+        如果返回YES，顺序匹配变量名与 _<key>，_is<Key>,<key>,is<Key>,匹配到则设定其值
+        如果返回NO,结束查找。并调用  setValue：forUndefinedKey：报异常
+3、如果既没有setter也没有访问实例变量的权限时，调用 setValue：forUndefinedKey：
+KVC支持实例变量；
+
+App Store常见被拒问题：
+1.二进制文件被拒绝：（需要重新上传应用，等待审核）
+    应用崩溃，加载失败；
+    一些私有的权限没有配置；
+    某个SDK版本含有x86_64,i386架构，解决办法是移除支持开发环境的sdk；
+    应用内包含检查更新功能（可以通过调后台接口，审核时隐藏，通过后再放出来）；
+    采集设备IDFA（广告标识符）但应用没有广告功能；
+    应用必须使用邀请码才能注册使用（苹果要求应用不能限制只有部分用户可以使用）；
+    应用使用第三方登录时，只能通过第三方软件登录APP被拒（之前安装了第三方软件就显示按钮，未安装不显示的逻辑已经行不通，需要修改为未安装时通过web登录也可以）
+    应用出现 beta版、测试字样；
+    应用内推荐其他APP；
+    应用违反当地法律法规；
+    应用提供功能过于简单；
+2.元数据被拒绝：（只需要修改应用信息，不需要再次提交App Store）
+    填写的应用信息，描述，截图等与实际应用不符
+    没有提供有效的测试账号或演示视频
+
+FMDB常用数据库操作：
+字段类型->
+integer：整型
+real：浮点型
+text：字符串
+blob：二进制数据（比如文件）
+
+创建表：
+create table user(id integer primary key autoincrement , name text)
+create table if not exists user(id integer , name text)
+
+删除表：
+drop table user
+drop table if exists user
+
+查询数据：
+select * from user;
+select * from user where age = 10;
+select name,age from student;
+select s.name,s.age from student s; //给student表起别名s
+
+模糊查询：
+NSString *sql=[NSString stringWithFormat:@"SELECT id,name,age FROM t_person WHERE name like '%%%@%%' ORDER BY age ASC;”,@“张三”];//查找包含张三的数据
+
+插入数据：
+insert into user(userId,userName) values(1,’name’);
+
+修改数据：
+update user set userName = ‘Jack’,userAge = 20;
+
+删除数据：
+delete from user;
+delete from user where userId = 10;
+
+添加字段：
+alter table user add column price integer;
+
+查询数量求和，平均，最大，最小
+select sum(age) from user;
+select avg(age) from user;
+select max(age) from user;
+select min(age) from user;
+
+条件语句：where，and，or
+update user set userAge = 5 where userId = 1 and userName = ‘Jack’;
+
+计算查询的数量：
+select count(*) from user where score >= 60;
+select count(userId) from user;
+
+排序：
+select * from user order by age;
+select * from user order by name; //默认是升序排列
+select * from user order by id asc;
+select * from user order by id desc;//降序
+
+限制查询的数量：
+select * from user limit a,b; // 略过最前面a条数据，查询b条数据。
+
+设置约束条件：not null, unique, default
+create table user(id integer, name text not null unique,age integer not null default 1)
+
+表连接查询：
+内连接：inner join 或者 join （左右表都有完整字段值的记录）
+左外连接：left outer join (保证左表数据的完整性)
+select s.name,s.age from student s, class c where s.class_id = c.id and c.name = ‘John’;
+
+
+Ios中常用到哪些框架？
+UIKit，提供用户界面的绘制，内容的呈现。
+Foundation，提供OC基础类，基本数据类型，字符串，数组字典等。
+QuartzCore，提供动画特效以及通过硬件进行渲染的能力。
+CoreGraphics，提供基于C语言的2D图形的绘制。
+CoreData，提供大型数据库管理
+AVFoundation/MediaPlayer，提供音视频的播放和处理
+CoreLocation，获取用户位置信息
+MapKit，地图组件
+AddressBook/AddressBookUI，访问系统通讯录功能
+CoreFoundation，提供基于C语言的基本数据类型
+
+iOS推送原理：
+第一阶段：后台服务器把要发送的消息、目的iPhone的设备标识打包，发送给APNS。
+第二阶段：APNS在自身的已注册Push服务的iPhone列表中，查找有相应标识的iPhone，并把消息发到iPhone。
+第三阶段：iPhone把发来的消息传递给某个应用程序，并且按照设定弹出Push通知。
+
+支付宝支付流程：
+需要到支付宝开放平台上和支付宝签约，生成商家id和partner id，然后集成SDK到客户端。
+服务器生成订单，客户端将服务端返回的支付参数进行组装，调用支付宝支付接口，发送订单，处理支付宝返回的支付结果。
+服务器端生成订单时，使用私钥加密订单信息，使用公约验证支付结果是否被篡改。
+
+iOS APP提交上传流程：
+首先需要到苹果开发者中心网站上面注册成为开发者，并且购买开发者年费服务，然后需要到开发者网站member center里面创建APPID，创建证书和证书签名文件，创建完成后下载安装到本地，之后到build settings正确配置好后，选择product-archive选项，打包完成后，上传到App Store里面。
+然后登录iTunesConnect，创建应用，填写应用的基本信息，包括应用的icon，各个屏幕尺寸的截图，选择刚刚提交的构建版本，然后保存，提交到App Store审核，审核周期一般是2-3天。
+
+iOS10的适配问题：
+增加了权限访问，相机/相册/位置权限访问，在info.plist里面添加相应key
+iOS10字体变大，可能会出现字体显示不全的情况
+UITableView/UICollectionView增加了预加载处理协议UICollectionViewDataSourcePrefetching，里面有相关的预加载处理方法
+iOS10以后想要收到推送，需要在capabilities里面打开推送开关。
+
+*************
+手动自动布局autolayout的两种方式：
+1.纯代码布局
+2.使用第三方库：Masonry进行布局。
+
+纯代码布局：设置NSLayoutConstraint对象，然后添加到相关view中。
+[NSLayoutConstraint constraintWithItem:]
+[-addConstraint:]
+[-addConstraints:]
+
+Masonry中能够添加autolayout的约束有三个函数：
+- (NSArray *)mas_makeConstraints:(void(^)(MASConstraintMaker *make))block;//新增约束
+- (NSArray *)mas_updateConstraints:(void(^)(MASConstraintMaker *make))block;//更新约束
+- (NSArray *)mas_remakeConstraints:(void(^)(MASConstraintMaker *make))block;//清除之前的所有约束，保留最新约束
+
+CocoaAsyncSocket框架的几个代理方法：
+    用到的类：GCDAsyncSocket
+    常用的几个代理方法：
+服务端->
+开始建立连接：socket didAcceptNewSocket
+收到消息：     socket didReadData withTag
+发送消息：     socket writeData withTimeout tag
+客户端->
+socket didConnectToHost
+Socket didReadData withTag
+Socket connectToHost withTimeout error
+Socket writeData withTimeout tag
+
+**************
+iOS常用的设计模式有哪些？
+单例，代理，观察者（通知中心/KVO），MVC，工厂模式。
+模型：用来封装应用程序的数据；
+视图：用来显示用户交互的内容；
+控制器：处理两者之间的逻辑关系，处理数据是如何绑定到界面上的。
+工厂模式：就是将类的实例化过程封装到一个工厂方法中，然后从类工厂方法中拿到被创建的对象。
+
+**************
+什么是面向对象，面向对象的特征有哪些，怎么理解面向对象？
+就是处理问题的时候将事物都抽象为对象来处理，而对象又有其对应的方法和属性，这就是面向对象编程；
+三个特性：封装，继承，多态。
+封装：将方法的实现部分隐藏起来，只是对外提供接口，可以使得代码模块化。
+继承：就是重写或者新增现有的父类方法，从而增强代码的可扩展性。
+多态：就是为了让类在派生的时候，可以保证使用任意类实例中的某些属性。
+
+
+iOS常见面试题：
+1.被id声明的对象具有什么特性？
+id声明的对象具有运行时的特性，即可以指向任意类型的OC对象
+
+2.OC有哪些内存管理方式？
+OC内存管理有三种方式：ARC（自动引用计数）、MRC（手动引用计数）、内存池。
+
+3.常见的OC数据类型有哪些，和C的基本数据类型有什么区别？
+OC的数据类型有：NSString、NSNumber、NSArray、NSMutableArray、NSDictionary、NSMutableDictionary、NSData等等，
+这些都是类，创建后就是对象，而C语言的基本数据类型是int，float，long，double等，只是一定字节的内存空间，用于存放数值；
+NSInteger是基本数据类型int或long的别名，它的区别在于，NSInteger会根据系统是32位/64位，来决定本身是int还是long。
+
+4.对于语句NSString *obj = [[NSData alloc] init];在编译时和运行时分别是什么类型的对象？
+编译时是NSString的类型，运行时是NSData类型的对象。
+
+5.写一个setter方法用于完成@property（nonatomic，retain）NSString *name；
+  写一个setter方法用于完成@property（nonatomic，copy）  NSString *name。
+-(void)setName:(NSString *)str
+{
+   [str retain];
+   [name release];
+   name = str;
+}
+-(void)setName:(NSString *)str
+{
+   id t = [str copy];
+   [name release];
+   name = t;
+}
+
+6.readwrite，readonly，assign，retain，copy，nonatomic各是什么作用？
+readwrite：可读可写
+readonly：是只读特性，只可生成属性的getter方法，不会生成setter方法
+assign：是赋值特性，setter方法将传入参数赋值给实例变量
+retain：表示持有特性，setter方法将传入的参数先保留，在赋值，传入参数的引用计数+1
+copy：表示拷贝特性，setter方法会将传入的对象复制一份
+nonatomic：非原子操作，决定编译器生成的setter、getter方法是否是原子操作，atomic表示多线程安全，一般使用nonatomic
+
+7.#import和#include有什么区别，@class呢，#import<>和#import""有什么区别？
+#import是OC导入头文件时要使用的，#include是C/C++导入头文件时要使用的；
+#import会自动去除重复包含的头文件，只会导入一次；
+@class在声明某个类时使用，当执行时，才会查看类的实现文件，可以解决头文件的相互包含；
+#import<>用来包含系统生成的头文件，#import""用来包含用户生成的头文件
+
+8.atomic和nonatomic有什么区别？
+atomic是原子操作，相对来说线程安全的，比较耗时，nonatomic是不安全的，编译器在生成属性的getter、setter方法时，执行效率高，只是简单返回这个值。
+
+9.OC中创建线程的方法是什么？
+有三种方法：NSThread、NSOperation，GCD。
+[[NSThread alloc] initWithTarget: selector:
+NSOperation使用子类化的NSInvocationOperation和NSBlockOperation
+GCD使用dispatch_async(dispatch_get_global_queue)函数
+
+10.在主线程中执行代码，方法是什么？
+[self performSelectorOnMainThread]
+[[NSOperationQueue mainQueue] addOperation:];
+dispatch_async(dispatch_get_main_queue());
+
+11.延时执行代码，方法是什么？
+self performSelector:onThread:withObject:waitUntilDone:
+dispatch_after()函数
+
+12.描述一下iOS SDK中如何实现MVC的开发模式？
+模型：封装应用程序的数据；
+视图：所有的view都是视图层的，用于展示用户交互；
+控制器：所有的viewController都是控制层，用于控制两者之间的逻辑关系
+
+13.OC中类别的作用？继承和类别有什么区别？
+category用于给原有的类添加方法，但是原则上只能添加方法，不能添加属性，如果类别中的方法和原有类的方法冲突，将会覆盖原来的方法
+继承可以添加，修改，删除方法，也可以添加属性。
+
+14.OC中的类可以多继承吗？重写一个类的方式使用继承好还是分类好？
+OC中的类不能多继承，用分类（类别）好，用category重写类的方法，仅对该类别有效，不会影响到其他类。
+
+15.写一个NSString类的实现
++ (id)initWithCString:(const char *)nullTerminatedCString encoding:(NSStringEncoding)encoding;
+ 
+ 
++ (id) stringWithCString: (const char*)nullTerminatedCString encoding: (NSStringEncoding)encoding
+{
+  NSString  *obj;
+  obj = [self allocWithZone: NSDefaultMallocZone()];
+  obj = [obj initWithCString: nullTerminatedCString encoding: encoding];
+  return AUTORELEASE(obj);
+}
+
+16.static关键字的作用
+static变量的作用域为该函数体，变量的内存只被分配一次，该值在下次调用的时候仍维持上一个值。
+static可以限制变量的作用域，也可以设置成员变量的存储域。
+
+17.线程与进程的区别与联系
+线程和进程都是操作系统执行程序运行的基本单元，区别在于它们是不同的操作系统资源管理方式。
+进程有独立的地址空间，一个进程崩溃不会对其他进程产生影响，而线程只是一个进程中的不同执行路径。
+线程有自己的堆栈和局部变量，但线程之间没有单独的地址空间，一个线程死掉就等于整个进程死掉。
+
+18.堆和栈的区别？
+栈是由操作系统自动分配和释放，而堆是由程序员手动分配和释放；
+栈比堆的执行效率高；
+栈是先进后出的，而堆的数据结构类似于一棵树。
+堆空间比栈灵活
+
+19.如何理解target-action？
+target-action是目标-动作机制，有两部分组成：目标对象和selector，目标对象指定最终处理事件的对象，而行为selector则是处理事件的方法。
+
+20.浅谈OBJC的内存管理
+对象的分配和释放，遵循黄金法则，即谁分配，谁释放。
+使用alloc，copy，retain，new等创建的对象在用完后要手动release，
+使用ARC机制，系统可以自动帮我们分配对象，在适当的地方自动帮我们添加release操作。
+
+********面试题整理:**********
+2.id和instancetype的区别
+Instancetype只能作为初始化时方法的返回值用，在编译期就可以校验实例的类型，id只有在运行时才校验类型，而且id既可以当做参数，也可以当做返回值用。
+
+3.synthesize 和 dynamic的区别
+通过@synthesize告诉编译器在编译期自动生成getter/setter方法
+通过@dynamic指令，需要自己实现属性的getter/setter方法
+
+4.项目开发中常用的开发工具有哪些
+instrument性能分析工具，git（sourcetree），svn（Cornerstone）版本管理工具，抓包工具（Charles）
+
+5.imageNamed和imageWithContentsOfFile的区别
+前者采用了缓存机制，图片使用完毕后缓存到内存中，加载速度快；后者不会缓存图片，加载速度漫；
+如果一次性使用图片，不需要缓存，就用后者，节省资源。
+
+6.NSCache和NSDictionary的区别
+前者结合了各种自动删除策略，以确保不会占用过多的内存；
+前者是线程安全的
+
+7.setNeedsDisplay和setNeedsLayout的区别
+调用UIView的setNeedsDisplay默认会重载drawRect方法，相当于重新绘制页面；
+调用UIView的setNeedsLayout会触发layoutSubViews方法，重新布局，进而就可以处理子视图中的一些数据
+
+9.int和NSInteger的区别
+NSInteger会自动识别当前操作系统的位数，来确定类型是long还是int
+
+10.@class
+@class只是声明了有这样一个类存在，可以避免循环引用头文件
+
+11.全部变量和静态变量的区别
+    1.全局变量在声明源文件之外使用，需要用extern关键字；
+       静态变量是使用static关键字
+    2.两者都是存储在静态存储区，而非堆栈上
+    3.两者的生命周期都是由系统自动分配的
+    4.全局变量在整个程序的任何地方均可访问，而静态变量的作用域仅局限于本文件中
+
+12.==、isEqualToString、isEqual的区别
+==：比较两个对象的指针地址
+isEqualToString：比较两个字符串的值是否相同
+isEqual：比较两个对象的类型和值是否相同
+
+13.NSValue和NSNumber
+NSValue可以包装任意类型的对象，包括自定义的结构体，系统的CGRect，CGSize，CGPoint
+NSNumber只能包装基本数据类型
+
+14.nil、Nil、NULL、NSNull的区别
+nil表示空对象，表示这个对象已经从内存中释放了；
+Nil和nil一样，表示空类，而nil被表示为空对象
+NULL是C语言的对象，表示一个空指针
+NSNull表示值为空的对象，拥有有效的内存地址
+
+15.队列和栈有什么区别
+队列是先进先出，它在两端进行操作，一端进行入队列操作，一端进行出队列操作；
+栈是先进后出，它只能在栈顶操作，入栈和出栈都在栈顶操作
+
+16.iOS的系统架构分为哪几个
+Core OS、Core Service、Media、Cocoa Touch
+
+17.loadView与viewDidLoad的区别：
+loadView在控制器的view为nil的时候会被调用；
+而不管是通过xib还是重写loadView创建UIViewController的view，在view创建完毕后，最终都会调用viewDidLoad方法
+
+如何调试BAD_ACCESS错误？
+1.在出现BAD_ACCESS前访问的最后一个object，重写respondsToSelector方法
+2.开启僵尸对象
+3.打全局断点，快速定位
+4.在build settings勾选Enable Address Sanitizer选项
+
+分类重写了原类方法，如何调用原类方法？
+通过遍历类的方法列表，获取方法在方法列表里的索引，然后找到该方法及方法实现，再调用即可。
+class_copyMethodList
+method_getName
+sel_getName
+method_getName
+method_getImplementation
+
+UITableView优化方案：
+1.正确设置好cell的重用机制
+2.刷新tableView时，提前缓存好行高
+3.加载网络图片时，使用异步加载并缓存，避免滚动tableView时重复请求数据
+4.尽量使用局部刷新，而不是reloadData
+5.cell里面避免复杂的业务操作，必要时开多线程处理或者利用懒加载机制
+
+性能优化方案：
+1.使用Instruments、Xcode Profile、Memory Leaks进行性能检测和分析，内存泄漏分析
+2.减少视图层次结构，避免层次过多造成GPU离屏渲染
+3.尽量避免庞大的xib和storyboard，使用纯代码布局
+4.对于网络请求，数据存储，文本/图片处理等耗时操作要用异步线程处理，避免卡主线程
+5.在一些经常读写的地方，要使用数据库缓存机制
+6.对于定位，蓝牙功能，要按需取用，不要长时间开着
+
+内存优化方案：
+1.使用ARC自动引用计数机制
+2.正确使用好属性修饰符(strong,weak,assign,copy等)，避免出现野指针
+3.对于tableView，collectionView正确使用cell重用机制
+4.尽量使用不透明视图
+5.避免过于庞大的xib和storyboard
+6.对于占用大量网络资源，大数据存储等耗时操作，开异步线程处理。
+7.可以使用懒加载机制，按需创建视图，而不是一次性创建所有视图
+8.可以注册监听内存警告
+9.使用instruments memory leaks进行内存检测
+
+**************
+性能优化和内存优化：
+性能和内存优化主要针对图形渲染，数据存储，网络优化等方面。
+从服务器中加载图片时，最好先下载并缓存图片，然后再加载图片到视图中；
+而且对图片进行操作时(图片缩放，裁剪，设置圆角)时，最好在多线程中处理，防止卡主线程。
+针对UITableView,UICollectionView的cell重用机制，懒加载机制，提前缓存行高，头视图/脚视图的高度，尽量减少通过代理设置行高的情况。
+对于占用大量网络资源，大数据存储等耗时操作，开异步线程处理。
+对于后台定位，蓝牙按需取用，不要长时间开着。
+尽量避免庞大的xib和storyboard，尽量使用纯代码布局。
+避免重复处理数据，可以使用数据库缓存，下次再加载重复数据时，从数据库里读。
+对于小规模数据采用NSUserDefaults，plist，归档，较大数据采用SQLite，Core Data处理，断网也能离线读取数据。
+还可以借助于iOS自带的Instruments分析APP的任务管理器，电量消耗，看哪部分程序耗时，还可以检测内存泄露，查看APP运行帧数。
+相关链接：http://www.cnblogs.com/oc-bowen/p/5999997.html
+**************
+
+WKWebView请求拦截以及离线加载方案，使用WKURLSchemeHandler
+一、设置URL Scheme
+WKWebViewConfiguration *webViewConfiguration = [[WKWebViewConfiguration alloc] init];
+[webViewConfiguration setURLSchemeHandler:[[MyURLSchemeHandler alloc] init] forURLScheme:@"herald-hybrid"];
+WKWebView *webView = [[WKWebView alloc] initWithFrame:self.view.frame configuration:webViewConfiguration];
+二、将webView的请求修改为herald-hybrid开头
+三、开始拦截，先创建MyURLSchemeHandler，继承自WKURLSchemeHandler
+- (void)webView:(nonnull WKWebView *)webView startURLSchemeTask:(nonnull id<WKURLSchemeTask>)urlSchemeTask
++ (NSURLResponse *)getURLResponseWithURL:(NSURL *)URL data:(NSData *)data
+removeAllUrlCacheFile（一键清除缓存)
+
+WKWebView自签名证书单向+双向认证，实现代理WKNavigationDelegate里的didReceiveAuthenticationChallenge方法
+
+音视频开发流程：
+音视频采集--AVCaptureSession，AVCaptureDevice，AVCaptureDeviceInput，AVCaptureOutput，采集视频帧
+视频滤镜(GPUImage)
+音视频编码--VideoToolBox，AudioToolBox框架
+推流--流媒体协议：RTMP\RTSP\HLS\FLV
+流媒体服务器处理--数据分发，实时转码，内容检测
+拉流
+音视频解码
+音视频播放--ijkplayer
+
