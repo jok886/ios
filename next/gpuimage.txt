@@ -260,5 +260,52 @@ class ViewController: UIViewController {
         })
     }
 }
+- (void)processVideoSampleBuffer:(CMSampleBufferRef)sampleBuffer;
+{
+    if (capturePaused)
+    {
+        return;
+    }
+    
+    CVImageBufferRef cameraFrame = CMSampleBufferGetImageBuffer(sampleBuffer);
+    int bufferWidth = (int) CVPixelBufferGetWidth(cameraFrame);
+    int bufferHeight = (int) CVPixelBufferGetHeight(cameraFrame);
+    
+    CMTime currentTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
+    [GPUImageContext useImageProcessingContext];
+    
+    CVPixelBufferLockBaseAddress(cameraFrame, 0);
+    
+    
+    #pragma mark -- Custom Method
+- (void)processVideo:(GPUImageOutput *)output {
+    __weak typeof(self) _self = self;
+    @autoreleasepool {
+        GPUImageFramebuffer *imageFramebuffer = output.framebufferForOutput;
+        CVPixelBufferRef pixelBuffer = [imageFramebuffer pixelBuffer];
+        if (pixelBuffer && _self.delegate && [_self.delegate respondsToSelector:@selector(captureOutput:pixelBuffer:)]) {
+            [_self.delegate captureOutput:_self pixelBuffer:pixelBuffer];
+        }
+    }
+}
 
+- (void)encodeVideoData:(CVPixelBufferRef)pixelBuffer timeStamp:(uint64_t)timeStamp {
+  
+    CVPixelBufferLockBaseAddress(pixelBuffer, 0);
+    CMVideoFormatDescriptionRef videoInfo = NULL;
+    CMVideoFormatDescriptionCreateForImageBuffer(NULL, pixelBuffer, &videoInfo);
+    
+    CMTime frameTime = CMTimeMake(timeStamp, 1000);
+    CMTime duration = CMTimeMake(1, (int32_t)_configuration.videoFrameRate);
+    CMSampleTimingInfo timing = {duration, frameTime, kCMTimeInvalid};
+    
+    CMSampleBufferRef sampleBuffer = NULL;
+    CMSampleBufferCreateForImageBuffer(kCFAllocatorDefault, pixelBuffer, YES, NULL, NULL, videoInfo, &timing, &sampleBuffer);
+    CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
+    [_encoder encodeFrame:sampleBuffer];
+    CFRelease(videoInfo);
+    CFRelease(sampleBuffer);
+
+    frameCount++;
+}
       
