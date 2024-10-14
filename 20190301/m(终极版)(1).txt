@@ -30,7 +30,9 @@ delegate和block的区别：
 1.delegate运行成本低，block运行成本高。delegate只是保存了一个对象指针，直接回调，没有额外消耗；block需要将使用的数据从栈区拷贝到堆区，使用完block或置为nil后才会回收内存。
 2.delegate更加安全，可以避免循环引用，而block使用不当会造成循环引用。
 
-swift，可选值，泛型，闭包，函数式编程，swift中的循环引用，OOP的理解，多线程，tableView优化，NSThread，NSOperation，GCD，同步，异步，串行，并行，performSelector的几个函数，延迟调用函数，栅栏函数，信号量，group监听，dispatch_apply，线程锁，runtime，runloop，NSTimer的循环引用，KVC，KVO，设计模式，内存管理，性能优化，APP启动优化，SDK开发，常用第三方库原理，轮播图，autoLayout，masonry，自定义UI组件，
+swift，可选值，泛型，闭包，函数式编程，swift中的循环引用，OOP的理解，多线程，tableView优化，NSThread，NSOperation，GCD，同步，异步，串行，并行，performSelector的几个函数，
+延迟调用函数，栅栏函数，信号量，group监听，dispatch_apply，线程锁，runtime，runloop，NSTimer的循环引用，KVC，KVO，设计模式，内存管理，性能优化，APP启动优化，SDK开发，
+常用第三方库原理，轮播图，autoLayout，masonry，自定义UI组件，
 事件传递/响应者链，混合应用开发（Hybrid），Flutter、AppCan、PhoneGap
 
 cookie和session的区别：
@@ -75,7 +77,8 @@ iOS 使用信号量处理多网络请求：
 https://www.jianshu.com/p/d31117c9dda0
 
 如何使多个网络请求执行完毕，再执行下一个任务？
-使用dispatch_group函数结合信号量使用，在任务执行前，创建信号量，创建dispatch_group_aync并行队列，在每一个任务完毕后都调一次dispatch_semaphore_signal，然后在dispatch_group_notify函数中执行N次dispatch_semaphore_wait，最后回调主线程，进行下一步任务。
+使用dispatch_group函数结合信号量使用，在任务执行前，创建信号量，创建dispatch_group_aync并行队列，在每一个任务完毕后都调一次dispatch_semaphore_signal，
+然后在dispatch_group_notify函数中执行N次dispatch_semaphore_wait，最后回调主线程，进行下一步任务。
 
 视图控制器的生命周期：
 init-loadView-viewDidLoad-viewWillAppear-viewWillLayoutSubviews-viewDidLayoutSubviews-viewDidAppear-viewWillDisappear-viewDidDisappear-dealloc
@@ -109,7 +112,9 @@ id和instancetype的区别：
 什么是离屏渲染：
 离屏渲染指的是GPU在当前屏幕缓冲区外新开辟了一个缓冲区进行渲染，离屏渲染会增加GPU的工作量，会导致CPU+GPU的处理时间每秒超过16.7ms，导致画面掉帧卡顿，所以应该尽量避免。
 
-正常情况下，App是通过CPU和GPU的合作，不停的将内容渲染完成放入帧缓存区，而屏幕显示不断从帧缓冲区中获取内容，显示实时的内容。但在某些情况下，比如阴影，圆角，遮罩，光栅化等效果下，GPU是没办法一次性扫描出图像并直接存放到frame buffer中，因为GPU采用的是画家算法，只能一层层的输出，因此当一层无法生成最终图片的时候，就需要额外开辟一块空间来存放临时图层直到最后合成后再存放到frame buffer中。这也就是GPU离屏渲染的原因。
+正常情况下，App是通过CPU和GPU的合作，不停的将内容渲染完成放入帧缓存区，而屏幕显示不断从帧缓冲区中获取内容，显示实时的内容。
+但在某些情况下，比如阴影，圆角，遮罩，光栅化等效果下，GPU是没办法一次性扫描出图像并直接存放到frame buffer中，因为GPU采用的是画家算法，只能一层层的输出，
+因此当一层无法生成最终图片的时候，就需要额外开辟一块空间来存放临时图层直到最后合成后再存放到frame buffer中。这也就是GPU离屏渲染的原因。
 
 iOS之AFNetworking的基本原理：
 https://blog.csdn.net/u011146511/article/details/65449517
@@ -122,7 +127,8 @@ https://blog.csdn.net/u011146511/article/details/65449517
 
 NSURLSession网络请求的过程：
 首先创建NSURLSessionConfiguration对象，用创建好的config对象配置初始化NSURLSession，创建NSURLSessionTask对象并用resume执行，用delegate或者block回调返回数据。
-AFHTTPSessionManager封装了上述请求：初始化AFHTTPSessionManager对象，设置requestSerializer和responseSerializer，获取网络请求的NSURLSessionDataTask对象，并且为每一个任务追加下载进度和上传进度回调，最后启动task，即[task resume]。
+AFHTTPSessionManager封装了上述请求：初始化AFHTTPSessionManager对象，设置requestSerializer和responseSerializer，获取网络请求的NSURLSessionDataTask对象，
+并且为每一个任务追加下载进度和上传进度回调，最后启动task，即[task resume]。
 
 Rechability开始监听网络连接状态：
 - (void)startMonitoring {
@@ -138,7 +144,8 @@ Rechability开始监听网络连接状态：
 }
 
 AFSecurityPolicy：
-是HTTPS的支持类，主要作用是在iOS系统验证服务端返回的证书之前，在类中做一步提前验证；如果在AFSecurityPolicy中的验证不通过，则直接取消请求，验证通过之后在走系统的认证；如果在AFSecurityPolicy中没有设置具体的安全验证策略，系统会加载默认的安全策略。
+是HTTPS的支持类，主要作用是在iOS系统验证服务端返回的证书之前，在类中做一步提前验证；如果在AFSecurityPolicy中的验证不通过，则直接取消请求，验证通过之后在走系统的认证；
+如果在AFSecurityPolicy中没有设置具体的安全验证策略，系统会加载默认的安全策略。
 //三种校验服务器端证书的方式
 typedef NS_ENUM(NSUInteger, AFSSLPinningMode) {
     AFSSLPinningModeNone,  //代表客户端无条件地信任服务器端返回的证书（包括公信机构和自签的证书），默认安全策略使用的是这种模式
@@ -157,7 +164,10 @@ AFURLResponseSerialization的作用就是用来对服务端返回的数据进行
 SDWebImage 原理及使用：
 https://www.cnblogs.com/jys509/p/5199997.html
 
-入口函数sd_setImageWithURL:placeHolderImage先将placeHolderImage显示，然后SDWebImageManager开始根据URL处理图片，交给SDImageCache处理，先从内存缓存中查找图片，如果找到了回调给SDWebImageManager，进而回调给UIImageView+WebCache显示图片；如果内存缓存中没找到，就会根据图片的URLKey在硬盘缓存目录中查找，如果找到了会将图片添加到内存缓存中，并且回调给前端展示图片，如果还是没有找到，说明内存缓存和硬盘缓存都没有，这时候会交给SDWebImageDownloader downloadImageWithURL:下载图片，图片下载完成后交给SDWebImageDecoder进行解码处理，解码操作在异步线程里，不会卡主线程，解码完成后回调给SDWebImageManager，在内存缓存和硬盘缓存中同时保存，同时回调给前端展示图片。
+入口函数sd_setImageWithURL:placeHolderImage先将placeHolderImage显示，然后SDWebImageManager开始根据URL处理图片，交给SDImageCache处理，先从内存缓存中查找图片，
+如果找到了回调给SDWebImageManager，进而回调给UIImageView+WebCache显示图片；如果内存缓存中没找到，就会根据图片的URLKey在硬盘缓存目录中查找，
+如果找到了会将图片添加到内存缓存中，并且回调给前端展示图片，如果还是没有找到，说明内存缓存和硬盘缓存都没有，这时候会交给SDWebImageDownloader downloadImageWithURL:
+下载图片，图片下载完成后交给SDWebImageDecoder进行解码处理，解码操作在异步线程里，不会卡主线程，解码完成后回调给SDWebImageManager，在内存缓存和硬盘缓存中同时保存，同时回调给前端展示图片。
 
 如果相同URL的图片内容发生了变化，需要在调用[sd_setImageWithURL:url placeHolderImage:nil options:SDWebImageRefreshCached];增加一个options选项
 
@@ -165,13 +175,15 @@ iOS崩溃crash大解析：
 https://www.jianshu.com/p/1b804426d212
 
 对于debug模式，可以真机调试，添加全局断点或者添加symbolic breakpoint，填上[NSObject doesNotRecognizeSelector]
-对于线上APP崩溃，可以搜集Xcode打包时生成的.dsym符号表文件，在Xcode-Window-Organizer，显示包内容可以看到，我一般是集成腾讯的buglySDK，把符号表文件上传到bugly后台，可以定位到问题代码的具体行号。
+对于线上APP崩溃，可以搜集Xcode打包时生成的.dsym符号表文件，在Xcode-Window-Organizer，显示包内容可以看到，我一般是集成腾讯的buglySDK，
+把符号表文件上传到bugly后台，可以定位到问题代码的具体行号。
 再有就是利用Xcode自带的Instruments工具，选择Leaks选项，检测内存泄漏。
 
 iOS耗电量检测与优化：
 https://www.jianshu.com/p/4555704f9696
 
-手机打开开发者模式，选择logging-energy-startRecording选项，真机跑3到5分钟左右，然后打开Xcode的instruments，找到energy log选项并打开，选择import logged data from device，进而分析电量损耗日志。
+手机打开开发者模式，选择logging-energy-startRecording选项，真机跑3到5分钟左右，然后打开Xcode的instruments，
+找到energy log选项并打开，选择import logged data from device，进而分析电量损耗日志。
 
 iOS App 启动性能优化：
 https://mp.weixin.qq.com/s?__biz=MzA3NTYzODYzMg==&mid=2653579242&idx=1&sn=8f2313711f96a62e7a80d63851653639&chksm=84b3b5edb3c43cfb08e30f2affb1895e8bac8c5c433a50e74e18cda794dcc5bd53287ba69025&mpshare=1&scene=1&srcid=081075Vt9sYPaGgAWwb7xd1x&key=4b95006583a3cb388791057645bf19a825b73affa9d3c1303dbc0040c75548ef548be21acce6a577731a08112119a29dfa75505399bba67497ad729187c6a98469674924c7b447788c7370f6c2003fb4&ascene=0&uin=NDA2NTgwNjc1&devicetype=iMac16%2C2+OSX+OSX+10.12.6+build(16G29)&version=12020110&nettype=WIFI&fontScale=100&pass_ticket=IDZVtt6EyfPD9ZLcACRVJZYH8WaaMPtT%2BF3nfv7yZUQBCMKM4H1rDCbevGd7bXoG
@@ -222,7 +234,8 @@ https://www.jianshu.com/p/6ddc19bfa6dc
 
 category是结合runtime来实现的，
 类别在编译的时候，会变成结构体category_t，里面存储着分类的类方法、对象方法、属性、协议，
-在运行时，runtime将分类中的数据进行合并：对象方法都统一合并到类中，类方法都统一合并到元类中，将合并后的分类数据（方法、属性、协议），插入到原来类数据的前面，按compile sources里的顺序执行。
+在运行时，runtime将分类中的数据进行合并：对象方法都统一合并到类中，类方法都统一合并到元类中，将合并后的分类数据（方法、属性、协议），
+插入到原来类数据的前面，按compile sources里的顺序执行。
 
 分类为什么不能添加成员变量？
 因为分类的结构体实现里面，没有成员变量列表，所以不能声明成员变量
@@ -298,7 +311,10 @@ RunLoop的五种运行mode：
 4.GSEventReceiveRunLoopMode：接收系统事件的内部mode，通常用不到
 5.NSRunLoopCommonModes：是一种占位mode，用于标记是NSDefaultRunLoopMode还是UITrackingRunLoopMode
 
-滑动时，定时器停止了，是因为如果我们在主线程使用定时器，此时RunLoop的Mode为NSDefaultRunLoopMode，此时滑动ScrollView时，RunLoop的Mode会切换到UITrackingRunLoopMode，因此在定时器就不在管用了，调用的方法也就不再执行了，当我们停止滑动时，RunLoop的Mode切换回NSDefaultRunLoopMode，所以NSTimer就又管用了。可以通过创建[NSTimer timerWithTimeInterval:],然后把timer加入到mainRunLoop中，mode设为NSRunLoopCommonModes -- [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
+滑动时，定时器停止了，是因为如果我们在主线程使用定时器，此时RunLoop的Mode为NSDefaultRunLoopMode，此时滑动ScrollView时，
+RunLoop的Mode会切换到UITrackingRunLoopMode，因此在定时器就不在管用了，调用的方法也就不再执行了，当我们停止滑动时，RunLoop的Mode切换回
+NSDefaultRunLoopMode，所以NSTimer就又管用了。可以通过创建[NSTimer timerWithTimeInterval:],然后把timer加入到mainRunLoop中，
+mode设为NSRunLoopCommonModes -- [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
 
 iOS Runtime详解：
 https://www.jianshu.com/p/6ebda3cd8052
@@ -306,7 +322,9 @@ https://www.jianshu.com/p/6ebda3cd8052
 OC的函数，属于动态调用调用过程，程序在编译的时候并不能决定调用哪一个函数，只有在真正运行的时候才会根据函数的名称找到对应的方法来调用。
 
 消息传递过程：
-方法调用的本质即发送消息，一个对象调用某个方法，编译器会将代码转化为objc_msgSend(obj,@selector(sendMessage)),在objc_msgSend函数中，首先通过obj的isa指针找到obj对应的class，然后在class中通过遍历方法列表查找对应的方法实现，如果在本类中找不到，就会去父类的方法列表中查找对应的方法实现。这里面有个objc_cache类，在查找过程中，系统会将所有的系统方法和使用过的方法的内存地址缓存起来，每次查找都会从缓存中读取，
+方法调用的本质即发送消息，一个对象调用某个方法，编译器会将代码转化为objc_msgSend(obj,@selector(sendMessage)),在objc_msgSend函数中，
+首先通过obj的isa指针找到obj对应的class，然后在class中通过遍历方法列表查找对应的方法实现，如果在本类中找不到，就会去父类的方法列表中查找对应的方法实现。
+这里面有个objc_cache类，在查找过程中，系统会将所有的系统方法和使用过的方法的内存地址缓存起来，每次查找都会从缓存中读取，
 提高查找效率。（isa指针指向本类class，class指向metaClass元类，metaClass指向根元类，根元类指向自己，形成一个闭环），如果还是找不到，就会进入消息转发。
 
 消息转发过程：
@@ -577,8 +595,10 @@ UDP服务端和客户端的通信流程：
 
 OSI七层模型从上到下是：
 应用层，表示层，会话层，传输层，网络层，数据链路层，物理层。
-TCP协议是一个面向连接的传输层协议，相对于UDP安全可靠，适用于端对端的连接；TCP使用流式传输，每次将数据分成若干个小块，一块一块的进行发送。在传输时会进行数据校验，保证数据完整。
-UDP协议是一个无连接的传输层的协议，传输效率高，但是安全可靠性差；UDP使用数据报文传输，每次发送数据时将数据封装成数据报文进行发送。在传输时不会对数据进行校验，无法保证完整性。
+TCP协议是一个面向连接的传输层协议，相对于UDP安全可靠，适用于端对端的连接；TCP使用流式传输，每次将数据分成若干个小块，
+一块一块的进行发送。在传输时会进行数据校验，保证数据完整。
+UDP协议是一个无连接的传输层的协议，传输效率高，但是安全可靠性差；UDP使用数据报文传输，每次发送数据时将数据封装成数据报文进行发送。
+在传输时不会对数据进行校验，无法保证完整性。
 HTTP协议是一个无状态的应用层协议，用于在浏览器和服务器之间传输文档，是TCP协议的高级封装。
 FTP协议是一个文件传输协议，用于从远程服务器上下载、上传文件。
 XMPP协议是跟即时通讯相关的协议，传输的是XML流。
@@ -622,7 +642,8 @@ TCP三次握手：
 iOS原生与H5的交互方式：
 1.使用WKWebView与JS进行交互
 native app调用JS，使用evaluateJavaScript:completionHandler来执行JS脚本；
-JS调用native app，需要注册方法名，通过[config.userContentController addScriptMessageHandler:self name:methodName]使用遵循WKScriptMessageHandler代理，并且实现代理方法中的-(void)userContentController:(WKUserContentController *)userContentController
+JS调用native app，需要注册方法名，通过[config.userContentController addScriptMessageHandler:self name:methodName]
+使用遵循WKScriptMessageHandler代理，并且实现代理方法中的-(void)userContentController:(WKUserContentController *)userContentController
       didReceiveScriptMessage:(WKScriptMessage *)message
 2.利用webViewJavaScriptBridge第三方库，注册bridge，通过responseCallBack回调。
 
@@ -779,9 +800,11 @@ iOS推送原理：
 服务器端生成订单时，使用私钥加密订单信息，使用公约验证支付结果是否被篡改。
 
 iOS APP提交上传流程：
-首先需要到苹果开发者中心网站上面注册成为开发者，并且购买开发者年费服务，然后需要到开发者网站member center里面创建APPID，创建证书和证书签名文件，创建完成后下载安装到本地，之后到build settings正确配置好后，
+首先需要到苹果开发者中心网站上面注册成为开发者，并且购买开发者年费服务，然后需要到开发者网站member center里面创建APPID，
+创建证书和证书签名文件，创建完成后下载安装到本地，之后到build settings正确配置好后，
 选择product-archive选项，打包完成后，上传到App Store里面。
-然后登录iTunesConnect，创建应用，填写应用的基本信息，包括应用的icon，各个屏幕尺寸的截图，选择刚刚提交的构建版本，然后保存，提交到App Store审核，审核周期一般是2-3天。
+然后登录iTunesConnect，创建应用，填写应用的基本信息，包括应用的icon，各个屏幕尺寸的截图，选择刚刚提交的构建版本，
+然后保存，提交到App Store审核，审核周期一般是2-3天。
 
 iOS10的适配问题：
 增加了权限访问，相机/相册/位置权限访问，在info.plist里面添加相应key
