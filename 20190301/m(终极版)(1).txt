@@ -30,7 +30,8 @@ delegate和block的区别：
 1.delegate运行成本低，block运行成本高。delegate只是保存了一个对象指针，直接回调，没有额外消耗；block需要将使用的数据从栈区拷贝到堆区，使用完block或置为nil后才会回收内存。
 2.delegate更加安全，可以避免循环引用，而block使用不当会造成循环引用。
 
-swift，可选值，泛型，闭包，函数式编程，swift中的循环引用，OOP的理解，多线程，tableView优化，NSThread，NSOperation，GCD，同步，异步，串行，并行，performSelector的几个函数，延迟调用函数，栅栏函数，信号量，group监听，dispatch_apply，线程锁，runtime，runloop，NSTimer的循环引用，KVC，KVO，设计模式，内存管理，性能优化，APP启动优化，SDK开发，常用第三方库原理，轮播图，autoLayout，masonry，自定义UI组件，事件传递/响应者链，混合应用开发（Hybrid），Flutter、AppCan、PhoneGap
+swift，可选值，泛型，闭包，函数式编程，swift中的循环引用，OOP的理解，多线程，tableView优化，NSThread，NSOperation，GCD，同步，异步，串行，并行，performSelector的几个函数，延迟调用函数，栅栏函数，信号量，group监听，dispatch_apply，线程锁，runtime，runloop，NSTimer的循环引用，KVC，KVO，设计模式，内存管理，性能优化，APP启动优化，SDK开发，常用第三方库原理，轮播图，autoLayout，masonry，自定义UI组件，
+事件传递/响应者链，混合应用开发（Hybrid），Flutter、AppCan、PhoneGap
 
 cookie和session的区别：
 它们都是用来跟踪用户的整个会话，
@@ -305,7 +306,8 @@ https://www.jianshu.com/p/6ebda3cd8052
 OC的函数，属于动态调用调用过程，程序在编译的时候并不能决定调用哪一个函数，只有在真正运行的时候才会根据函数的名称找到对应的方法来调用。
 
 消息传递过程：
-方法调用的本质即发送消息，一个对象调用某个方法，编译器会将代码转化为objc_msgSend(obj,@selector(sendMessage)),在objc_msgSend函数中，首先通过obj的isa指针找到obj对应的class，然后在class中通过遍历方法列表查找对应的方法实现，如果在本类中找不到，就会去父类的方法列表中查找对应的方法实现。这里面有个objc_cache类，在查找过程中，系统会将所有的系统方法和使用过的方法的内存地址缓存起来，每次查找都会从缓存中读取，提高查找效率。（isa指针指向本类class，class指向metaClass元类，metaClass指向根元类，根元类指向自己，形成一个闭环），如果还是找不到，就会进入消息转发。
+方法调用的本质即发送消息，一个对象调用某个方法，编译器会将代码转化为objc_msgSend(obj,@selector(sendMessage)),在objc_msgSend函数中，首先通过obj的isa指针找到obj对应的class，然后在class中通过遍历方法列表查找对应的方法实现，如果在本类中找不到，就会去父类的方法列表中查找对应的方法实现。这里面有个objc_cache类，在查找过程中，系统会将所有的系统方法和使用过的方法的内存地址缓存起来，每次查找都会从缓存中读取，
+提高查找效率。（isa指针指向本类class，class指向metaClass元类，metaClass指向根元类，根元类指向自己，形成一个闭环），如果还是找不到，就会进入消息转发。
 
 消息转发过程：
 1.首先会进入resolveInstanceMethod或者resolveClassMethod，这里需要提供一个函数实现
@@ -625,7 +627,8 @@ JS调用native app，需要注册方法名，通过[config.userContentController
 2.利用webViewJavaScriptBridge第三方库，注册bridge，通过responseCallBack回调。
 
 KVO原理：
-底层是通过runtime来实现的，当一个类的对象第一次被观察时，系统就会在运行时动态创建该类的派生类，并且在派生类中重写被观察属性的setter方法，然后系统会将这个对象的isa指针指向这个新诞生的派生类，所以在原对象上调用setter方法会调用重写的setter方法，从而激活键值观察机制。此外派生类还重写了dealloc方法来释放资源
+底层是通过runtime来实现的，当一个类的对象第一次被观察时，系统就会在运行时动态创建该类的派生类，并且在派生类中重写被观察属性的setter方法，然后系统会将这个对象的isa指针指向这个新诞生的派生类，
+所以在原对象上调用setter方法会调用重写的setter方法，从而激活键值观察机制。此外派生类还重写了dealloc方法来释放资源
 如果原类为 Person，那么生成的派生类名为 NSKVONotifying_Person
 [self willChangeValueForKey:key];
 [super setValue:value forKey:key];
@@ -776,7 +779,8 @@ iOS推送原理：
 服务器端生成订单时，使用私钥加密订单信息，使用公约验证支付结果是否被篡改。
 
 iOS APP提交上传流程：
-首先需要到苹果开发者中心网站上面注册成为开发者，并且购买开发者年费服务，然后需要到开发者网站member center里面创建APPID，创建证书和证书签名文件，创建完成后下载安装到本地，之后到build settings正确配置好后，选择product-archive选项，打包完成后，上传到App Store里面。
+首先需要到苹果开发者中心网站上面注册成为开发者，并且购买开发者年费服务，然后需要到开发者网站member center里面创建APPID，创建证书和证书签名文件，创建完成后下载安装到本地，之后到build settings正确配置好后，
+选择product-archive选项，打包完成后，上传到App Store里面。
 然后登录iTunesConnect，创建应用，填写应用的基本信息，包括应用的icon，各个屏幕尺寸的截图，选择刚刚提交的构建版本，然后保存，提交到App Store审核，审核周期一般是2-3天。
 
 iOS10的适配问题：
