@@ -1,3 +1,57 @@
+
+https://github.com/NPOpenSource/opencvIOS
+
+想在ios上使用opencv 还是挺简单的,用pod 加载就可以了
+pod 'OpenCV', '~> 3.4.6'
+
+#ifdef __cplusplus
+#import <opencv2/opencv.hpp>
+#import <opencv2/imgcodecs/ios.h>
+#import <opencv2/imgproc.hpp>
+#import <opencv2/highgui.hpp>
+#import <opencv2/core/operations.hpp>
+#import <opencv2/core/core_c.h>
+using namespace cv;
+using namespace std;
+
+#endif
+
+ Mat src, dst;
+    UIImage * src1Image = [UIImage imageNamed:@"env.jpg"];
+     src  = [self cvMatFromUIImage:src1Image];
+    UIImageView *imageView;
+    imageView = [self createImageViewInRect:CGRectMake(0, 100, 150, 150)];
+    [self.view addSubview:imageView];
+    imageView.image  = [self UIImageFromCVMat:src];
+    /// 转为灰度图
+   vector<Mat> rgb_planes;
+    split( src, rgb_planes );
+
+    /// 设定bin数目
+    int histSize = 255;
+
+    /// 设定取值范围 ( R,G,B) )
+    float range[] = { 0, 255 } ;
+    const float* histRange = { range };
+
+    bool uniform = true; bool accumulate = false;
+
+    Mat r_hist, g_hist, b_hist;
+
+    /// 计算直方图:
+    calcHist( &rgb_planes[0], 1, 0, Mat(), r_hist, 1, &histSize, &histRange, uniform, accumulate );
+    calcHist( &rgb_planes[1], 1, 0, Mat(), g_hist, 1, &histSize, &histRange, uniform, accumulate );
+    calcHist( &rgb_planes[2], 1, 0, Mat(), b_hist, 1, &histSize, &histRange, uniform, accumulate );
+
+
+
+
+
+
+
+
+
+
 1.检测涂改：
 
 读取每个像素
@@ -344,3 +398,4 @@ void BillBPO:: RoiBillNumber2(const char* binSrcPath,const char* outPath,int top
 	cvReleaseImage(&dst);
 	cvReleaseImage(&pSrcIamge);
 }
+
